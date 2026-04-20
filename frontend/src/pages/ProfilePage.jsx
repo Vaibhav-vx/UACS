@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  User, Lock, Building2, Mail, Save, Loader2,
+  User, Lock, Building2, Smartphone, Save, Loader2,
   AlertCircle, CheckCircle2, Shield, KeyRound,
   Eye, EyeOff, LogOut,
 } from 'lucide-react';
@@ -61,7 +61,7 @@ export default function ProfilePage() {
 
   // Profile section
   const [name,       setName]       = useState('');
-  const [email,      setEmail]      = useState('');
+  const [phone,      setPhone]      = useState('');
   const [dept,       setDept]       = useState('');
   const [role,       setRole]       = useState('');
   const [profSaving, setProfSaving] = useState(false);
@@ -79,7 +79,7 @@ export default function ProfilePage() {
     try {
       const u = JSON.parse(localStorage.getItem('uacs_user') || '{}');
       setName(u.name || '');
-      setEmail(u.email || '');
+      setPhone(u.phone || '');
       setDept(u.department || '');
       setRole(u.role || 'admin');
     } catch {}
@@ -150,7 +150,7 @@ export default function ProfilePage() {
         </div>
         <div className="flex-1 min-w-0">
           <p style={{ fontWeight: 700, fontSize: 16, margin: 0 }}>{name || '—'}</p>
-          <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>{email}</p>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>{phone}</p>
         </div>
         <span style={{ padding: '4px 12px', borderRadius: 20, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', background: 'var(--accent-bg)', color: 'var(--accent)', border: '1px solid var(--accent-border)', flexShrink: 0 }}>
           {role}
@@ -163,9 +163,9 @@ export default function ProfilePage() {
           <Field label="Full Name" icon={User}>
             <input className="input-field" value={name} onChange={e => setName(e.target.value)} placeholder="Your full name" />
           </Field>
-          <Field label="Email Address" icon={Mail}>
-            <input className="input-field" value={email} disabled style={{ opacity: 0.6, cursor: 'not-allowed' }} />
-            <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>Email cannot be changed</p>
+          <Field label="Mobile Number" icon={Smartphone}>
+            <input className="input-field" value={phone} disabled style={{ opacity: 0.6, cursor: 'not-allowed' }} />
+            <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>Mobile number cannot be changed</p>
           </Field>
           <Field label="Department" icon={Building2}>
             <input className="input-field" value={dept} onChange={e => setDept(e.target.value)} placeholder="e.g. Central Command" />

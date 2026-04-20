@@ -3,7 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Shield, Mail, Lock, Eye, EyeOff, Loader2, AlertCircle,
   Sun, Moon, Globe, ChevronDown, User, Building2, UserPlus,
-  LogIn, CheckCircle2, ArrowRight,
+  LogIn, CheckCircle2, ArrowRight, Smartphone, ScrollText,
+  KeyRound
 } from 'lucide-react';
 import { authApi } from '../api';
 import { useTheme } from '../ThemeContext';
@@ -106,7 +107,7 @@ export default function LoginPage() {
   const [tab, setTab] = useState('login');   // 'login' | 'register'
 
   // Login state
-  const [loginEmail, setLoginEmail]       = useState('');
+  const [loginPhone, setLoginPhone]       = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [showLoginPwd, setShowLoginPwd]   = useState(false);
   const [loginLoading, setLoginLoading]   = useState(false);
@@ -114,16 +115,29 @@ export default function LoginPage() {
 
   // Register state
   const [regName, setRegName]             = useState('');
-  const [regEmail, setRegEmail]           = useState('');
+  const [regPhone, setRegPhone]           = useState('');
   const [regDept, setRegDept]             = useState('');
   const [regPassword, setRegPassword]     = useState('');
   const [regConfirm, setRegConfirm]       = useState('');
   const [showRegPwd, setShowRegPwd]       = useState(false);
   const [regLoading, setRegLoading]       = useState(false);
   const [regError, setRegError]           = useState('');
+  const [regRole, setRegRole]             = useState('user'); // default to user
   const [regSuccess, setRegSuccess]       = useState(false);
-
-  // Controls
+  const [regOtp, setRegOtp]               = useState('');
+  const [otpSent, setOtpSent]             = useState(false);
+  const [otpLoading, setOtpLoading]       = useState(false);
+ 
+  // Password Strength Check
+  const getPasswordCriteria = (pwd) => ({
+    length: pwd.length >= 8,
+    upper: /[A-Z]/.test(pwd),
+    lower: /[a-z]/.test(pwd),
+    number: /\d/.test(pwd),
+    special: /[@$!%*?&]/.test(pwd),
+  });
+  const criteria = getPasswordCriteria(regPassword);
+  const isPasswordStrong = Object.values(criteria).every(Boolean);
   const [langOpen, setLangOpen]           = useState(false);
   const navigate                          = useNavigate();
   const [searchParams]                    = useSearchParams();
@@ -141,16 +155,16 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoginError('');
-    if (!loginEmail.trim()) { setLoginError('Email is required'); return; }
+    if (!loginPhone.trim()) { setLoginError('Mobile number is required'); return; }
     if (!loginPassword)     { setLoginError('Password is required'); return; }
     setLoginLoading(true);
     try {
-      const res = await authApi.login(loginEmail.trim().toLowerCase(), loginPassword);
+      const res = await authApi.login(loginPhone.trim(), loginPassword);
       localStorage.setItem('uacs_token', res.data.token);
       localStorage.setItem('uacs_user', JSON.stringify(res.data.user));
       navigate('/dashboard');
     } catch (err) {
-      setLoginError(err.response?.data?.error || 'Invalid email or password');
+      setLoginError(err.response?.data?.error || 'Invalid mobile or password');
     } finally {
       setLoginLoading(false);
     }
@@ -161,14 +175,35 @@ export default function LoginPage() {
     e.preventDefault();
     setRegError('');
     if (!regName.trim())  { setRegError('Full name is required'); return; }
-    if (!regEmail.trim()) { setRegError('Email is required'); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail)) { setRegError('Enter a valid email address'); return; }
-    if (regPassword.length < 8) { setRegError('Password must be at least 8 characters'); return; }
+    if (!regPhone.trim()) { setRegError('Mobile number is required'); return; }
+    if (!isPasswordStrong) { setRegError('Please meet all password requirements'); return; }
     if (regPassword !== regConfirm) { setRegError('Passwords do not match'); return; }
+
+    if (!otpSent) {
+      setOtpLoading(true);
+      try {
+        await authApi.sendOtp(regPhone.trim());
+        setOtpSent(true);
+      } catch (err) {
+        setRegError(err.response?.data?.error || 'Failed to send verification code');
+      } finally {
+        setOtpLoading(false);
+      }
+      return;
+    }
+
+    if (!regOtp.trim()) { setRegError('Verification code is required'); return; }
 
     setRegLoading(true);
     try {
-      const res = await authApi.register({ name: regName.trim(), email: regEmail.trim(), password: regPassword, department: regDept.trim() });
+      const res = await authApi.register({ 
+        name: regName.trim(), 
+        phone: regPhone.trim(), 
+        password: regPassword, 
+        department: regDept.trim(), 
+        role: regRole,
+        otp: regOtp.trim()
+      });
       localStorage.setItem('uacs_token', res.data.token);
       localStorage.setItem('uacs_user', JSON.stringify(res.data.user));
       setRegSuccess(true);
@@ -305,15 +340,15 @@ export default function LoginPage() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <Field
-                id="login-email"
-                label="Email Address"
-                icon={Mail}
-                type="email"
-                value={loginEmail}
-                onChange={e => { setLoginEmail(e.target.value); setLoginError(''); }}
-                placeholder="name@uacs.gov"
+                id="login-phone"
+                label="Mobile Number"
+                icon={Smartphone}
+                type="tel"
+                value={loginPhone}
+                onChange={e => { setLoginPhone(e.target.value); setLoginError(''); }}
+                placeholder="+91 99999 99999"
                 autoFocus
-                autoComplete="email"
+                autoComplete="tel"
               />
               <Field
                 id="login-password"
@@ -397,14 +432,14 @@ export default function LoginPage() {
                     autoComplete="name"
                   />
                   <Field
-                    id="reg-email"
-                    label="Email Address"
-                    icon={Mail}
-                    type="email"
-                    value={regEmail}
-                    onChange={e => { setRegEmail(e.target.value); setRegError(''); }}
-                    placeholder="name@uacs.gov"
-                    autoComplete="email"
+                    id="reg-phone"
+                    label="Mobile Number"
+                    icon={Smartphone}
+                    type="tel"
+                    value={regPhone}
+                    onChange={e => { setRegPhone(e.target.value); setRegError(''); }}
+                    placeholder="+91 99999 99999"
+                    autoComplete="tel"
                   />
                   <Field
                     id="reg-dept"
@@ -415,6 +450,30 @@ export default function LoginPage() {
                     placeholder="e.g. Central Command"
                     autoComplete="organization"
                   />
+                  <div style={{ marginBottom: 4 }}>
+                    <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 8, color: 'var(--text-secondary)' }}>
+                      Request Role
+                    </label>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      {['user', 'admin'].map(r => (
+                        <button
+                          key={r}
+                          type="button"
+                          onClick={() => setRegRole(r)}
+                          style={{
+                            flex: 1, padding: '8px 0', borderRadius: 8, fontSize: 12, fontWeight: 600,
+                            border: '1px solid', transition: 'all 0.2s', cursor: 'pointer',
+                            textTransform: 'capitalize',
+                            borderColor: regRole === r ? 'var(--accent)' : 'var(--border)',
+                            background: regRole === r ? 'var(--accent-bg)' : 'transparent',
+                            color: regRole === r ? 'var(--accent)' : 'var(--text-secondary)',
+                          }}
+                        >
+                          {r}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <div>
                     <Field
                       id="reg-password"
@@ -427,7 +486,28 @@ export default function LoginPage() {
                       autoComplete="new-password"
                       rightEl={<EyeBtn show={showRegPwd} toggle={() => setShowRegPwd(v => !v)} />}
                     />
-                    <PasswordStrength password={regPassword} />
+                    
+                    {/* Strength Checklist */}
+                    {regPassword && (
+                      <div style={{ marginTop: 10, padding: '10px 12px', borderRadius: 8, background: 'var(--bg-hover)', border: '1px solid var(--border)' }}>
+                        <p style={{ fontSize: 11, fontWeight: 700, marginBottom: 6, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Security Requirements</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 12px' }}>
+                          {[
+                            { label: '8+ Characters', met: criteria.length },
+                            { label: 'Uppercase', met: criteria.upper },
+                            { label: 'Number', met: criteria.number },
+                            { label: 'Special Symbol', met: criteria.special },
+                          ].map(c => (
+                            <div key={c.label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: c.met ? 'var(--accent)' : 'var(--text-dim)' }}>
+                              <div style={{ width: 12, height: 12, borderRadius: '50%', background: c.met ? 'var(--accent)' : 'transparent', border: `1px solid ${c.met ? 'var(--accent)' : 'var(--border)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                {c.met && <CheckCircle2 style={{ width: 8, height: 8, color: 'white' }} />}
+                              </div>
+                              {c.label}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <Field
                     id="reg-confirm"
@@ -440,20 +520,42 @@ export default function LoginPage() {
                     autoComplete="new-password"
                     hint={regConfirm && regPassword !== regConfirm ? '⚠ Passwords do not match' : regConfirm && regPassword === regConfirm ? '✓ Passwords match' : ''}
                   />
-                </div>
 
-                <button
-                  type="submit"
-                  id="register-submit-btn"
-                  disabled={regLoading}
-                  className="btn-primary"
-                  style={{ width: '100%', justifyContent: 'center', padding: '12px 0', fontSize: 14, marginTop: 22, gap: 8 }}
-                >
-                  {regLoading
-                    ? <><Loader2 style={{ width: 16, height: 16 }} className="animate-spin" /> Creating account...</>
-                    : <><UserPlus style={{ width: 16, height: 16 }} /> Create Account</>
-                  }
-                </button>
+                  {otpSent && (
+                    <div className="animate-slide-up">
+                      <Field
+                        id="reg-otp"
+                        label="Verification Code (SMS)"
+                        icon={Shield}
+                        type="text"
+                        value={regOtp}
+                        onChange={e => { setRegOtp(e.target.value); setRegError(''); }}
+                        placeholder="Enter 6-digit code"
+                        autoFocus
+                      />
+                      <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: -6, marginLeft: 2 }}>
+                        A code was sent to {regPhone}
+                      </p>
+                    </div>
+                  )}
+
+                  <div style={{ marginTop: 8 }}>
+                    <button
+                      type="submit"
+                      disabled={regLoading || otpLoading}
+                      className="btn-primary"
+                      style={{ width: '100%', height: 48, borderRadius: 12, fontSize: 15, fontWeight: 700, gap: 10 }}
+                    >
+                      {otpLoading ? (
+                        <><Loader2 className="animate-spin" style={{ width: 20, height: 20 }} /> Sending Code...</>
+                      ) : regLoading ? (
+                        <><Loader2 className="animate-spin" style={{ width: 20, height: 20 }} /> Verifying...</>
+                      ) : (
+                        otpSent ? <><CheckCircle2 style={{ width: 20, height: 20 }} /> Verify & Register</> : <><Smartphone style={{ width: 20, height: 20 }} /> Send Verification Code</>
+                      )}
+                    </button>
+                  </div>
+                </div>
 
                 <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-muted)', marginTop: 16 }}>
                   Already have an account?{' '}

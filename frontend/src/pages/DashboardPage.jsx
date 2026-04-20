@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Activity, Clock, AlertTriangle, CheckCircle, Send, Timer, RefreshCw, Eye, RotateCcw, Zap, TrendingUp, X } from 'lucide-react';
+import { Activity, Clock, AlertTriangle, CheckCircle, Send, Timer, RefreshCw, Eye, RotateCcw, Zap, TrendingUp, X, PenSquare } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { messagesApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -23,6 +23,8 @@ export default function DashboardPage() {
   const [emergencyError, setEmergencyError] = useState('');
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('uacs_user') || '{}'));
+  const isAdmin = user.role === 'admin';
 
   const fetchData = useCallback(async () => {
     try {
@@ -106,10 +108,10 @@ export default function DashboardPage() {
       </div>
       <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
         {[
-          { key: 'active',  icon: Zap,      label: `${t('activeAlerts') || 'Active'} (${activeMessages.length})` },
-          { key: 'drafts',  icon: PenSquare, label: `Drafts (${draftMessages.length})` },
-          { key: 'expired', icon: Clock,    label: `${t('expiredAlerts') || 'Expired'} (${expiredMessages.length})` },
-        ].map(tb => (
+          { key: 'active',  icon: Zap,      label: `${t('activeAlerts') || 'Active'} (${activeMessages.length})`, roles: ['admin', 'user'] },
+          { key: 'drafts',  icon: PenSquare, label: `Drafts (${draftMessages.length})`, roles: ['admin'] },
+          { key: 'expired', icon: Clock,    label: `${t('expiredAlerts') || 'Expired'} (${expiredMessages.length})`, roles: ['admin', 'user'] },
+        ].filter(tb => tb.roles.includes(user.role || 'admin')).map(tb => (
           <button key={tb.key} onClick={() => setActiveTab(tb.key)} className="px-5 py-2 rounded-lg text-sm font-medium flex items-center gap-2" style={{ background: activeTab===tb.key?'var(--accent)':'transparent', color: activeTab===tb.key?'white':'var(--text-muted)', boxShadow: activeTab===tb.key?'var(--shadow-md)':'none', border: 'none', cursor: 'pointer' }}><tb.icon className="w-3.5 h-3.5"/>{tb.label}</button>
         ))}
       </div>
@@ -119,17 +121,19 @@ export default function DashboardPage() {
           <div key={msg.id} className="glass-card p-5 animate-slide-up" style={{ animationDelay:`${i*60}ms` }}>
             <div className="flex flex-col lg:flex-row lg:items-start gap-4">
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3 mb-2 flex-wrap"><AlertBanner urgency={msg.urgency} /><h3 className="font-semibold text-lg">{msg.title}</h3></div>
-                <p className="text-sm text-theme-secondary mb-3 line-clamp-2">{msg.master_content}</p>
-                <div className="flex flex-wrap items-center gap-3 text-xs text-theme-muted"><div className="flex items-center gap-1.5">{(msg.channels||[]).map(ch=><ChannelBadge key={ch} channel={ch}/>)}</div><span style={{color:'var(--border-strong)'}}>•</span><span>{(msg.languages||[]).length} {t('languageCount') || 'language(s)'}</span><span style={{color:'var(--border-strong)'}}>•</span><span>{t('by')} {msg.sent_by}</span></div>
+                <div className="flex items-center gap-3 mb-2 flex-wrap"><AlertBanner urgency={msg?.urgency} /><h3 className="font-semibold text-lg">{msg?.title}</h3></div>
+                <p className="text-sm text-theme-secondary mb-3 line-clamp-2">{msg?.master_content}</p>
+                <div className="flex flex-wrap items-center gap-3 text-xs text-theme-muted"><div className="flex items-center gap-1.5">{(msg?.channels||[]).map(ch=><ChannelBadge key={ch} channel={ch}/>)}</div><span style={{color:'var(--border-strong)'}}>•</span><span>{(msg?.languages||[]).length} {t('languageCount') || 'language(s)'}</span><span style={{color:'var(--border-strong)'}}>•</span><span>{t('by')} {msg?.sent_by}</span></div>
               </div>
               <div className="flex flex-col items-end gap-3 shrink-0">
                 {msg.expires_at && <ExpiryTimer expiresAt={msg.expires_at} status={msg.status}/>}
+                {isAdmin && (
                 <div className="flex items-center gap-2">
-                  <button onClick={()=>handleExtend(msg.id)} disabled={actionLoading[`x-${msg.id}`]} className="btn-secondary text-xs py-1.5 px-3">{actionLoading[`x-${msg.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<Timer className="w-3 h-3"/>} {t('extend')}</button>
-                  <button onClick={()=>handleExpireNow(msg.id)} disabled={actionLoading[`e-${msg.id}`]} className="btn-danger text-xs py-1.5 px-3">{actionLoading[`e-${msg.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<AlertTriangle className="w-3 h-3"/>} {t('expireNow')}</button>
-                  <button onClick={()=>handleDelete(msg.id)} disabled={actionLoading[`d-${msg.id}`]} className="btn-secondary text-xs py-1.5 px-3" style={{color:'#ef4444',borderColor:'rgba(239,68,68,0.3)'}}>{actionLoading[`d-${msg.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<X className="w-3 h-3"/>}</button>
+                  <button onClick={()=>handleExtend(msg?.id)} disabled={actionLoading[`x-${msg?.id}`]} className="btn-secondary text-xs py-1.5 px-3">{actionLoading[`x-${msg?.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<Timer className="w-3 h-3"/>} {t('extend')}</button>
+                  <button onClick={()=>handleExpireNow(msg?.id)} disabled={actionLoading[`e-${msg?.id}`]} className="btn-danger text-xs py-1.5 px-3">{actionLoading[`e-${msg?.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<AlertTriangle className="w-3 h-3"/>} {t('expireNow')}</button>
+                  <button onClick={()=>handleDelete(msg?.id)} disabled={actionLoading[`d-${msg?.id}`]} className="btn-secondary text-xs py-1.5 px-3" style={{color:'#ef4444',borderColor:'rgba(239,68,68,0.3)'}}>{actionLoading[`d-${msg?.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<X className="w-3 h-3"/>}</button>
                 </div>
+                )}
               </div>
             </div>
           </div>
@@ -173,25 +177,27 @@ export default function DashboardPage() {
         ))}
       </div>)}
 
-      {/* Floating Emergency Button */}
-      <div 
-        className="fixed bottom-8 right-8 z-[9999] flex flex-col items-center gap-2 cursor-pointer group"
-        onClick={() => setIsEmergencyModalOpen(true)}
-      >
-        <button 
-          className="w-16 h-16 rounded-full flex items-center justify-center text-3xl transition-transform group-hover:scale-110 emergency-btn-pulse"
-          style={{ 
-            background: '#ef4444', 
-            border: 'none',
-            color: 'white'
-          }}
+      {/* Floating Emergency Button (Admins only) */}
+      {isAdmin && (
+        <div 
+          className="fixed bottom-8 right-8 z-[9999] flex flex-col items-center gap-2 cursor-pointer group"
+          onClick={() => setIsEmergencyModalOpen(true)}
         >
-          ⚠️
-        </button>
-        <span className="text-xs font-bold text-red-500 uppercase tracking-widest drop-shadow-md">
-          {t('emergency') || 'Emergency'}
-        </span>
-      </div>
+          <button 
+            className="w-16 h-16 rounded-full flex items-center justify-center text-3xl transition-transform group-hover:scale-110 emergency-btn-pulse"
+            style={{ 
+              background: '#ef4444', 
+              border: 'none',
+              color: 'white'
+            }}
+          >
+            ⚠️
+          </button>
+          <span className="text-xs font-bold text-red-500 uppercase tracking-widest drop-shadow-md">
+            {t('emergency') || 'Emergency'}
+          </span>
+        </div>
+      )}
 
       {/* Emergency Modal */}
       {isEmergencyModalOpen && (

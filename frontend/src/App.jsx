@@ -17,12 +17,12 @@ import RecipientsPage  from './pages/RecipientsPage';
 import ProfilePage     from './pages/ProfilePage';
 
 const NAV_ITEMS = [
-  { path: '/dashboard',  labelKey: 'dashboard',  icon: LayoutDashboard },
-  { path: '/templates',  labelKey: 'templates',   icon: BookTemplate },
-  { path: '/compose',    labelKey: 'compose',     icon: PenSquare },
-  { path: '/approval',   labelKey: 'approval',    icon: CheckCircle2 },
-  { path: '/recipients', labelKey: 'recipients',  icon: Users },
-  { path: '/audit',      labelKey: 'auditLog',    icon: ScrollText },
+  { path: '/dashboard',  labelKey: 'dashboard',  icon: LayoutDashboard, roles: ['admin', 'user'] },
+  { path: '/templates',  labelKey: 'templates',   icon: BookTemplate,    roles: ['admin'] },
+  { path: '/compose',    labelKey: 'compose',     icon: PenSquare,       roles: ['admin'] },
+  { path: '/approval',   labelKey: 'approval',    icon: CheckCircle2,    roles: ['admin'] },
+  { path: '/recipients', labelKey: 'recipients',  icon: Users,           roles: ['admin'] },
+  { path: '/audit',      labelKey: 'auditLog',    icon: ScrollText,      roles: ['admin'] },
 ];
 
 /* ── Language Switcher ─────────────────────────────── */
@@ -229,7 +229,7 @@ function AppLayout() {
 
           {/* Nav links */}
           <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto' }}>
-            {NAV_ITEMS.map(item => (
+            {NAV_ITEMS.filter(item => item.roles.includes(user?.role || 'admin')).map(item => (
               <NavLink
                 key={item.path}
                 to={item.path}
@@ -317,15 +317,15 @@ function AppLayout() {
         >
           <div style={{ padding: '24px 20px', maxWidth: '1280px', margin: '0 auto' }}>
             <Routes>
-              <Route path="/dashboard"  element={<DashboardPage />} />
-              <Route path="/templates"  element={<TemplatesPage />} />
-              <Route path="/compose"    element={<ComposerPage />} />
-              <Route path="/approval"   element={<ApprovalPage />} />
-              <Route path="/approval/:id" element={<ApprovalPage />} />
-              <Route path="/recipients" element={<RecipientsPage />} />
-              <Route path="/audit"      element={<AuditLogPage />} />
-              <Route path="/profile"    element={<ProfilePage />} />
-              <Route path="*"           element={<Navigate to="/dashboard" replace />} />
+              <Route path="/dashboard"    element={<DashboardPage />} />
+              <Route path="/templates"    element={user?.role === 'admin' ? <TemplatesPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/compose"      element={user?.role === 'admin' ? <ComposerPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/approval"     element={user?.role === 'admin' ? <ApprovalPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/approval/:id" element={user?.role === 'admin' ? <ApprovalPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/recipients"   element={user?.role === 'admin' ? <RecipientsPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/audit"        element={user?.role === 'admin' ? <AuditLogPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/profile"      element={<ProfilePage />} />
+              <Route path="*"             element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </div>
         </main>

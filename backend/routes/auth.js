@@ -11,24 +11,32 @@ const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'uacs_super_secret_2026';
 const JWT_EXPIRES_IN = '24h';
 
+// Twilio Client
+import twilio from 'twilio';
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
+// OTP Cache (In-Memory for single-server stability)
+const OTP_STORE = new Map();
+const OTP_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
+
 // ─── POST /api/auth/login ───────────────────────────────
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password)
-      return res.status(400).json({ error: 'Email and password are required' });
+    const { phone, password } = req.body;
+    if (!phone || !password)
+      return res.status(400).json({ error: 'Mobile number and password are required' });
 
-    const user = await dbGetOne('users', { email: email.toLowerCase().trim() });
-    if (!user) return res.status(401).json({ error: 'Invalid email or password' });
+    const user = await dbGetOne('users', { phone: phone.trim() });
+    if (!user) return res.status(401).json({ error: 'Invalid mobile or password' });
 
     const validPassword = bcrypt.compareSync(password, user.password);
-    if (!validPassword) return res.status(401).json({ error: 'Invalid email or password' });
+    if (!validPassword) return res.status(401).json({ error: 'Invalid mobile or password' });
 
     // Update last_login
     await dbUpdate('users', user.id, { last_login: new Date().toISOString() });
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id, phone: user.phone, role: user.role },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES_IN }
     );
@@ -37,7 +45,7 @@ router.post('/login', async (req, res) => {
 
     res.json({
       token,
-      user: { id: user.id, name: user.name, email: user.email, role: user.role, department: user.department },
+      user: { id: user.id, name: user.name, phone: user.phone, role: user.role, department: user.department },
     });
   } catch (err) {
     console.error('[UACS AUTH] Login error:', err.message);
@@ -51,38 +59,89 @@ router.post('/logout', (req, res) => {
   res.json({ success: true, message: 'Logged out successfully' });
 });
 
+// ─── POST /api/auth/otp/send ─────────────────────────────
+router.post('/otp/send', async (req, res) => {
+  try {
+    const { phone } = req.body;
+    if (!phone) return res.status(400).json({ error: 'Mobile number is required' });
+
+    // Generate 6-digit code
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiry = Date.now() + OTP_EXPIRY_MS;
+
+    // Save to cache
+    OTP_STORE.set(phone, { code, expiry });
+
+    // Send via Twilio
+    await twilioClient.messages.create({
+      body: `Your UACS registration code is: ${code}. Valid for 5 minutes.`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: phone,
+    });
+
+    console.log(`[UACS OTP] Code ${code} sent to ${phone}`);
+    res.json({ success: true, message: 'Verification code sent' });
+  } catch (err) {
+    console.error('[UACS OTP] Send error:', err.message);
+    res.status(500).json({ error: 'Failed to send SMS. Please check the mobile number format.' });
+  }
+});
+
 // ─── POST /api/auth/register ────────────────────────────
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, department } = req.body;
+    const { name, phone, password, department, otp } = req.body;
 
-    if (!name?.trim() || !email?.trim() || !password)
-      return res.status(400).json({ error: 'Name, email, and password are required' });
+    if (!name?.trim() || !phone?.trim() || !password || !otp)
+      return res.status(400).json({ error: 'All fields including OTP are required' });
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      return res.status(400).json({ error: 'Invalid email address' });
+    // Verify OTP
+    const cached = OTP_STORE.get(phone);
+    if (!cached || cached.code !== otp || Date.now() > cached.expiry) {
+      return res.status(400).json({ error: 'Invalid or expired verification code' });
+    }
 
-    if (password.length < 8)
-      return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    // OTP Correct -> Clear from cache
+    OTP_STORE.delete(phone);
 
-    // Check email not already taken
-    const existing = await dbGetOne('users', { email: email.toLowerCase().trim() });
+    if (phone.trim().length < 10)
+      return res.status(400).json({ error: 'Valid mobile number is required' });
+
+    const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!pwdRegex.test(password))
+      return res.status(400).json({ error: 'Password must be 8+ chars and include uppercase, lowercase, number, and special character' });
+
+    // Check phone not already taken
+    const existing = await dbGetOne('users', { phone: phone.trim() });
     if (existing)
-      return res.status(409).json({ error: 'An account with this email already exists' });
+      return res.status(409).json({ error: 'An account with this mobile number already exists' });
 
     // Hash password and create user
     const hash = bcrypt.hashSync(password, 10);
     const newUser = await dbInsert('users', {
       name:       name.trim(),
-      email:      email.toLowerCase().trim(),
+      phone:      phone.trim(),
       password:   hash,
-      role:       'admin',           // all registered users get admin role
+      role:       (req.body.role || 'user').toLowerCase(), // Use provided role or default to user
       department: department?.trim() || null,
     });
 
+    // AUTO-SYNC TO RECIPIENTS (Deduplicated)
+    const existingRecipient = await dbGetOne('recipients', { phone: phone.trim() });
+    if (!existingRecipient) {
+      await dbInsert('recipients', {
+        name:       name.trim(),
+        phone:      phone.trim(),
+        zone:       department?.trim() || 'General',
+        language:   'english',
+        active:     true
+      });
+      console.log(`[UACS AUTH] Auto-added ${phone} to Recipients list`);
+    }
+
     // Sign JWT — same shape as login
     const token = jwt.sign(
-      { id: newUser.id, email: newUser.email, role: newUser.role },
+      { id: newUser.id, phone: newUser.phone, role: newUser.role },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES_IN }
     );
@@ -91,7 +150,7 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json({
       token,
-      user: { id: newUser.id, name: newUser.name, email: newUser.email, role: newUser.role, department: newUser.department },
+      user: { id: newUser.id, name: newUser.name, phone: newUser.phone, role: newUser.role, department: newUser.department },
     });
   } catch (err) {
     console.error('[UACS AUTH] Register error:', err.message);
