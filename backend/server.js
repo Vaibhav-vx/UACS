@@ -31,8 +31,19 @@ import { getSupabase, dbSelect } from './database/db.js';
 const app  = express();
 const PORT = process.env.PORT || 5000;
 
-// ─── Middleware ──────────────────────────────────────────
-app.use(cors());
+// ─── CORS ────────────────────────────────────────────────
+const allowedOrigins = [
+  /^http:\/\/localhost:\d+$/,
+  /^https?:\/\/.*\.vercel\.app$/,
+];
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true); // allow non-browser (Postman etc.)
+    const ok = allowedOrigins.some(p => (typeof p === 'string' ? p === origin : p.test(origin)));
+    cb(ok ? null : new Error('CORS policy: origin not allowed'), ok);
+  },
+  credentials: true,
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
