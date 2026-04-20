@@ -26,7 +26,7 @@ router.post('/login', async (req, res) => {
     if (!phone || !password)
       return res.status(400).json({ error: 'Mobile number and password are required' });
 
-    const user = await dbGetOne('users', { phone: phone.trim() });
+    const user = await dbGetOne('users', { email: phone.trim() });
     if (!user) return res.status(401).json({ error: 'Invalid mobile or password' });
 
     const validPassword = bcrypt.compareSync(password, user.password);
@@ -45,7 +45,7 @@ router.post('/login', async (req, res) => {
 
     res.json({
       token,
-      user: { id: user.id, name: user.name, phone: user.phone, role: user.role, department: user.department },
+      user: { id: user.id, name: user.name, phone: user.email, role: user.role, department: user.department },
     });
   } catch (err) {
     console.error('[UACS AUTH] Login error:', err.message);
@@ -111,8 +111,8 @@ router.post('/register', async (req, res) => {
     if (!pwdRegex.test(password))
       return res.status(400).json({ error: 'Password must be 8+ chars and include uppercase, lowercase, number, and special character' });
 
-    // Check phone not already taken
-    const existing = await dbGetOne('users', { phone: phone.trim() });
+    // Check phone not already taken (using email column)
+    const existing = await dbGetOne('users', { email: phone.trim() });
     if (existing)
       return res.status(409).json({ error: 'An account with this mobile number already exists' });
 
@@ -120,9 +120,9 @@ router.post('/register', async (req, res) => {
     const hash = bcrypt.hashSync(password, 10);
     const newUser = await dbInsert('users', {
       name:       name.trim(),
-      phone:      phone.trim(),
+      email:      phone.trim(), // Use email column to store phone
       password:   hash,
-      role:       (req.body.role || 'user').toLowerCase(), // Use provided role or default to user
+      role:       'user', // FORCE USER ROLE - NO EXCEPTIONS
       department: department?.trim() || null,
     });
 
@@ -141,7 +141,7 @@ router.post('/register', async (req, res) => {
 
     // Sign JWT — same shape as login
     const token = jwt.sign(
-      { id: newUser.id, phone: newUser.phone, role: newUser.role },
+      { id: newUser.id, phone: newUser.email, role: newUser.role },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES_IN }
     );
@@ -150,7 +150,7 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json({
       token,
-      user: { id: newUser.id, name: newUser.name, phone: newUser.phone, role: newUser.role, department: newUser.department },
+      user: { id: newUser.id, name: newUser.name, phone: newUser.email, role: newUser.role, department: newUser.department },
     });
   } catch (err) {
     console.error('[UACS AUTH] Register error:', err.message);

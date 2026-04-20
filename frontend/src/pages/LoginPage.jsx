@@ -122,7 +122,6 @@ export default function LoginPage() {
   const [showRegPwd, setShowRegPwd]       = useState(false);
   const [regLoading, setRegLoading]       = useState(false);
   const [regError, setRegError]           = useState('');
-  const [regRole, setRegRole]             = useState('user'); // default to user
   const [regSuccess, setRegSuccess]       = useState(false);
   const [regOtp, setRegOtp]               = useState('');
   const [otpSent, setOtpSent]             = useState(false);
@@ -201,7 +200,6 @@ export default function LoginPage() {
         phone: regPhone.trim(), 
         password: regPassword, 
         department: regDept.trim(), 
-        role: regRole,
         otp: regOtp.trim()
       });
       localStorage.setItem('uacs_token', res.data.token);
@@ -450,30 +448,6 @@ export default function LoginPage() {
                     placeholder="e.g. Central Command"
                     autoComplete="organization"
                   />
-                  <div style={{ marginBottom: 4 }}>
-                    <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 8, color: 'var(--text-secondary)' }}>
-                      Request Role
-                    </label>
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      {['user', 'admin'].map(r => (
-                        <button
-                          key={r}
-                          type="button"
-                          onClick={() => setRegRole(r)}
-                          style={{
-                            flex: 1, padding: '8px 0', borderRadius: 8, fontSize: 12, fontWeight: 600,
-                            border: '1px solid', transition: 'all 0.2s', cursor: 'pointer',
-                            textTransform: 'capitalize',
-                            borderColor: regRole === r ? 'var(--accent)' : 'var(--border)',
-                            background: regRole === r ? 'var(--accent-bg)' : 'transparent',
-                            color: regRole === r ? 'var(--accent)' : 'var(--text-secondary)',
-                          }}
-                        >
-                          {r}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
                   <div>
                     <Field
                       id="reg-password"
