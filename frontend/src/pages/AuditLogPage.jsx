@@ -1,0 +1,67 @@
+import { useState, useEffect } from 'react';
+import { ScrollText, Download, Filter, RefreshCw, Search, ChevronDown, X, Calendar, Trash2 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { auditApi } from '../api';
+import { useLanguage } from '../i18n/LanguageContext';
+
+const ACTION_COLORS = { created: { bg:'rgba(59,130,246,0.15)', color:'#3b82f6' }, approved: { bg:'rgba(34,197,94,0.15)', color:'#22c55e' }, dispatched: { bg:'rgba(168,85,247,0.15)', color:'#a855f7' }, expired: { bg:'rgba(239,68,68,0.15)', color:'#ef4444' }, edited: { bg:'rgba(234,179,8,0.15)', color:'#eab308' } };
+
+export default function AuditLogPage() {
+  const { t } = useLanguage();
+  const [entries, setEntries] = useState([]); const [loading, setLoading] = useState(true); const [exporting, setExporting] = useState(false); const [clearing, setClearing] = useState(false);
+  const [showClearMenu, setShowClearMenu] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState({ action:'', channel:'', performed_by:'', date_from:'', date_to:'' });
+
+  const fetchEntries = async () => { setLoading(true); try { const active={}; Object.entries(filters).forEach(([k,v])=>{if(v)active[k]=v;}); const r=await auditApi.getAll(active); setEntries(r.data); } catch { toast.error(t('failedLoad')||'Failed to load'); } finally { setLoading(false); } };
+  useEffect(()=>{fetchEntries();},[]);
+  const clearFilters=()=>{setFilters({action:'',channel:'',performed_by:'',date_from:'',date_to:''});setTimeout(fetchEntries,0);};
+  const handleExport=async()=>{setExporting(true);try{const active={};Object.entries(filters).forEach(([k,v])=>{if(v)active[k]=v;});const r=await auditApi.exportCsv(active);const url=window.URL.createObjectURL(new Blob([r.data]));const link=document.createElement('a');link.href=url;link.setAttribute('download',`uacs-audit-${new Date().toISOString().split('T')[0]}.csv`);document.body.appendChild(link);link.click();link.remove();window.URL.revokeObjectURL(url);toast.success(t('csvExported')||'Exported');}catch{toast.error(t('exportFailed')||'Export failed');}finally{setExporting(false);}};
+  const handleClear=async(days)=>{ if(!window.confirm(`Delete all audit entries older than ${days} days? This cannot be undone.`))return; setClearing(true);setShowClearMenu(false); try{ const r=await auditApi.clearOld(days); toast.success(`Cleared ${r.data.deleted} entries older than ${days} days`); fetchEntries(); }catch(err){ toast.error('Clear failed: '+(err.response?.data?.error||err.message)); }finally{setClearing(false);}; };
+  const hasActive=Object.values(filters).some(v=>v);
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div><h1 className="text-2xl font-bold flex items-center gap-3"><ScrollText className="w-6 h-6" style={{color:'var(--accent)'}}/> {t('auditTitle')}</h1><p className="text-sm mt-1 text-theme-muted">{t('auditSubtitle')}</p></div>
+        <div className="flex items-center gap-2">
+          <button onClick={fetchEntries} className="btn-secondary text-sm"><RefreshCw className="w-4 h-4"/> {t('refresh')||'Refresh'}</button>
+          <button onClick={()=>setShowFilters(!showFilters)} className="btn-secondary text-sm" style={hasActive?{borderColor:'var(--accent-border)',color:'var(--accent)'}:{}}><Filter className="w-4 h-4"/> {t('filters')||'Filters'} {hasActive&&<span className="w-2 h-2 rounded-full" style={{background:'var(--accent)'}}/>}</button>
+          <button onClick={handleExport} disabled={exporting} className="btn-primary text-sm">{exporting?<RefreshCw className="w-4 h-4 animate-spin"/>:<Download className="w-4 h-4"/>} {t('exportCSV')||'Export CSV'}</button>
+          {/* Clear old entries */}
+          <div style={{position:'relative'}}>
+            <button onClick={()=>setShowClearMenu(v=>!v)} disabled={clearing} className="btn-secondary text-sm" style={{borderColor:'rgba(239,68,68,0.3)',color:'#ef4444'}}>
+              {clearing?<RefreshCw className="w-4 h-4 animate-spin"/>:<Trash2 className="w-4 h-4"/>} Clear Old
+            </button>
+            {showClearMenu&&(
+              <div className="animate-fade-in" style={{position:'absolute',right:0,top:'100%',marginTop:4,minWidth:180,borderRadius:10,background:'var(--bg-surface)',border:'1px solid var(--border)',boxShadow:'var(--shadow-lg)',zIndex:50,overflow:'hidden'}}>
+                <p style={{fontSize:11,color:'var(--text-muted)',padding:'8px 12px 4px',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em'}}>Delete entries older than</p>
+                {[7,30,90].map(days=>(
+                  <button key={days} onClick={()=>handleClear(days)} style={{width:'100%',textAlign:'left',padding:'9px 14px',fontSize:13,background:'transparent',color:'#ef4444',border:'none',cursor:'pointer',display:'flex',alignItems:'center',gap:8}} onMouseEnter={e=>e.currentTarget.style.background='rgba(239,68,68,0.08)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                    <Trash2 style={{width:13,height:13}}/> {days} days
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      {showFilters&&(<div className="glass-card p-5 animate-slide-up"><div className="flex items-center justify-between mb-4"><h3 className="text-sm font-medium text-theme-secondary">{t('filterAudit')}</h3>{hasActive&&<button onClick={clearFilters} className="text-xs text-theme-muted flex items-center gap-1" style={{background:'none',border:'none',cursor:'pointer'}}><X className="w-3 h-3"/> {t('clearAll')}</button>}</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <div><label className="text-xs text-theme-muted mb-1 block">{t('action')}</label><div className="relative"><select value={filters.action} onChange={e=>setFilters(p=>({...p,action:e.target.value}))} className="input-field text-sm appearance-none pr-8"><option value="">{t('allActions')}</option><option value="created">{t('created')}</option><option value="approved">{t('approved')}</option><option value="dispatched">{t('dispatched')}</option><option value="expired">{t('expired')}</option><option value="edited">{t('edited')}</option></select><ChevronDown className="w-3.5 h-3.5 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-theme-muted"/></div></div>
+          <div><label className="text-xs text-theme-muted mb-1 block">{t('channel')}</label><div className="relative"><select value={filters.channel} onChange={e=>setFilters(p=>({...p,channel:e.target.value}))} className="input-field text-sm appearance-none pr-8"><option value="">{t('allChannels')}</option><option value="sms">{t('sms')}</option><option value="twitter">{t('twitter')}</option><option value="radio">{t('radio')}</option><option value="tv">{t('tv')}</option><option value="website">{t('website')}</option></select><ChevronDown className="w-3.5 h-3.5 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-theme-muted"/></div></div>
+          <div><label className="text-xs text-theme-muted mb-1 block">{t('performedBy')}</label><input type="text" value={filters.performed_by} onChange={e=>setFilters(p=>({...p,performed_by:e.target.value}))} placeholder={t('searchPlaceholder')} className="input-field text-sm"/></div>
+          <div><label className="text-xs text-theme-muted mb-1 block">{t('from')}</label><input type="date" value={filters.date_from} onChange={e=>setFilters(p=>({...p,date_from:e.target.value}))} className="input-field text-sm"/></div>
+          <div><label className="text-xs text-theme-muted mb-1 block">{t('to')}</label><input type="date" value={filters.date_to} onChange={e=>setFilters(p=>({...p,date_to:e.target.value}))} className="input-field text-sm"/></div>
+        </div>
+        <div className="mt-4 flex justify-end"><button onClick={fetchEntries} className="btn-primary text-sm"><Search className="w-4 h-4"/> {t('apply')}</button></div>
+      </div>)}
+      <div className="glass-card overflow-hidden">
+        {loading?(<div className="p-6 space-y-3">{[1,2,3,4,5].map(i=><div key={i} className="h-12 shimmer rounded-lg"/>)}</div>
+        ):entries.length===0?(<div className="p-12 text-center"><ScrollText className="w-12 h-12 mx-auto mb-4 text-theme-dim"/><h3 className="text-lg font-medium text-theme-secondary mb-2">{t('noAuditEntries')}</h3><p className="text-sm text-theme-muted">{hasActive?t('noFilterMatch'):t('noAuditDesc')}</p></div>
+        ):(<div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr style={{borderBottom:'1px solid var(--border)'}}>{[t('timestamp'),t('messageCol'),t('action'),t('performedBy'),t('channel'),t('notes')].map(h=>(<th key={h} className="text-left px-5 py-3 text-xs uppercase tracking-wider font-medium text-theme-muted">{h}</th>))}</tr></thead><tbody>{entries.map((e,i)=>{const ac=ACTION_COLORS[e.action]||{bg:'var(--bg-hover)',color:'var(--text-muted)'};return(<tr key={e.id} className="animate-fade-in" style={{borderBottom:'1px solid var(--border)',animationDelay:`${i*30}ms`}} onMouseEnter={ev=>ev.currentTarget.style.background='var(--bg-hover)'} onMouseLeave={ev=>ev.currentTarget.style.background='transparent'}><td className="px-5 py-3 text-theme-secondary whitespace-nowrap"><div className="flex items-center gap-1.5"><Calendar className="w-3 h-3"/> {e.timestamp?new Date(e.timestamp).toLocaleString():'—'}</div></td><td className="px-5 py-3 font-medium max-w-[200px] truncate">{e.message_title||`#${e.message_id}`}</td><td className="px-5 py-3"><span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider" style={{background:ac.bg,color:ac.color}}>{t(e.action)||e.action}</span></td><td className="px-5 py-3 text-theme-secondary">{e.performed_by||'—'}</td><td className="px-5 py-3 text-theme-muted uppercase text-xs">{e.channel||'—'}</td><td className="px-5 py-3 text-theme-muted max-w-[250px] truncate text-xs">{e.notes||'—'}</td></tr>);})}</tbody></table></div>)}
+      </div>
+      {!loading&&entries.length>0&&<p className="text-xs text-theme-dim text-right">{t('showingEntries')} {entries.length} {t('entries')}</p>}
+    </div>
+  );
+}

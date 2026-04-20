@@ -1,0 +1,101 @@
+// ═══════════════════════════════════════
+// UACS API Service Layer
+// JWT-authenticated axios instance
+// ═══════════════════════════════════════
+
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: '/api',
+  timeout: 30000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Attach JWT Bearer token to every request
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('uacs_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Handle 401 responses — redirect to login
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      const code = error.response?.data?.code;
+      // Don't redirect if this is a login request failing
+      if (!error.config?.url?.includes('/auth/login')) {
+        localStorage.removeItem('uacs_token');
+        localStorage.removeItem('uacs_user');
+        const msg = code === 'TOKEN_EXPIRED'
+          ? '?expired=1'
+          : '';
+        window.location.href = `/login${msg}`;
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+// ─── Auth API ───
+export const authApi = {
+  login:         (email, password) => api.post('/auth/login', { email, password }),
+  register:      (data)            => api.post('/auth/register', data),
+  logout:        ()                => api.post('/auth/logout'),
+  me:            ()                => api.get('/auth/me'),
+  updateProfile: (data)            => api.put('/auth/profile', data),
+  changePassword:(data)            => api.put('/auth/password', data),
+};
+
+// ─── Messages API ───
+export const messagesApi = {
+  getAll:   (status) => api.get('/messages', { params: { status } }),
+  getById:  (id)     => api.get(`/messages/${id}`),
+  getStats: ()       => api.get('/messages/stats'),
+  create:   (data)   => api.post('/messages', data),
+  update:   (id, data) => api.put(`/messages/${id}`, data),
+  approve:  (id)     => api.put(`/messages/${id}/approve`),
+  reject:   (id, reason) => api.put(`/messages/${id}/reject`, { reason }),
+  expire:   (id)     => api.put(`/messages/${id}/expire`),
+  extend:   (id, expires_at) => api.put(`/messages/${id}/extend`, { expires_at }),
+  delete:   (id)     => api.delete(`/messages/${id}`),
+  emergency: (data)  => api.post('/messages/emergency', data),
+};
+
+// ─── Translation API ───
+export const translateApi = {
+  translate: (text, languages) => api.post('/translate', { text, languages }),
+};
+
+// ─── Dispatch API ───
+export const dispatchApi = {
+  dispatch: (id) => api.post(`/dispatch/${id}`),
+};
+
+// ─── Audit API ───
+export const auditApi = {
+  getAll:   (params) => api.get('/audit', { params }),
+  exportCsv: (params) => api.get('/audit/export', { params, responseType: 'blob' }),
+  clearOld:  (days)  => api.delete(`/audit/clear`, { params: { days } }),
+};
+
+// ─── Users API ───
+export const usersApi = {
+  getAll: () => api.get('/users'),
+};
+
+// ─── Recipients API ───
+export const recipientsApi = {
+  getAll: (zone) => api.get('/recipients', { params: zone ? { zone } : {} }),
+  create: (data) => api.post('/recipients', data),
+  update: (id, data) => api.put(`/recipients/${id}`, data),
+  delete: (id) => api.delete(`/recipients/${id}`),
+  sendTest: (id) => api.post(`/recipients/${id}/test`),
+};
+
+export default api;

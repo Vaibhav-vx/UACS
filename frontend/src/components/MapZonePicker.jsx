@@ -1,0 +1,241 @@
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { MapPin, X, Search, Check } from 'lucide-react';
+
+// Leaflet CSS must be imported here (once, globally in index.css is also fine)
+import 'leaflet/dist/leaflet.css';
+
+const PRESET_ZONES = [
+  { name: 'North Delhi', lat: 28.7041, lng: 77.1025 },
+  { name: 'South Mumbai', lat: 18.9388, lng: 72.8354 },
+  { name: 'Central Kolkata', lat: 22.5726, lng: 88.3639 },
+  { name: 'East Chennai', lat: 13.0827, lng: 80.2707 },
+  { name: 'West Bengaluru', lat: 12.9716, lng: 77.5946 },
+  { name: 'Pune City', lat: 18.5204, lng: 73.8567 },
+  { name: 'Hyderabad Central', lat: 17.3850, lng: 78.4867 },
+  { name: 'Ahmedabad North', lat: 23.0225, lng: 72.5714 },
+];
+
+export default function MapZonePicker({ value, onChange, onClose }) {
+  const mapRef = useRef(null);
+  const leafletMap = useRef(null);
+  const markerRef = useRef(null);
+  const circleRef = useRef(null);
+  const [selectedCoords, setSelectedCoords] = useState(null);
+  const [zoneName, setZoneName] = useState(value || '');
+  const [radius, setRadius] = useState(5); // km
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searching, setSearching] = useState(false);
+
+  const updateMapOverlay = useCallback((lat, lng, km, L) => {
+    if (!leafletMap.current) return;
+
+    // Remove old overlays
+    if (markerRef.current) markerRef.current.remove();
+    if (circleRef.current) circleRef.current.remove();
+
+    // Custom marker icon
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="width:28px;height:28px;background:var(--accent,#0ea5e9);border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.4)"></div>`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 28],
+    });
+
+    markerRef.current = L.marker([lat, lng], { icon }).addTo(leafletMap.current);
+    circleRef.current = L.circle([lat, lng], {
+      radius: km * 1000,
+      color: 'var(--accent, #0ea5e9)',
+      fillColor: '#0ea5e9',
+      fillOpacity: 0.15,
+      weight: 2,
+    }).addTo(leafletMap.current);
+
+    leafletMap.current.flyTo([lat, lng], 11, { duration: 0.8 });
+  }, []);
+
+  useEffect(() => {
+    if (!mapRef.current || leafletMap.current) return;
+
+    import('leaflet').then((L) => {
+      // Fix default icon path issue with webpack/vite
+      delete L.Icon.Default.prototype._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      });
+
+      leafletMap.current = L.map(mapRef.current, {
+        center: [20.5937, 78.9629], // India center
+        zoom: 5,
+        zoomControl: true,
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 18,
+      }).addTo(leafletMap.current);
+
+      // Click on map to select zone
+      leafletMap.current.on('click', (e) => {
+        const { lat, lng } = e.latlng;
+        setSelectedCoords({ lat, lng });
+        updateMapOverlay(lat, lng, radius, L);
+      });
+    });
+
+    return () => {
+      if (leafletMap.current) {
+        leafletMap.current.remove();
+        leafletMap.current = null;
+      }
+    };
+  }, []);
+
+  // Update circle when radius changes
+  useEffect(() => {
+    if (!selectedCoords) return;
+    import('leaflet').then((L) => {
+      updateMapOverlay(selectedCoords.lat, selectedCoords.lng, radius, L);
+    });
+  }, [radius]);
+
+  const handlePreset = (zone) => {
+    setSelectedCoords({ lat: zone.lat, lng: zone.lng });
+    setZoneName(zone.name);
+    import('leaflet').then((L) => {
+      updateMapOverlay(zone.lat, zone.lng, radius, L);
+    });
+  };
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+    setSearching(true);
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery + ', India')}&limit=1`);
+      const data = await res.json();
+      if (data.length > 0) {
+        const { lat, lon, display_name } = data[0];
+        const parsed = { lat: parseFloat(lat), lng: parseFloat(lon) };
+        setSelectedCoords(parsed);
+        // Use just first 2 parts of the display name for clarity
+        const shortName = display_name.split(',').slice(0, 2).join(',').trim();
+        setZoneName(shortName);
+        import('leaflet').then((L) => updateMapOverlay(parsed.lat, parsed.lng, radius, L));
+      } else {
+        alert('Location not found. Try a different search term.');
+      }
+    } catch (e) {
+      alert('Search failed. Check your internet connection.');
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const handleConfirm = () => {
+    const finalZone = zoneName.trim() || (selectedCoords ? `Zone (${selectedCoords.lat.toFixed(3)}, ${selectedCoords.lng.toFixed(3)})` : '');
+    onChange(finalZone);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-[20000] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
+      <div className="glass-card w-full max-w-3xl shadow-2xl flex flex-col" style={{ maxHeight: '90vh', background: 'var(--bg-base)' }}>
+        {/* Header */}
+        <div className="p-4 border-b border-[var(--border)] flex items-center justify-between shrink-0">
+          <h2 className="text-lg font-bold flex items-center gap-2">
+            <MapPin className="w-5 h-5" style={{ color: 'var(--accent)' }} />
+            Select Target Zone on Map
+          </h2>
+          <button onClick={onClose} className="text-theme-muted hover:text-theme-primary transition-colors">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="flex flex-col md:flex-row flex-1 overflow-hidden" style={{ minHeight: 0 }}>
+          {/* Sidebar */}
+          <div className="w-full md:w-64 shrink-0 p-4 border-b md:border-b-0 md:border-r border-[var(--border)] space-y-4 overflow-y-auto">
+            {/* Search */}
+            <div>
+              <label className="text-xs font-semibold text-theme-muted uppercase tracking-wider">Search Location</label>
+              <div className="flex gap-2 mt-1.5">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                  placeholder="e.g. Dharavi, Mumbai"
+                  className="input-field flex-1 text-sm py-1.5"
+                />
+                <button onClick={handleSearch} disabled={searching} className="btn-primary px-3 py-1.5">
+                  <Search className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Zone name override */}
+            <div>
+              <label className="text-xs font-semibold text-theme-muted uppercase tracking-wider">Zone Label</label>
+              <input
+                type="text"
+                value={zoneName}
+                onChange={e => setZoneName(e.target.value)}
+                placeholder="e.g. Ward 5-12, North Delhi"
+                className="input-field w-full text-sm mt-1.5"
+              />
+            </div>
+
+            {/* Radius */}
+            <div>
+              <label className="text-xs font-semibold text-theme-muted uppercase tracking-wider">Alert Radius: {radius} km</label>
+              <input
+                type="range" min={1} max={50} value={radius}
+                onChange={e => setRadius(Number(e.target.value))}
+                className="w-full mt-1.5 accent-[var(--accent)]"
+              />
+            </div>
+
+            {/* Presets */}
+            <div>
+              <label className="text-xs font-semibold text-theme-muted uppercase tracking-wider">Quick Select City</label>
+              <div className="mt-1.5 space-y-1">
+                {PRESET_ZONES.map(z => (
+                  <button key={z.name} onClick={() => handlePreset(z)}
+                    className="w-full text-left text-sm px-3 py-2 rounded-lg transition-colors"
+                    style={{
+                      background: zoneName === z.name ? 'var(--accent-bg)' : 'var(--bg-input)',
+                      color: zoneName === z.name ? 'var(--accent)' : 'var(--text-secondary)',
+                      border: `1px solid ${zoneName === z.name ? 'var(--accent-border)' : 'var(--border)'}`,
+                    }}>
+                    {z.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {selectedCoords && (
+              <div className="text-xs text-theme-muted p-2 rounded-lg" style={{ background: 'var(--bg-input)' }}>
+                <div>📍 Lat: {selectedCoords.lat.toFixed(4)}</div>
+                <div>📍 Lng: {selectedCoords.lng.toFixed(4)}</div>
+              </div>
+            )}
+            <p className="text-xs text-theme-dim">💡 Click anywhere on the map to pin a custom zone</p>
+          </div>
+
+          {/* Map */}
+          <div className="flex-1 relative" style={{ minHeight: '320px' }}>
+            <div ref={mapRef} className="w-full h-full" style={{ minHeight: '320px' }} />
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-[var(--border)] flex gap-3 justify-end shrink-0" style={{ background: 'var(--bg-surface)' }}>
+          <button onClick={onClose} className="btn-secondary">Cancel</button>
+          <button onClick={handleConfirm} disabled={!zoneName.trim() && !selectedCoords} className="btn-primary">
+            <Check className="w-4 h-4" /> Confirm Zone: {zoneName || '(click map first)'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

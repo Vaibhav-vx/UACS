@@ -1,0 +1,110 @@
+// ═══════════════════════════════════════
+// UACS Translation Integration
+// Uses MyMemory (free, no key needed) with fallback
+// ═══════════════════════════════════════
+
+import axios from 'axios';
+
+// Language code mapping (UACS names → ISO codes)
+const LANG_CODES = {
+  en:      'en',
+  hindi:   'hi',
+  urdu:    'ur',
+  tamil:   'ta',
+  bengali: 'bn',
+  telugu:  'te',
+  hi: 'hi', ur: 'ur', ta: 'ta', bn: 'bn', te: 'te',
+};
+
+const LANG_NAMES = {
+  hi: 'Hindi', ur: 'Urdu', ta: 'Tamil', bn: 'Bengali', te: 'Telugu', en: 'English',
+};
+
+/**
+ * Translate text using MyMemory API (free, no key required up to 5000 words/day)
+ */
+async function translateViaMyMemory(text, sourceLang, targetLang) {
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`;
+  const res = await axios.get(url, { timeout: 15000 });
+  if (res.data?.responseStatus === 200 && res.data?.responseData?.translatedText) {
+    const translated = res.data.responseData.translatedText;
+    // MyMemory sometimes returns the original text unchanged if it can't translate
+    if (translated.toLowerCase() !== text.toLowerCase()) {
+      return translated;
+    }
+  }
+  throw new Error('MyMemory could not translate this text');
+}
+
+/**
+ * Try Google Translate (unofficial endpoint, may rate-limit)
+ */
+async function translateViaGoogle(text, sourceLang, targetLang) {
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+  const res = await axios.get(url, { timeout: 15000, headers: { 'User-Agent': 'Mozilla/5.0' } });
+  if (Array.isArray(res.data?.[0])) {
+    const parts = res.data[0].map(s => s?.[0] || '').filter(Boolean);
+    const joined = parts.join('');
+    if (joined && joined.length > 0) return joined;
+  }
+  throw new Error('Google translate failed');
+}
+
+/**
+ * Main translate function — tries Google first, falls back to MyMemory
+ */
+export async function translateText(text, source = 'en', target = 'hi') {
+  if (!text?.trim() || target === source || target === 'en') return text;
+
+  const srcCode = LANG_CODES[source] || source;
+  const tgtCode = LANG_CODES[target] || target;
+
+  // Try Google first (faster, more accurate)
+  try {
+    const result = await translateViaGoogle(text, srcCode, tgtCode);
+    console.log(`[UACS TRANSLATE] ✅ Google: ${source} → ${target}`);
+    return result;
+  } catch (e) {
+    console.warn(`[UACS TRANSLATE] Google failed (${e.message}), trying MyMemory...`);
+  }
+
+  // Fall back to MyMemory
+  try {
+    const result = await translateViaMyMemory(text, srcCode, tgtCode);
+    console.log(`[UACS TRANSLATE] ✅ MyMemory: ${source} → ${target}`);
+    return result;
+  } catch (e) {
+    console.warn(`[UACS TRANSLATE] MyMemory failed (${e.message}). Using prefixed fallback.`);
+  }
+
+  // Last resort: prefix with language name
+  return `[${LANG_NAMES[tgtCode] || target}] ${text}`;
+}
+
+/**
+ * Translate to multiple languages in parallel
+ * Returns { hindi: '...', tamil: '...', en: '...(original)...' }
+ */
+export async function translateToMultiple(text, targetLangs) {
+  const results = await Promise.all(
+    targetLangs.map(async (lang) => {
+      const code = LANG_CODES[lang.toLowerCase()] || lang;
+      if (code === 'en') {
+        return { lang, text }; // English stays as-is (master content)
+      }
+      try {
+        const translated = await translateText(text, 'en', code);
+        return { lang, text: translated };
+      } catch (err) {
+        console.error(`[UACS TRANSLATE] ${lang} failed: ${err.message}`);
+        return { lang, text: `[${LANG_NAMES[code] || lang}] ${text}` };
+      }
+    })
+  );
+
+  const translations = {};
+  results.forEach(r => { translations[r.lang] = r.text; });
+  return translations;
+}
+
+export default { translateText, translateToMultiple };
