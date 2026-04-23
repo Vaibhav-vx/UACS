@@ -9,6 +9,7 @@ import {
 import { authApi } from '../api';
 import { useTheme } from '../ThemeContext';
 import { useLanguage } from '../i18n/LanguageContext';
+import toast from 'react-hot-toast';
 
 // ── Animated background orbs ─────────────────────────────
 function BgOrbs() {
@@ -212,6 +213,10 @@ export default function LoginPage() {
       const res = await authApi.demo();
       localStorage.setItem('uacs_token', res.data.token);
       localStorage.setItem('uacs_user', JSON.stringify(res.data.user));
+      // Set demo preferences for better initial visualization
+      localStorage.setItem('uacs_pref_zone', 'Zone 4');
+      localStorage.setItem('uacs_pref_lang', 'hindi');
+      toast.success(t('demoLoginSuccess') || 'Welcome to Demo Portal');
       navigate('/dashboard');
     } catch (err) {
       setRegError(err.response?.data?.error || 'Failed to login as Demo User');

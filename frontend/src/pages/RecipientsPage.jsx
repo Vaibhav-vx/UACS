@@ -7,6 +7,25 @@ import {
 import toast from 'react-hot-toast';
 import { recipientsApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Fix Leaflet icons
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+});
+
+const ZONE_PRESETS = {
+  'North District': [19.21, 72.85],
+  'South District': [18.93, 72.83],
+  'East District':  [19.08, 72.92],
+  'West District':  [19.12, 72.82],
+  'Central Zone':   [19.03, 72.85],
+};
 
 const LANGUAGE_OPTIONS = [
   { value: 'en',      label: 'English',  flag: '🇬🇧' },
@@ -89,14 +108,30 @@ function RecipientModal({ initial, onSave, onClose, saving }) {
           <div>
             <label className="block text-sm font-medium mb-1.5 text-theme-secondary">
               <MapPin style={{ width: 13, height: 13, display: 'inline', marginRight: 4 }} />
-              {t('zone') || 'Zone'} <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>({t('optional') || 'optional'})</span>
+              {t('zone') || 'Zone'}
             </label>
-            <input
-              className="input-field"
-              placeholder="e.g. North Delhi, Zone 5"
+            <select 
+              className="input-field mb-2"
               value={form.zone}
               onChange={e => upd('zone', e.target.value)}
-            />
+            >
+              <option value="">Select Zone...</option>
+              {Object.keys(ZONE_PRESETS).map(z => <option key={z} value={z}>{z}</option>)}
+              <option value="General">General / All</option>
+            </select>
+            
+            {/* Small Map for Zone Visualization */}
+            <div className="h-32 rounded-xl overflow-hidden border border-theme-border">
+              <MapContainer 
+                center={ZONE_PRESETS[form.zone] || [19.07, 72.87]} 
+                zoom={10} 
+                style={{ height: '100%', width: '100%' }}
+                zoomControl={false}
+              >
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                {ZONE_PRESETS[form.zone] && <Marker position={ZONE_PRESETS[form.zone]} />}
+              </MapContainer>
+            </div>
           </div>
 
           {/* Language */}

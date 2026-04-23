@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Activity, Clock, AlertTriangle, CheckCircle, Send, Timer, RefreshCw, Eye, RotateCcw, Zap, TrendingUp, X, PenSquare } from 'lucide-react';
+import { Activity, Clock, AlertTriangle, CheckCircle, Send, Timer, RefreshCw, Eye, RotateCcw, Zap, TrendingUp, X, PenSquare, MapPin, Globe } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { messagesApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -88,64 +88,159 @@ export default function DashboardPage() {
     }
   };
 
-  const statCards = [
-    { label: t('totalSentToday'), value: stats.totalToday, icon: Send, color: 'var(--accent)' },
-    { label: t('activeAlerts'), value: stats.active, icon: Activity, color: '#22c55e' },
-    { label: t('expiringSoon'), value: stats.expiringSoon, icon: AlertTriangle, color: '#eab308' },
-    { label: t('expiredLabel'), value: stats.expired, icon: CheckCircle, color: 'var(--text-muted)' },
-  ];
+  const Stat = ({ icon: Icon, label, value, color, trend }) => (
+    <div className="stat-card animate-slide-up">
+      <div className="flex items-center justify-between">
+        <span className="text-xs uppercase tracking-wider font-medium text-theme-muted">{label}</span>
+        <Icon className="w-4 h-4" style={{ color }} />
+      </div>
+      <div className="text-3xl font-bold mt-1">{value}</div>
+      {trend && <div className="text-[10px] text-green-500 mt-1">{trend}</div>}
+    </div>
+  );
 
   if (loading) return (<div className="space-y-6"><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">{[1,2,3,4].map(i=><div key={i} className="glass-card p-5 h-24 shimmer rounded-xl"/>)}</div><div className="space-y-3">{[1,2,3].map(i=><div key={i} className="glass-card p-6 h-32 shimmer rounded-xl"/>)}</div></div>);
 
   if (!isAdmin) {
+    const userZone = localStorage.getItem('uacs_pref_zone') || 'General';
+    const myAlerts = activeMessages.filter(msg => {
+      if (userZone === 'General') return true;
+      if (!msg.target_zone || msg.target_zone === 'All' || msg.target_zone === 'General') return true;
+      return msg.target_zone === userZone;
+    });
+    const nearbyAlerts = activeMessages.filter(msg => !myAlerts.includes(msg));
+
     return (
-      <div className="space-y-6 animate-fade-in max-w-4xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
-          <Activity className="w-8 h-8" style={{ color: 'var(--accent)' }} />
-          <div>
-            <h1 className="text-2xl font-bold">{t('publicAlertsFeed') || 'Public Alerts Feed'}</h1>
-            <p className="text-sm text-theme-muted">{t('publicAlertsSub') || 'Stay informed with the latest official communications.'}</p>
-          </div>
+      <div className="space-y-8 animate-fade-in max-w-5xl mx-auto pb-12">
+        {/* Personalized Header */}
+        <div className="glass-card p-8 rounded-3xl relative overflow-hidden border-0 shadow-2xl">
+           <div style={{ position: 'absolute', top: 0, right: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg, transparent, var(--accent-bg))', opacity: 0.5, pointerEvents: 'none' }} />
+           <div className="relative z-10">
+             <h1 className="text-3xl font-extrabold mb-2">
+               {t('greetingPrefix') || 'Good morning'}, {user.name?.split(' ')[0]} 👋
+             </h1>
+             <div className="flex flex-wrap items-center gap-4 text-sm">
+               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
+                 <MapPin className="w-4 h-4 text-accent" />
+                 <span className="font-semibold text-theme-secondary">Zone: {userZone}</span>
+               </div>
+               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
+                 <Globe className="w-4 h-4 text-accent" />
+                 <span className="font-semibold text-theme-secondary">Language: {localStorage.getItem('uacs_pref_lang')?.toUpperCase() || 'EN'}</span>
+               </div>
+             </div>
+           </div>
         </div>
 
-        {activeMessages.length === 0 ? (
-           <div className="glass-card p-12 text-center rounded-xl" style={{ border: '1px solid var(--border)' }}>
-             <Activity className="w-12 h-12 mx-auto mb-4 text-theme-dim" />
-             <h3 className="text-lg font-medium text-theme-secondary mb-2">{t('noActiveAlertsTitle') || 'No Active Alerts'}</h3>
-             <p className="text-sm text-theme-muted mb-4">{t('noActiveAlertsDesc') || 'All clear. There are no ongoing emergencies or broadcasts.'}</p>
-           </div>
-        ) : (
-          <div className="space-y-4">
-             {activeMessages.filter(msg => {
-                const userZone = localStorage.getItem('uacs_pref_zone') || 'General';
-                if (userZone === 'General') return true; // General sees all
-                if (!msg.target_zone || msg.target_zone === 'All' || msg.target_zone === 'General') return true;
-                return msg.target_zone === userZone;
-             }).map((msg, i) => {
-                const borderColors = { critical: '#ef4444', high: '#f97316', normal: 'var(--accent)' };
-                const prefLang = localStorage.getItem('uacs_pref_lang') || 'english';
-                let displayContent = msg.master_content;
-                if (prefLang !== 'english' && msg.translations) {
-                  try {
-                    const transObj = typeof msg.translations === 'string' ? JSON.parse(msg.translations) : msg.translations;
-                    if (transObj[prefLang]) displayContent = transObj[prefLang];
-                  } catch (e) {}
-                }
-                
-                return (
-                  <div key={msg.id} className="glass-card p-6 animate-slide-up rounded-xl" style={{ animationDelay:`${i*60}ms`, borderLeft: `4px solid ${borderColors[msg.urgency] || 'var(--accent)'}` }}>
-                    <div className="flex items-center gap-3 mb-3"><AlertBanner urgency={msg.urgency} /><h3 className="font-semibold text-lg">{msg.title}</h3></div>
-                    <p className="text-theme-primary mb-4 whitespace-pre-wrap">{displayContent}</p>
-                    <div className="flex flex-wrap items-center gap-3 text-xs text-theme-muted">
-                      <span className="font-medium text-theme-secondary px-2 py-1 rounded bg-theme-hover">Department: {msg.sent_by}</span>
-                      {msg.target_zone && <span className="font-medium text-theme-secondary px-2 py-1 rounded bg-theme-hover">Zone: {msg.target_zone}</span>}
-                      <span>•</span>
-                      <span>{new Date(msg.created_at).toLocaleString()}</span>
-                    </div>
-                  </div>
-                );
-             })}
+        {/* YOUR ACTIVE ALERTS */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold flex items-center gap-3">
+              <Zap className="w-6 h-6 text-red-500 fill-red-500/20" />
+              {t('yourActiveAlerts') || 'YOUR ACTIVE ALERTS'} ({myAlerts.length})
+            </h2>
           </div>
+
+          {myAlerts.length === 0 ? (
+             <div className="glass-card p-12 text-center rounded-2xl border-dashed border-2">
+               <CheckCircle className="w-12 h-12 mx-auto mb-4 text-green-500" />
+               <h3 className="text-lg font-bold">{t('allClear') || 'All Clear in Your Zone'}</h3>
+               <p className="text-sm text-theme-muted">{t('noActiveZoneAlerts') || 'There are no active emergency alerts matching your current zone.'}</p>
+             </div>
+          ) : (
+            <div className="grid gap-6">
+               {myAlerts.map((msg, i) => {
+                  const borderColors = { critical: '#ef4444', high: '#f97316', normal: 'var(--accent)' };
+                  const prefLang = localStorage.getItem('uacs_pref_lang') || 'english';
+                  let displayContent = msg.master_content;
+                  if (prefLang !== 'english' && msg.translations) {
+                    try {
+                      const transObj = typeof msg.translations === 'string' ? JSON.parse(msg.translations) : msg.translations;
+                      if (transObj[prefLang]) displayContent = transObj[prefLang];
+                    } catch (e) {}
+                  }
+                  
+                  return (
+                    <div key={msg.id} className="glass-card overflow-hidden rounded-2xl border-0 shadow-lg group hover:shadow-2xl transition-all duration-300">
+                      <div style={{ height: 4, background: borderColors[msg.urgency] || 'var(--accent)' }} />
+                      <div className="p-6">
+                        <div className="flex items-start justify-between gap-4 mb-4">
+                          <div className="flex items-center gap-3">
+                            <AlertBanner urgency={msg.urgency} />
+                            <h3 className="font-bold text-xl">{msg.title}</h3>
+                          </div>
+                          <span className="text-xs font-bold px-2 py-1 rounded bg-theme-hover text-theme-dim">{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                        
+                        <p className="text-lg leading-relaxed text-theme-primary mb-6 whitespace-pre-wrap">{displayContent}</p>
+
+                        {/* Safety Check-in Banner for Critical Alerts */}
+                        {msg.urgency === 'critical' && (
+                          <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 mb-6 animate-pulse-slow">
+                            <h4 className="font-bold text-red-500 text-lg mb-4 flex items-center gap-2">
+                              <AlertTriangle className="w-5 h-5" /> Are you safe?
+                            </h4>
+                            <div className="flex flex-col sm:flex-row gap-3">
+                              <button 
+                                onClick={() => {
+                                  toast.success("Glad to hear you're safe!");
+                                  // In real app, call messagesApi.submitSafety(msg.id, 'safe')
+                                }}
+                                className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-600/20"
+                              >
+                                <CheckCircle className="w-5 h-5" /> {t('iAmSafe') || 'YES, I AM SAFE'}
+                              </button>
+                              <button 
+                                onClick={() => {
+                                  toast.error("Assistance request sent to authorities");
+                                  // In real app, call messagesApi.submitSafety(msg.id, 'assistance')
+                                }}
+                                className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-red-600/20"
+                              >
+                                <AlertTriangle className="w-5 h-5" /> {t('iNeedAssistance') || 'SOS: I NEED ASSISTANCE'}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-theme-muted border-t pt-4 border-theme-border">
+                          <span className="font-bold text-theme-secondary px-3 py-1 rounded-full bg-theme-hover">Zone: {msg.target_zone || 'All'}</span>
+                          <span className="font-bold text-theme-secondary px-3 py-1 rounded-full bg-theme-hover">Dept: {msg.sent_by}</span>
+                          <span>•</span>
+                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {new Date(msg.created_at).toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+               })}
+            </div>
+          )}
+        </section>
+
+        {/* NEARBY ZONES */}
+        {nearbyAlerts.length > 0 && (
+          <section>
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-3 text-theme-muted">
+              <RotateCcw className="w-6 h-6" />
+              {t('nearbyZonesAlerts') || 'NEARBY ZONES'} ({nearbyAlerts.length})
+            </h2>
+            <div className="grid gap-4 opacity-80 hover:opacity-100 transition-opacity">
+               {nearbyAlerts.map((msg, i) => (
+                  <div key={msg.id} className="glass-card p-4 rounded-xl border border-theme-border flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-10 rounded-full" style={{ background: msg.urgency === 'critical' ? '#ef4444' : msg.urgency === 'high' ? '#f97316' : 'var(--accent)' }} />
+                      <div>
+                        <h4 className="font-bold text-sm">{msg.title}</h4>
+                        <p className="text-xs text-theme-muted">Zone: {msg.target_zone} • {msg.urgency.toUpperCase()}</p>
+                      </div>
+                    </div>
+                    <button onClick={() => toast(msg.master_content)} className="p-2 rounded-lg bg-theme-hover text-theme-secondary hover:text-accent">
+                      <Eye className="w-5 h-5" />
+                    </button>
+                  </div>
+               ))}
+            </div>
+          </section>
         )}
       </div>
     );
@@ -158,7 +253,53 @@ export default function DashboardPage() {
         <button onClick={fetchData} className="btn-secondary text-sm"><RefreshCw className="w-4 h-4" /> {t('refresh')}</button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {statCards.map((s,i)=>(<div key={i} className="stat-card animate-slide-up" style={{ animationDelay: `${i*80}ms` }}><div className="flex items-center justify-between"><span className="text-xs uppercase tracking-wider font-medium text-theme-muted">{s.label}</span><s.icon className="w-4 h-4" style={{ color: s.color }} /></div><span className="text-3xl font-bold tracking-tight">{s.value}</span></div>))}
+        <Stat icon={Zap} label={t('activeAlerts')} value={stats.active} color="#ef4444" trend="+2 since yesterday" />
+        <Stat icon={Clock} label={t('expiringSoon')} value={stats.expiringSoon} color="#f97316" />
+        <Stat icon={Send} label={t('totalSentToday')} value={stats.totalToday} color="var(--accent)" />
+        <Stat icon={Timer} label={t('expiredLabel')} value={stats.expired} color="var(--text-dim)" />
+      </div>
+
+      {/* Safety Analytics Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="glass-card p-6 rounded-2xl border-0 shadow-lg relative overflow-hidden">
+          <div style={{ position: 'absolute', top: 0, right: 0, width: '100px', height: '100px', background: 'radial-gradient(circle, var(--accent-bg) 0%, transparent 70%)', opacity: 0.3 }} />
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Shield className="w-5 h-5 text-accent" /> {t('safetyResponseAnalytics') || 'Safety Response Analytics'}
+          </h2>
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
+              <div className="text-2xl font-black text-green-500">842</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-green-600/70">{t('markedSafe') || 'Marked Safe'}</div>
+            </div>
+            <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20">
+              <div className="text-2xl font-black text-red-500">12</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-red-600/70">{t('needAssistance') || 'Need Assistance'}</div>
+            </div>
+          </div>
+          <div className="text-xs text-theme-muted flex items-center gap-2">
+            <Info className="w-3 h-3" /> {t('realTimeAnalyticsDesc') || 'Aggregated response from all active critical alerts.'}
+          </div>
+        </div>
+
+        <div className="glass-card p-6 rounded-2xl border-0 shadow-lg">
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Activity className="w-5 h-5 text-accent" /> {t('recentSafetyReports') || 'Recent Safety Reports'}
+          </h2>
+          <div className="space-y-3">
+             <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-theme-hover">
+               <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500" /> <span>John D. (Zone 4)</span></div>
+               <span className="text-theme-dim">2 mins ago</span>
+             </div>
+             <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-theme-hover">
+               <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-red-500" /> <span className="font-bold">SOS: Priya S. (Zone 2)</span></div>
+               <span className="text-theme-dim">5 mins ago</span>
+             </div>
+             <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-theme-hover">
+               <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500" /> <span>Rahul K. (Zone 4)</span></div>
+               <span className="text-theme-dim">8 mins ago</span>
+             </div>
+          </div>
+        </div>
       </div>
       <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
         {[

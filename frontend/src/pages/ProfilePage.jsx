@@ -83,6 +83,7 @@ export default function ProfilePage() {
   const [prefMsg, setPrefMsg] = useState({ type: '', text: '' });
 
   // Emergency Contact section
+  const [emName, setEmName] = useState('');
   const [emPhone, setEmPhone] = useState('');
   const [emSaving, setEmSaving] = useState(false);
   const [emMsg, setEmMsg] = useState({ type: '', text: '' });
@@ -162,9 +163,10 @@ export default function ProfilePage() {
     if (!emPhone.trim()) { setEmMsg({ type: 'error', text: 'Phone number is required' }); return; }
     setEmSaving(true);
     try {
-      const res = await authApi.setEmergencyContact({ phone: emPhone });
+      const res = await authApi.setEmergencyContact({ phone: emPhone, name: emName });
       setEmMsg({ type: 'success', text: res.data.message || 'Emergency contact added successfully' });
       setEmPhone('');
+      setEmName('');
       toast.success('Emergency contact added');
     } catch (err) {
       setEmMsg({ type: 'error', text: err.response?.data?.error || 'Failed to add contact' });
@@ -287,15 +289,37 @@ export default function ProfilePage() {
       </Section>
 
       {/* Emergency Contact */}
-      <Section title={t('emergencyContact') || 'Emergency Contact'} subtitle={t('emergencyContactSub') || 'Add a trusted contact to receive your critical alerts'} icon={Phone}>
+      <Section 
+        title={t('emergencyContact') || 'Emergency Contact'} 
+        subtitle={t('emergencyContactSub') || 'Add a trusted contact to receive your critical alerts'} 
+        icon={Phone}
+      >
+        <div style={{ 
+          background: 'rgba(59,130,246,0.05)', 
+          border: '1px dashed var(--accent)', 
+          borderRadius: 12, 
+          padding: 16,
+          marginBottom: 16
+        }}>
+          <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent)', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Shield style={{ width: 14, height: 14 }} /> {t('highPriorityFeature') || 'Critical Safety Feature'}
+          </p>
+          <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+            {t('emergencyContactDesc') || 'Register a trusted person (e.g., Mom, Spouse). They will be automatically notified via SMS whenever a CRITICAL alert is issued in your zone.'}
+          </p>
+        </div>
+
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <Field label={t('contactName') || 'Contact Name'} icon={User}>
+            <input className="input-field" value={emName} onChange={e => setEmName(e.target.value)} placeholder="e.g. Mom" />
+          </Field>
           <Field label={t('contactMobile') || 'Contact Mobile Number'} icon={Smartphone}>
             <input className="input-field" value={emPhone} onChange={e => setEmPhone(e.target.value)} placeholder="e.g. 98765 43210" />
-            <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>{t('contactMobileHint') || 'They will automatically receive SMS broadcasts during critical emergencies.'}</p>
+            <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>{t('contactMobileHint') || 'Format: 10 digits. We will automatically add +91.'}</p>
           </Field>
           {emMsg.text && <InlineAlert type={emMsg.type} msg={emMsg.text} />}
-          <button onClick={saveEmergencyContact} disabled={emSaving} className="btn-primary" style={{ width: 'fit-content', gap: 8 }}>
-            {emSaving ? <><Loader2 style={{ width: 15, height: 15 }} className="animate-spin" /> Adding...</> : <><Save style={{ width: 15, height: 15 }} /> {t('addContact') || 'Add Contact'}</>}
+          <button onClick={saveEmergencyContact} disabled={emSaving} className="btn-primary" style={{ width: '100%', height: 44, gap: 8, marginTop: 4 }}>
+            {emSaving ? <><Loader2 style={{ width: 15, height: 15 }} className="animate-spin" /> Adding...</> : <><Save style={{ width: 15, height: 15 }} /> {t('saveEmergencyContact') || 'Add Emergency Contact'}</>}
           </button>
         </div>
       </Section>

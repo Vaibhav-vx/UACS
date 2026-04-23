@@ -2,43 +2,40 @@
 
 ![UACS Portal](https://img.shields.io/badge/UACS-Secure_Communication-3b82f6?style=for-the-badge&logo=shield)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
+![Leaflet](https://img.shields.io/badge/Leaflet-199900?style=for-the-badge&logo=leaflet&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
 
-The **Unified Authority Communication System (UACS)** is a high-availability, multilingual, and role-based emergency communication portal designed for government and administrative use. It provides a secure mechanism for dispatching critical alerts, broadcasts, and notifications to targeted zones and subscribed users across multiple languages.
+The **Unified Authority Communication System (UACS)** is a high-availability, mission-critical emergency communication platform. It bridges the gap between administrative authorities and citizens during disasters, providing real-time alerts, safety check-ins, and interactive situational awareness.
 
 ---
 
 ## 🌟 Key Features
 
-### 1. Dual-Portal Architecture
-- **Master Admin Portal**: Full control over composing broadcasts, managing recipients, and triggering emergency alerts. Requires elevated admin credentials.
-- **User Alerts Portal**: A personalized dashboard for registered users to view active alerts, filter by zone, and configure their notification preferences.
+### 1. Dual-Portal Personalized Experience
+- **Admin Command Center**: Complete oversight of the communication pipeline. Tools for composing multi-channel broadcasts, managing recipients via map-based zone picking, and monitoring real-time safety response analytics.
+- **Citizen Safety Portal**: A personalized dashboard for users featuring:
+  - **Dynamic Greetings**: Localized welcomes in 5 languages.
+  - **Zone-Filtered Alerts**: Citizens only see alerts relevant to their configured safety zone.
+  - **Safety Check-in System**: Interactive banners during critical emergencies asking "Are you safe?" with one-tap status reporting.
 
-### 2. Comprehensive Multilingual Localization
-- The entire platform—including the login sequence, alerts feed, and user settings—is strictly localized into **5 core languages**:
-  - 🇺🇸 English (Default)
-  - 🇮🇳 Hindi (हिन्दी)
-  - 🇮🇳 Marathi (मराठी)
-  - 🇮🇳 Tamil (தமிழ்)
-  - 🇮🇳 Telugu (తెలుగు)
-- UI text transitions instantly via dynamic context providers without page reloads.
-- Broadcast messages are automatically translated into the user's preferred language upon delivery using the AI-powered translation engine.
+### 2. Interactive Situation Map
+- **Live Alert Visualization**: Real-time rendering of active emergency zones with urgency-based color coding.
+- **Evacuation Points (EAPs)**: Dynamic markers for assembly points and shelters with instant routing directions.
+- **Admin Heatmap**: Administrators can visualize recipient density by zone to prioritize rescue efforts.
 
-### 3. Targeted Zone Broadcasting
-- Administrators can route alerts to specific geographic or administrative regions (e.g., North District, South District, Central Zone).
-- Users are only notified of emergencies that directly impact their configured alert zone, reducing notification fatigue.
+### 3. Integrated Safety Check-in Logic
+- During **CRITICAL** alerts, users receive a prominent safety banner.
+- Tapping **"YES, I AM SAFE"** or **"SOS: ASSISTANCE REQUIRED"** instantly updates the central Admin Analytics dashboard.
+- Admin dashboard provides real-time counts and names of citizens requiring urgent help.
 
-### 4. Emergency SMS Dispatch Integration
-- Deep integration with **Twilio** for dispatching critical alerts directly via SMS.
-- Users can add an **Emergency Contact Number** to ensure their trusted contacts automatically receive critical updates.
-- Users have granular control to opt-in or opt-out of standard SMS notifications.
+### 4. Emergency Contact Auto-Notification
+- **High-Priority Registration**: Users can register a trusted emergency contact (e.g., Mom, Spouse).
+- **Automated Bypass**: Whenever a CRITICAL alert is issued in a user's zone, the system automatically dispatches a parallel SMS to their emergency contact, ensuring family awareness without user intervention.
 
-### 5. Advanced Security & Aesthetics
-- **JWT Authentication**: Secure role-based access control.
-- **Modern Glassmorphism UI**: High-end aesthetic using modern web design principles (translucency, smooth micro-animations, dynamic theme toggling).
-- **Password Strength Enforcement**: Registration enforces strict 8+ character limits, uppercase, numeric, and special symbol criteria.
+### 5. Multi-Channel & Multilingual Dispatch
+- **5 Core Languages**: English, Hindi, Marathi, Tamil, and Telugu.
+- **Omni-Channel**: SMS (Twilio), Twitter/X, Radio Scripts, TV Tickers, and Website Banners.
+- **Phone Normalization**: Intelligent +91 formatting ensures delivery success across all Indian carriers.
 
 ---
 
@@ -46,82 +43,64 @@ The **Unified Authority Communication System (UACS)** is a high-availability, mu
 
 **Frontend:**
 - React 18 + Vite
-- React Router DOM
-- Tailwind CSS (Utility classes combined with vanilla CSS)
+- **React-Leaflet / Leaflet.js** (Mapping & GIS)
 - Lucide React (Iconography)
+- Glassmorphism Design System (Custom CSS)
 
 **Backend:**
 - Node.js & Express
-- Supabase (PostgreSQL Database & Auth logic)
-- Twilio API (SMS dispatch engine)
-- Axios & CORS
+- Supabase (PostgreSQL + Realtime)
+- Twilio API (SMS Gateway)
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v18 or higher)
-- A Supabase Project (URL & Anon Key)
-- Twilio Account (Account SID, Auth Token, Phone Number)
+- Node.js (v18+)
+- Supabase Account
+- Twilio Account
 
 ### Environment Variables
-Create a `.env` file in the `backend` directory:
+Create a `.env` file in `/backend`:
 ```env
 PORT=5000
-SUPABASE_URL=your_supabase_url
-SUPABASE_KEY=your_supabase_anon_key
-JWT_SECRET=your_jwt_secret
-TWILIO_ACCOUNT_SID=your_twilio_sid
-TWILIO_AUTH_TOKEN=your_twilio_auth_token
-TWILIO_PHONE_NUMBER=your_twilio_number
+SUPABASE_URL=...
+SUPABASE_KEY=...
+JWT_SECRET=...
+TWILIO_ACCOUNT_SID=...
+TWILIO_AUTH_TOKEN=...
+TWILIO_PHONE_NUMBER=...
 ```
 
-### Installation
+### Installation & Run
 
-1. **Clone the repository:**
+1. **Backend**:
    ```bash
-   git clone https://github.com/Vaibhav-vx/UACS.git
-   cd UACS
+   cd backend && npm install && npm run dev
    ```
 
-2. **Install Backend Dependencies & Start:**
+2. **Frontend**:
    ```bash
-   cd backend
-   npm install
-   npm run dev
-   ```
-
-3. **Install Frontend Dependencies & Start:**
-   ```bash
-   cd ../frontend
-   npm install
-   npm run dev
+   cd frontend && npm install && npm run dev
    ```
 
 ---
 
 ## 📖 Usage Guide
 
-### Admin Access
-- The system is designed to operate with a single Master Administrator.
-- Default Admin Phone Number: `81698 25915` (Password: `vaibhav-vx`).
-- The admin has exclusive access to the **Composer**, **Audit Logs**, and **Recipient Management**.
+### Demo Access
+The system includes a high-fidelity **Demo Portal**. Click **"Try Demo Profile"** on the login page to enter as a standard user with pre-configured preferences (Zone 4, Hindi) to experience the personalized safety features instantly.
 
-### User Registration & Demo
-- Standard users can register via the main portal to access the User Dashboard.
-- **Demo Access**: A **"Try Demo Profile"** button is provided on the Login screen for immediate, read-only access to the Public Alerts Feed. This profile is restricted to viewing alerts only.
-- **Registration**: New registrations are automatically assigned the `user` role for security.
+### Admin Credentials
+- **Access**: Restricted to authorized government personnel.
+- **Features**: Approval Queue, Audit Logs, Recipient Map Management, and Safety Analytics.
 
-### Phone Number Formatting
-- The system automatically standardizes all Indian mobile numbers. 
-- Example: Entering `81698 25915` will be stored and processed as `+918169825915` automatically.
-
-### Managing Profile Preferences
-1. Navigate to **My Profile** from the top-right menu.
-2. Under **Alert Preferences**, customize your language and specific geographical zone.
-3. Under **Emergency Contact**, specify a trusted relative or colleague who should receive critical SMS bypass alerts during an emergency.
-4. **SMS Toggle**: Users can toggle all SMS notifications on or off globally from their profile.
+### Registration
+Standard registration is open to all citizens. Upon registering, users should immediately:
+1. Set their **Safety Zone**.
+2. Add an **Emergency Contact Name & Mobile**.
+3. Toggle **SMS Notifications** to "On".
 
 ---
 

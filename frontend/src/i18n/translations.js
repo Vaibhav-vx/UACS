@@ -366,7 +366,22 @@ const translations = {
     "reEnterPassword": "Re-enter your password",
     "passwordsDontMatch": "⚠ Passwords do not match",
     "passwordsMatch": "✓ Passwords match",
-    "creatingAccount": "Creating Account..."
+    "creatingAccount": "Creating Account...",
+    "greetingPrefix": "Good morning",
+    "yourActiveAlerts": "YOUR ACTIVE ALERTS",
+    "allClear": "All Clear in Your Zone",
+    "noActiveZoneAlerts": "There are no active emergency alerts matching your current zone.",
+    "iAmSafe": "YES, I AM SAFE",
+    "iNeedAssistance": "SOS: I NEED ASSISTANCE",
+    "nearbyZonesAlerts": "NEARBY ZONES",
+    "interactiveMap": "Interactive Situation Map",
+    "mapSubtitle": "Visualizing active alerts and evacuation assembly points.",
+    "jumpToZone": "Jump to Zone...",
+    "highPriorityFeature": "Critical Safety Feature",
+    "emergencyContactDesc": "Register a trusted person (e.g., Mom, Spouse). They will be automatically notified via SMS whenever a CRITICAL alert is issued in your zone.",
+    "contactName": "Contact Name",
+    "saveEmergencyContact": "Add Emergency Contact",
+    "demoLoginSuccess": "Welcome to Demo Portal"
   },
   "hi": {
     "dashboard": "डैशबोर्ड",

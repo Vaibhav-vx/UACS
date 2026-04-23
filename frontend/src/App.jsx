@@ -3,7 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard, PenSquare, CheckCircle2, ScrollText, LogOut,
-  Shield, Menu, X, Sun, Moon, Globe, ChevronDown, Users, BookTemplate,
+  Shield, Menu, X, Sun, Moon, Globe, ChevronDown, Users, BookTemplate, Map
 } from 'lucide-react';
 import { ThemeProvider, useTheme } from './ThemeContext';
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
@@ -15,6 +15,7 @@ import LoginPage       from './pages/LoginPage';
 import TemplatesPage   from './pages/TemplatesPage';
 import RecipientsPage  from './pages/RecipientsPage';
 import ProfilePage     from './pages/ProfilePage';
+import MapPage         from './pages/MapPage';
 
 const NAV_ITEMS = [
   { path: '/dashboard',  labelKey: 'dashboard',  icon: LayoutDashboard, roles: ['admin', 'user'] },
@@ -23,6 +24,7 @@ const NAV_ITEMS = [
   { path: '/approval',   labelKey: 'approval',    icon: CheckCircle2,    roles: ['admin'] },
   { path: '/recipients', labelKey: 'recipients',  icon: Users,           roles: ['admin'] },
   { path: '/audit',      labelKey: 'auditLog',    icon: ScrollText,      roles: ['admin'] },
+  { path: '/map',        labelKey: 'map',         icon: Map,             roles: ['admin', 'user'] },
 ];
 
 /* ── Language Switcher ─────────────────────────────── */
@@ -325,6 +327,7 @@ function AppLayout() {
               <Route path="/recipients"   element={user?.role === 'admin' ? <RecipientsPage /> : <Navigate to="/dashboard" replace />} />
               <Route path="/audit"        element={user?.role === 'admin' ? <AuditLogPage /> : <Navigate to="/dashboard" replace />} />
               <Route path="/profile"      element={<ProfilePage />} />
+              <Route path="/map"          element={<MapPage />} />
               <Route path="*"             element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </div>
