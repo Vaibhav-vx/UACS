@@ -52,8 +52,11 @@ export default function DashboardPage() {
         setSafetyStats(safStats.data);
         setRecentReports(safRecent.data);
       }
-    } catch {
-      toast.error(t('failedFetch') || 'Failed to load data — is the backend running?');
+      }
+    } catch (err) {
+      console.error('[DASHBOARD] Fetch error:', err);
+      const msg = err.response?.data?.error || err.message || 'Connection failed';
+      toast.error(`${t('failedFetch') || 'Failed to load data'}: ${msg}`);
     } finally {
       setLoading(false);
     }

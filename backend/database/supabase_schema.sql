@@ -64,6 +64,17 @@ CREATE TABLE recipients (
   created_at       TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- ── TABLE: safety_reports ────────────────────────────────
+CREATE TABLE IF NOT EXISTS safety_reports (
+  id               SERIAL PRIMARY KEY,
+  message_id       INTEGER REFERENCES messages(id) ON DELETE CASCADE,
+  user_id          INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  user_name        TEXT,
+  zone             TEXT,
+  status           TEXT CHECK(status IN ('safe', 'assistance')),
+  created_at       TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ── Indexes ──────────────────────────────────────────────
 CREATE INDEX idx_messages_status     ON messages(status);
 CREATE INDEX idx_messages_expires_at ON messages(expires_at);
