@@ -265,11 +265,17 @@ router.get('/preferences', async (req, res) => {
     if (!authHeader?.startsWith('Bearer ')) return res.status(401).json({ error: 'No token provided' });
     const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
     
-    // Preferences are stored in the recipients table matching the user's phone
-    const recipient = await dbGetOne('recipients', { phone: decoded.phone });
-    if (!recipient) return res.json({ language: 'english', zone: 'General', active: true });
+    // Preferences are synced between users and recipients table
+    const user = await dbGetOne('users', { id: decoded.id });
+    if (!user) return res.status(404).json({ error: 'User not found' });
     
-    res.json({ language: recipient.language, zone: recipient.zone, active: recipient.active });
+    res.json({ 
+      language: user.language || 'english', 
+      zone: user.zone || 'General', 
+      lat: user.lat,
+      lng: user.lng,
+      active: true // default active
+    });
   } catch (err) {
     console.error('[UACS AUTH] Get preferences error:', err.message);
     res.status(500).json({ error: 'Server error fetching preferences' });
@@ -283,28 +289,39 @@ router.put('/preferences', async (req, res) => {
     if (!authHeader?.startsWith('Bearer ')) return res.status(401).json({ error: 'No token provided' });
     const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
     
-    const { language, zone, active } = req.body;
+    const { language, zone, lat, lng, active } = req.body;
     
+    // 1. Update users table
+    await dbUpdate('users', decoded.id, { 
+      zone: zone || 'General',
+      lat: lat || null,
+      lng: lng || null
+    });
+
+    // 2. Sync to recipients table for dispatching
     const recipient = await dbGetOne('recipients', { phone: decoded.phone });
-    if (!recipient) {
-      // Create if it doesn't exist
+    if (recipient) {
+      await dbUpdate('recipients', recipient.id, { 
+        zone: zone || 'General',
+        language: language || 'english',
+        lat: lat || null,
+        lng: lng || null,
+        active: active !== undefined ? active : true
+      });
+    } else {
       const user = await dbGetOne('users', { id: decoded.id });
       await dbInsert('recipients', {
         name: user.name,
         phone: decoded.phone,
         language: language || 'english',
         zone: zone || 'General',
+        lat: lat || null,
+        lng: lng || null,
         active: active !== undefined ? active : true
-      });
-    } else {
-      await dbUpdate('recipients', recipient.id, { 
-        language: language || recipient.language,
-        zone: zone || recipient.zone,
-        active: active !== undefined ? active : recipient.active
       });
     }
     
-    res.json({ success: true });
+    res.json({ success: true, message: 'Preferences updated and synced' });
   } catch (err) {
     console.error('[UACS AUTH] Update preferences error:', err.message);
     res.status(500).json({ error: 'Server error updating preferences' });
