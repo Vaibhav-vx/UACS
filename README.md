@@ -18,13 +18,13 @@ The **Unified Authority Communication System (UACS)** is a high-availability, mu
 
 ### 2. Comprehensive Multilingual Localization
 - The entire platform—including the login sequence, alerts feed, and user settings—is strictly localized into **5 core languages**:
-  - 🇺🇸 English
+  - 🇺🇸 English (Default)
   - 🇮🇳 Hindi (हिन्दी)
   - 🇮🇳 Marathi (मराठी)
   - 🇮🇳 Tamil (தமிழ்)
   - 🇮🇳 Telugu (తెలుగు)
-- UI text transitions instantly via dynamic context providers.
-- Broadcast messages are automatically translated into the user's preferred language upon delivery.
+- UI text transitions instantly via dynamic context providers without page reloads.
+- Broadcast messages are automatically translated into the user's preferred language upon delivery using the AI-powered translation engine.
 
 ### 3. Targeted Zone Broadcasting
 - Administrators can route alerts to specific geographic or administrative regions (e.g., North District, South District, Central Zone).
@@ -105,17 +105,23 @@ TWILIO_PHONE_NUMBER=your_twilio_number
 
 ### Admin Access
 - The system is designed to operate with a single Master Administrator.
-- Default Admin Phone Number: `81698 25915` (Format automatically standardizes to `+918169825915`).
-- The admin has exclusive access to the **Composer** and **Audit Logs**.
+- Default Admin Phone Number: `81698 25915` (Password: `vaibhav-vx`).
+- The admin has exclusive access to the **Composer**, **Audit Logs**, and **Recipient Management**.
 
 ### User Registration & Demo
 - Standard users can register via the main portal to access the User Dashboard.
-- A **"Try Demo Profile"** button is provided on the Login screen for immediate, read-only access to the Public Alerts Feed without requiring phone verification.
+- **Demo Access**: A **"Try Demo Profile"** button is provided on the Login screen for immediate, read-only access to the Public Alerts Feed. This profile is restricted to viewing alerts only.
+- **Registration**: New registrations are automatically assigned the `user` role for security.
+
+### Phone Number Formatting
+- The system automatically standardizes all Indian mobile numbers. 
+- Example: Entering `81698 25915` will be stored and processed as `+918169825915` automatically.
 
 ### Managing Profile Preferences
 1. Navigate to **My Profile** from the top-right menu.
 2. Under **Alert Preferences**, customize your language and specific geographical zone.
 3. Under **Emergency Contact**, specify a trusted relative or colleague who should receive critical SMS bypass alerts during an emergency.
+4. **SMS Toggle**: Users can toggle all SMS notifications on or off globally from their profile.
 
 ---
 
