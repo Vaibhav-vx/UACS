@@ -303,8 +303,8 @@ export default function LoginPage() {
           padding: 4, marginBottom: 18, border: '1px solid var(--border)',
         }}>
           {[
-            { key: 'login',    label: 'Sign In',    Icon: LogIn },
-            { key: 'register', label: 'Register',   Icon: UserPlus },
+            { key: 'login',    label: t('loginButton') || 'Sign In',    Icon: LogIn },
+            { key: 'register', label: t('register') || 'Register',   Icon: UserPlus },
           ].map(({ key, label, Icon }) => (
             <button
               key={key}
@@ -328,8 +328,8 @@ export default function LoginPage() {
         {tab === 'login' && (
           <form onSubmit={handleLogin} className="glass-card animate-fade-in" style={{ padding: 28 }}>
             <div style={{ marginBottom: 20 }}>
-              <h2 style={{ fontSize: 17, fontWeight: 700, margin: 0 }}>Welcome back</h2>
-              <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>Sign in to your UACS account</p>
+              <h2 style={{ fontSize: 17, fontWeight: 700, margin: 0 }}>{t('welcomeBack') || 'Welcome back'}</h2>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>{t('signInToUacs') || 'Sign in to your UACS account'}</p>
             </div>
 
             {loginError && (
@@ -345,7 +345,7 @@ export default function LoginPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <Field
                 id="login-phone"
-                label="Mobile Number"
+                label={t('mobileNumber') || 'Mobile Number'}
                 icon={Smartphone}
                 type="tel"
                 value={loginPhone}
@@ -356,12 +356,12 @@ export default function LoginPage() {
               />
               <Field
                 id="login-password"
-                label="Password"
+                label={t('passwordLabel') || 'Password'}
                 icon={Lock}
                 type={showLoginPwd ? 'text' : 'password'}
                 value={loginPassword}
                 onChange={e => { setLoginPassword(e.target.value); setLoginError(''); }}
-                placeholder="Enter your password"
+                placeholder={t('passwordLabel') || 'Enter your password'}
                 autoComplete="current-password"
                 rightEl={<EyeBtn show={showLoginPwd} toggle={() => setShowLoginPwd(v => !v)} />}
               />
@@ -381,13 +381,13 @@ export default function LoginPage() {
             </button>
 
             <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-muted)', marginTop: 16 }}>
-              Don't have an account?{' '}
+              {t('dontHaveAccount') || "Don't have an account?"}{' '}
               <button
                 type="button"
                 onClick={() => setTab('register')}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontWeight: 600, fontSize: 12, padding: 0 }}
               >
-                Create one
+                {t('createOne') || 'Create one'}
               </button>
             </p>
           </form>
@@ -404,14 +404,14 @@ export default function LoginPage() {
                 }}>
                   <CheckCircle2 style={{ width: 28, height: 28, color: '#22c55e' }} />
                 </div>
-                <h3 style={{ fontWeight: 700, fontSize: 17, marginBottom: 6 }}>Account Created!</h3>
-                <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>Redirecting to dashboard...</p>
+                <h3 style={{ fontWeight: 700, fontSize: 17, marginBottom: 6 }}>{t('accountCreated') || 'Account Created!'}</h3>
+                <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>{t('redirecting') || 'Redirecting to dashboard...'}</p>
               </div>
             ) : (
               <>
                 <div style={{ marginBottom: 20 }}>
-                  <h2 style={{ fontSize: 17, fontWeight: 700, margin: 0 }}>Create an account</h2>
-                  <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>Join UACS as an authorized administrator</p>
+                  <h2 style={{ fontSize: 17, fontWeight: 700, margin: 0 }}>{t('createAccount') || 'Create an account'}</h2>
+                  <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>{t('joinUacs') || 'Join UACS as an authorized administrator'}</p>
                 </div>
 
                 {regError && (
@@ -427,7 +427,7 @@ export default function LoginPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                   <Field
                     id="reg-name"
-                    label="Full Name"
+                    label={t('fullName') || 'Full Name'}
                     icon={User}
                     value={regName}
                     onChange={e => { setRegName(e.target.value); setRegError(''); }}
@@ -437,7 +437,7 @@ export default function LoginPage() {
                   />
                   <Field
                     id="reg-phone"
-                    label="Mobile Number"
+                    label={t('mobileNumber') || 'Mobile Number'}
                     icon={Smartphone}
                     type="tel"
                     value={regPhone}
@@ -447,7 +447,7 @@ export default function LoginPage() {
                   />
                   <Field
                     id="reg-dept"
-                    label={<>Department <span style={{ fontSize: 11, color: 'var(--text-dim)', fontWeight: 400 }}>(optional)</span></>}
+                    label={<>{t('department') || 'Department'} <span style={{ fontSize: 11, color: 'var(--text-dim)', fontWeight: 400 }}>{t('optional') || '(optional)'}</span></>}
                     icon={Building2}
                     value={regDept}
                     onChange={e => setRegDept(e.target.value)}
@@ -457,7 +457,7 @@ export default function LoginPage() {
                   <div>
                     <Field
                       id="reg-password"
-                      label="Password"
+                      label={t('passwordLabel') || 'Password'}
                       icon={Lock}
                       type={showRegPwd ? 'text' : 'password'}
                       value={regPassword}
@@ -491,12 +491,12 @@ export default function LoginPage() {
                   </div>
                   <Field
                     id="reg-confirm"
-                    label="Confirm Password"
+                    label={t('confirmPassword') || 'Confirm Password'}
                     icon={Lock}
                     type={showRegPwd ? 'text' : 'password'}
                     value={regConfirm}
                     onChange={e => { setRegConfirm(e.target.value); setRegError(''); }}
-                    placeholder="Re-enter your password"
+                    placeholder={t('confirmPassword') || "Re-enter your password"}
                     autoComplete="new-password"
                     hint={regConfirm && regPassword !== regConfirm ? '⚠ Passwords do not match' : regConfirm && regPassword === regConfirm ? '✓ Passwords match' : ''}
                   />
@@ -511,7 +511,7 @@ export default function LoginPage() {
                       {regLoading ? (
                         <><Loader2 className="animate-spin" style={{ width: 20, height: 20 }} /> Creating Account...</>
                       ) : (
-                        <><CheckCircle2 style={{ width: 20, height: 20 }} /> Create Account</>
+                        <><CheckCircle2 style={{ width: 20, height: 20 }} /> {t('createAccount') || 'Create Account'}</>
                       )}
                     </button>
                     
@@ -522,19 +522,19 @@ export default function LoginPage() {
                       className="btn-secondary"
                       style={{ width: '100%', height: 48, borderRadius: 12, fontSize: 15, fontWeight: 700, gap: 10, marginTop: 12 }}
                     >
-                      <UserPlus style={{ width: 20, height: 20 }} /> Try Demo Profile
+                      <UserPlus style={{ width: 20, height: 20 }} /> {t('demoLogin') || 'Try Demo Profile'}
                     </button>
                   </div>
                 </div>
 
                 <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-muted)', marginTop: 16 }}>
-                  Already have an account?{' '}
+                  {t('alreadyHaveAccount') || 'Already have an account?'}{' '}
                   <button
                     type="button"
                     onClick={() => setTab('login')}
                     style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontWeight: 600, fontSize: 12, padding: 0 }}
                   >
-                    Sign in
+                    {t('loginButton') || 'Sign in'}
                   </button>
                 </p>
               </>
@@ -543,7 +543,7 @@ export default function LoginPage() {
         )}
 
         <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--text-dim)', marginTop: 24 }}>
-          🇮🇳 Government of India · Unified Authority Communication System
+          🇮🇳 {t('govFooter') || 'Government of India • Secure Communication Portal • v1.0'}
         </p>
       </div>
     </div>

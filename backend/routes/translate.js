@@ -7,16 +7,14 @@ import { translateText } from '../integrations/translateApi.js';
 
 const router = Router();
 
-// UACS language key → ISO code
 const LANGUAGE_MAP = {
   en:      'en',
   english: 'en',
   hindi:   'hi',
-  urdu:    'ur',
+  marathi: 'mr',
   tamil:   'ta',
-  bengali: 'bn',
   telugu:  'te',
-  hi: 'hi', ur: 'ur', ta: 'ta', bn: 'bn', te: 'te',
+  hi: 'hi', mr: 'mr', ta: 'ta', te: 'te',
 };
 
 // ─── POST /api/translate ─────────────────────────────────

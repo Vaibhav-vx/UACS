@@ -16,10 +16,9 @@ const URGENCY_LEVELS = [
 const LANG_LIST = [
   { value: 'en', label: 'English', flag: '🇬🇧' },
   { value: 'hindi', label: 'Hindi', flag: '🇮🇳' },
-  { value: 'urdu', label: 'Urdu', flag: '🇵🇰' },
-  { value: 'tamil', label: 'Tamil', flag: '🏳️' },
-  { value: 'bengali', label: 'Bengali', flag: '🇧🇩' },
-  { value: 'telugu', label: 'Telugu', flag: '🏳️' },
+  { value: 'marathi', label: 'Marathi', flag: '🇮🇳' },
+  { value: 'tamil', label: 'Tamil', flag: '🇮🇳' },
+  { value: 'telugu', label: 'Telugu', flag: '🇮🇳' },
 ];
 
 export default function ComposerPage() {

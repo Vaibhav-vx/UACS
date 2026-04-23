@@ -103,16 +103,16 @@ export default function DashboardPage() {
         <div className="flex items-center gap-3 mb-8">
           <Activity className="w-8 h-8" style={{ color: 'var(--accent)' }} />
           <div>
-            <h1 className="text-2xl font-bold">Public Alerts Feed</h1>
-            <p className="text-sm text-theme-muted">Stay informed with the latest official communications.</p>
+            <h1 className="text-2xl font-bold">{t('publicAlertsFeed') || 'Public Alerts Feed'}</h1>
+            <p className="text-sm text-theme-muted">{t('publicAlertsSub') || 'Stay informed with the latest official communications.'}</p>
           </div>
         </div>
 
         {activeMessages.length === 0 ? (
            <div className="glass-card p-12 text-center rounded-xl" style={{ border: '1px solid var(--border)' }}>
              <Activity className="w-12 h-12 mx-auto mb-4 text-theme-dim" />
-             <h3 className="text-lg font-medium text-theme-secondary mb-2">No Active Alerts</h3>
-             <p className="text-sm text-theme-muted mb-4">All clear. There are no ongoing emergencies or broadcasts.</p>
+             <h3 className="text-lg font-medium text-theme-secondary mb-2">{t('noActiveAlertsTitle') || 'No Active Alerts'}</h3>
+             <p className="text-sm text-theme-muted mb-4">{t('noActiveAlertsDesc') || 'All clear. There are no ongoing emergencies or broadcasts.'}</p>
            </div>
         ) : (
           <div className="space-y-4">

@@ -190,9 +190,9 @@ export default function ProfilePage() {
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-3">
           <User className="w-6 h-6" style={{ color: 'var(--accent)' }} />
-          My Profile
+          {t('profileSettings') || 'My Profile'}
         </h1>
-        <p className="text-sm mt-1 text-theme-muted">Manage your account details and security settings</p>
+        <p className="text-sm mt-1 text-theme-muted">{t('profileSettingsSub') || 'Manage your account details and security settings'}</p>
       </div>
 
       {/* Account info badge */}
@@ -210,32 +210,32 @@ export default function ProfilePage() {
       </div>
 
       {/* Profile Info */}
-      <Section title="Personal Information" subtitle="Update your name and department" icon={User}>
+      <Section title={t('personalInfo') || 'Personal Information'} subtitle={t('updateNameDept') || 'Update your name and department'} icon={User}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <Field label="Full Name" icon={User}>
-            <input className="input-field" value={name} onChange={e => setName(e.target.value)} placeholder="Your full name" />
+          <Field label={t('fullName') || 'Full Name'} icon={User}>
+            <input className="input-field" value={name} onChange={e => setName(e.target.value)} placeholder={t('fullName') || 'Your full name'} />
           </Field>
-          <Field label="Mobile Number" icon={Smartphone}>
+          <Field label={t('mobileNumber') || 'Mobile Number'} icon={Smartphone}>
             <input className="input-field" value={phone} disabled style={{ opacity: 0.6, cursor: 'not-allowed' }} />
-            <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>Mobile number cannot be changed</p>
+            <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>{t('mobileNoChange') || 'Mobile number cannot be changed'}</p>
           </Field>
-          <Field label="Department" icon={Building2}>
+          <Field label={t('department') || 'Department'} icon={Building2}>
             <input className="input-field" value={dept} onChange={e => setDept(e.target.value)} placeholder="e.g. Central Command" />
           </Field>
           {profMsg.text && <InlineAlert type={profMsg.type} msg={profMsg.text} />}
           <button onClick={saveProfile} disabled={profSaving} className="btn-primary" style={{ width: 'fit-content', gap: 8 }}>
-            {profSaving ? <><Loader2 style={{ width: 15, height: 15 }} className="animate-spin" /> Saving...</> : <><Save style={{ width: 15, height: 15 }} /> Save Changes</>}
+            {profSaving ? <><Loader2 style={{ width: 15, height: 15 }} className="animate-spin" /> {t('saving') || 'Saving...'}</> : <><Save style={{ width: 15, height: 15 }} /> {t('saveChanges') || 'Save Changes'}</>}
           </button>
         </div>
       </Section>
 
       {/* Password */}
-      <Section title="Change Password" subtitle="Use a strong password — minimum 8 characters" icon={KeyRound}>
+      <Section title={t('changePassword') || 'Change Password'} subtitle={t('pwdSubtitle') || 'Use a strong password — minimum 8 characters'} icon={KeyRound}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {[
-            { label: 'Current Password', val: curPwd, set: setCurPwd, id: 'cur-pwd' },
-            { label: 'New Password',     val: newPwd, set: setNewPwd, id: 'new-pwd' },
-            { label: 'Confirm New Password', val: confPwd, set: setConfPwd, id: 'conf-pwd' },
+            { label: t('curPassword') || 'Current Password', val: curPwd, set: setCurPwd, id: 'cur-pwd' },
+            { label: t('newPassword') || 'New Password',     val: newPwd, set: setNewPwd, id: 'new-pwd' },
+            { label: t('confNewPassword') || 'Confirm New Password', val: confPwd, set: setConfPwd, id: 'conf-pwd' },
           ].map(({ label, val, set, id }) => (
             <Field key={id} label={label} icon={Lock}>
               <div style={{ position: 'relative' }}>
@@ -246,25 +246,24 @@ export default function ProfilePage() {
           ))}
           {pwdMsg.text && <InlineAlert type={pwdMsg.type} msg={pwdMsg.text} />}
           <button onClick={changePassword} disabled={pwdSaving} className="btn-primary" style={{ width: 'fit-content', gap: 8 }}>
-            {pwdSaving ? <><Loader2 style={{ width: 15, height: 15 }} className="animate-spin" /> Changing...</> : <><Shield style={{ width: 15, height: 15 }} /> Change Password</>}
+            {pwdSaving ? <><Loader2 style={{ width: 15, height: 15 }} className="animate-spin" /> {t('changing') || 'Changing...'}</> : <><Shield style={{ width: 15, height: 15 }} /> {t('changePassword') || 'Change Password'}</>}
           </button>
         </div>
       </Section>
 
       {/* Preferences Section */}
-      <Section title="Alert Preferences" subtitle="Customize how you receive alerts" icon={Bell}>
+      <Section title={t('alertPreferences') || 'Alert Preferences'} subtitle={t('alertPreferencesSub') || 'Customize how you receive alerts'} icon={Bell}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <Field label="Preferred Language" icon={Globe}>
+          <Field label={t('preferredLanguage') || 'Preferred Language'} icon={Globe}>
             <select className="input-field" value={lang} onChange={e => setLang(e.target.value)}>
               <option value="english">English</option>
               <option value="hindi">Hindi</option>
+              <option value="marathi">Marathi</option>
               <option value="tamil">Tamil</option>
-              <option value="urdu">Urdu</option>
-              <option value="bengali">Bengali</option>
               <option value="telugu">Telugu</option>
             </select>
           </Field>
-          <Field label="Alert Zone" icon={MapPin}>
+          <Field label={t('alertZone') || 'Alert Zone'} icon={MapPin}>
             <select className="input-field" value={zone} onChange={e => setZone(e.target.value)}>
               <option value="General">All Zones (General)</option>
               <option value="North District">North District</option>
@@ -274,35 +273,35 @@ export default function ProfilePage() {
               <option value="Central Zone">Central Zone</option>
             </select>
           </Field>
-          <Field label="SMS Notifications" icon={Smartphone}>
+          <Field label={t('smsNotifications') || 'SMS Notifications'} icon={Smartphone}>
             <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', background: 'var(--bg-surface)', padding: '12px', borderRadius: '8px', border: '1px solid var(--border)' }}>
               <input type="checkbox" checked={smsActive} onChange={e => setSmsActive(e.target.checked)} style={{ width: 16, height: 16, accentColor: 'var(--accent)' }} />
-              <span style={{ fontSize: 13, fontWeight: 500 }}>Receive critical alerts via SMS</span>
+              <span style={{ fontSize: 13, fontWeight: 500 }}>{t('receiveSms') || 'Receive critical alerts via SMS'}</span>
             </label>
           </Field>
           {prefMsg.text && <InlineAlert type={prefMsg.type} msg={prefMsg.text} />}
           <button onClick={savePreferences} disabled={prefSaving} className="btn-primary" style={{ width: 'fit-content', gap: 8 }}>
-            {prefSaving ? <><Loader2 style={{ width: 15, height: 15 }} className="animate-spin" /> Saving...</> : <><Save style={{ width: 15, height: 15 }} /> Save Preferences</>}
+            {prefSaving ? <><Loader2 style={{ width: 15, height: 15 }} className="animate-spin" /> {t('saving') || 'Saving...'}</> : <><Save style={{ width: 15, height: 15 }} /> {t('savePreferences') || 'Save Preferences'}</>}
           </button>
         </div>
       </Section>
 
       {/* Emergency Contact */}
-      <Section title="Emergency Contact" subtitle="Add a trusted contact to receive your critical alerts" icon={Phone}>
+      <Section title={t('emergencyContact') || 'Emergency Contact'} subtitle={t('emergencyContactSub') || 'Add a trusted contact to receive your critical alerts'} icon={Phone}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <Field label="Contact Mobile Number" icon={Smartphone}>
+          <Field label={t('contactMobile') || 'Contact Mobile Number'} icon={Smartphone}>
             <input className="input-field" value={emPhone} onChange={e => setEmPhone(e.target.value)} placeholder="e.g. 98765 43210" />
-            <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>They will automatically receive SMS broadcasts during critical emergencies.</p>
+            <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>{t('contactMobileHint') || 'They will automatically receive SMS broadcasts during critical emergencies.'}</p>
           </Field>
           {emMsg.text && <InlineAlert type={emMsg.type} msg={emMsg.text} />}
           <button onClick={saveEmergencyContact} disabled={emSaving} className="btn-primary" style={{ width: 'fit-content', gap: 8 }}>
-            {emSaving ? <><Loader2 style={{ width: 15, height: 15 }} className="animate-spin" /> Adding...</> : <><Save style={{ width: 15, height: 15 }} /> Add Contact</>}
+            {emSaving ? <><Loader2 style={{ width: 15, height: 15 }} className="animate-spin" /> Adding...</> : <><Save style={{ width: 15, height: 15 }} /> {t('addContact') || 'Add Contact'}</>}
           </button>
         </div>
       </Section>
 
       {/* Danger Zone */}
-      <Section title="Session" subtitle="Sign out from this device" icon={LogOut}>
+      <Section title={t('sessionSignOut') || 'Session'} subtitle={t('signOutSub') || 'Sign out from this device'} icon={LogOut}>
         <button onClick={handleLogout} className="btn-secondary" style={{ borderColor: 'rgba(239,68,68,0.35)', color: '#ef4444', gap: 8 }}>
           <LogOut style={{ width: 15, height: 15 }} /> Sign Out
         </button>
