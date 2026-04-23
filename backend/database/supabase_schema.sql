@@ -1,17 +1,9 @@
--- ═══════════════════════════════════════════════════════
--- UACS Supabase Schema — COMPLETE SETUP
--- Paste this ENTIRE script in Supabase SQL Editor and click RUN
--- Dashboard → SQL Editor → New Query → Paste → Run
--- ═══════════════════════════════════════════════════════
-
--- ── Drop existing tables (fresh start) ──────────────────
-DROP TABLE IF EXISTS audit_log CASCADE;
-DROP TABLE IF EXISTS messages CASCADE;
-DROP TABLE IF EXISTS recipients CASCADE;
-DROP TABLE IF EXISTS users CASCADE;
+-- ══════════════════════════════════════════════════════════
+-- UACS — Supabase PostgreSQL Schema (Unified & Robust)
+-- ══════════════════════════════════════════════════════════
 
 -- ── TABLE: messages ──────────────────────────────────────
-CREATE TABLE messages (
+CREATE TABLE IF NOT EXISTS messages (
   id               SERIAL PRIMARY KEY,
   title            TEXT NOT NULL,
   master_content   TEXT NOT NULL,
@@ -31,21 +23,20 @@ CREATE TABLE messages (
 );
 
 -- ── TABLE: audit_log ─────────────────────────────────────
-CREATE TABLE audit_log (
+CREATE TABLE IF NOT EXISTS audit_log (
   id               SERIAL PRIMARY KEY,
   message_id       INTEGER REFERENCES messages(id) ON DELETE CASCADE,
   action           TEXT CHECK(action IN ('created', 'approved', 'dispatched', 'expired', 'edited')),
   performed_by     TEXT,
-  channel          TEXT,
-  timestamp        TIMESTAMPTZ DEFAULT NOW(),
-  notes            TEXT
+  details          TEXT,
+  timestamp        TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ── TABLE: users ─────────────────────────────────────────
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id               SERIAL PRIMARY KEY,
   name             TEXT NOT NULL,
-  email            TEXT UNIQUE NOT NULL,
+  email            TEXT UNIQUE NOT NULL, -- Actually stores mobile number
   password         TEXT NOT NULL,
   role             TEXT NOT NULL DEFAULT 'admin',
   department       TEXT,
@@ -57,7 +48,7 @@ CREATE TABLE users (
 );
 
 -- ── TABLE: recipients ────────────────────────────────────
-CREATE TABLE recipients (
+CREATE TABLE IF NOT EXISTS recipients (
   id               SERIAL PRIMARY KEY,
   name             TEXT NOT NULL,
   phone            TEXT NOT NULL,
@@ -76,52 +67,54 @@ CREATE TABLE IF NOT EXISTS safety_reports (
   user_id          INTEGER REFERENCES users(id) ON DELETE CASCADE,
   user_name        TEXT,
   zone             TEXT,
-  status           TEXT CHECK(status IN ('safe', 'assistance')),
+  status           TEXT NOT NULL CHECK(status IN ('safe', 'assistance')),
   created_at       TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ── TABLE: safety_reports ───────────────────────────────
-CREATE TABLE safety_reports (
-  id               SERIAL PRIMARY KEY,
-  message_id       INTEGER REFERENCES messages(id),
-  user_id          INTEGER REFERENCES users(id),
-  user_name        TEXT,
-  zone             TEXT,
-  status           TEXT NOT NULL, -- 'safe', 'assistance'
-  created_at       TIMESTAMPTZ DEFAULT NOW()
-);
+-- ── Column Backfills (In case tables already existed) ────
+DO $$ 
+BEGIN 
+  -- Users table columns
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='zone') THEN
+    ALTER TABLE users ADD COLUMN zone TEXT DEFAULT 'General';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='lat') THEN
+    ALTER TABLE users ADD COLUMN lat DECIMAL(10, 8);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='lng') THEN
+    ALTER TABLE users ADD COLUMN lng DECIMAL(11, 8);
+  END IF;
+
+  -- Recipients table columns
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='recipients' AND column_name='lat') THEN
+    ALTER TABLE recipients ADD COLUMN lat DECIMAL(10, 8);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='recipients' AND column_name='lng') THEN
+    ALTER TABLE recipients ADD COLUMN lng DECIMAL(11, 8);
+  END IF;
+END $$;
 
 -- ── Indexes ──────────────────────────────────────────────
-CREATE INDEX idx_messages_status     ON messages(status);
-CREATE INDEX idx_messages_expires_at ON messages(expires_at);
-CREATE INDEX idx_audit_message_id    ON audit_log(message_id);
-CREATE INDEX idx_audit_timestamp     ON audit_log(timestamp);
-CREATE INDEX idx_users_email         ON users(email);
-CREATE INDEX idx_recipients_zone     ON recipients(zone);
-CREATE INDEX idx_recipients_phone    ON recipients(phone);
+CREATE INDEX IF NOT EXISTS idx_messages_status     ON messages(status);
+CREATE INDEX IF NOT EXISTS idx_messages_expires_at ON messages(expires_at);
+CREATE INDEX IF NOT EXISTS idx_audit_message_id    ON audit_log(message_id);
+CREATE INDEX IF NOT EXISTS idx_audit_timestamp     ON audit_log(timestamp);
+CREATE INDEX IF NOT EXISTS idx_users_email         ON users(email);
+CREATE INDEX IF NOT EXISTS idx_recipients_zone     ON recipients(zone);
+CREATE INDEX IF NOT EXISTS idx_recipients_phone    ON recipients(phone);
 
--- ── Disable Row Level Security on all tables ─────────────
--- (server uses service_role key which bypasses RLS anyway,
---  but this prevents any accidental 404 issues)
-ALTER TABLE messages    DISABLE ROW LEVEL SECURITY;
-ALTER TABLE audit_log   DISABLE ROW LEVEL SECURITY;
-ALTER TABLE users       DISABLE ROW LEVEL SECURITY;
-ALTER TABLE recipients  DISABLE ROW LEVEL SECURITY;
+-- ── Disable Row Level Security (Universal Access) ─────────
+ALTER TABLE messages       DISABLE ROW LEVEL SECURITY;
+ALTER TABLE audit_log      DISABLE ROW LEVEL SECURITY;
+ALTER TABLE users          DISABLE ROW LEVEL SECURITY;
+ALTER TABLE recipients     DISABLE ROW LEVEL SECURITY;
 ALTER TABLE safety_reports DISABLE ROW LEVEL SECURITY;
 
--- ── Seed: Admin user (password = Admin@123) ───────────────
+-- ── Seed Data ────────────────────────────────────────────
+-- (Using ON CONFLICT to avoid duplicate seed errors)
 INSERT INTO users (name, email, password, role, department)
-VALUES (
-  'Admin',
-  'admin@uacs.gov',
-  '$2b$10$JYVIN2TSVvPymoxantR9se2dWU1rABAh2mZY5sq.x5/Jojv/SvhyK',
-  'admin',
-  'Central Command'
-);
-
--- ── Seed: Your verified recipient ────────────────────────
-INSERT INTO recipients (name, phone, zone, language, active)
-VALUES ('Vaibhav Dubey', '+918169825915', 'Mumbai', 'en', TRUE);
+VALUES ('Admin', 'admin@uacs.gov', '$2b$10$JYVIN2TSVvPymoxantR9se2dWU1rABAh2mZY5sq.x5/Jojv/SvhyK', 'admin', 'Central Command')
+ON CONFLICT (email) DO NOTHING;
 
 -- ── Verify ───────────────────────────────────────────────
 SELECT 'users' as tbl, COUNT(*) as rows FROM users
