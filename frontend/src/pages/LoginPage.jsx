@@ -234,6 +234,20 @@ export default function LoginPage() {
     }
   };
 
+  const handleDemoAccess = () => {
+    const demoUser = {
+      id: 'demo-999',
+      name: 'Demo Visitor',
+      phone: '00000 00000',
+      role: 'user',
+      department: 'Guest'
+    };
+    localStorage.setItem('uacs_token', 'demo-token-123');
+    localStorage.setItem('uacs_user', JSON.stringify(demoUser));
+    toast.success('Welcome to Demo Mode!', { icon: '✨' });
+    navigate('/dashboard');
+  };
+
   const EyeBtn = ({ show, toggle }) => (
     <button
       type="button"
@@ -565,6 +579,18 @@ export default function LoginPage() {
             )}
           </form>
         )}
+
+        <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid var(--border)', textAlign: 'center' }}>
+          <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 12 }}>Want to explore first?</p>
+          <button
+            onClick={handleDemoAccess}
+            className="btn-secondary"
+            style={{ width: '100%', height: 44, borderRadius: 10, fontSize: 13, gap: 8, justifyContent: 'center' }}
+          >
+            <Shield style={{ width: 16, height: 16, color: 'var(--accent)' }} /> 
+            Try Demo Mode
+          </button>
+        </div>
 
         <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--text-dim)', marginTop: 24 }}>
           🇮🇳 Government of India · Unified Authority Communication System
