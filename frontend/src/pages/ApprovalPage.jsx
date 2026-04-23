@@ -156,7 +156,7 @@ export default function ApprovalPage() {
             className="btn-secondary text-sm"
             style={{ borderColor: 'rgba(239,68,68,0.4)', color: '#ef4444' }}
           >
-            <XCircle className="w-4 h-4"/> Reject
+            <XCircle className="w-4 h-4"/> {t('reject') || 'Reject'}
           </button>
           <button onClick={handleQuickDispatch} disabled={dispatching || rejecting} className="btn-primary text-sm shadow-lg shadow-blue-500/20">
             <Send className="w-4 h-4"/> {t('dispatchNow') || 'Dispatch Now'}
@@ -266,18 +266,18 @@ export default function ApprovalPage() {
                 <XCircle style={{ width: 20, height: 20, color: '#ef4444' }} />
               </div>
               <div>
-                <h3 style={{ fontWeight: 700, fontSize: 16, margin: 0 }}>Reject Message</h3>
-                <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>This will return the message to draft for revision</p>
+                <h3 style={{ fontWeight: 700, fontSize: 16, margin: 0 }}>{t('rejectTitle') || 'Reject Message'}</h3>
+                <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{t('rejectDesc') || 'This will return the message to draft for revision'}</p>
               </div>
             </div>
             <div style={{ marginBottom: 18 }}>
               <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 6, color: 'var(--text-secondary)' }}>
-                Reason for rejection <span style={{ color: 'var(--text-dim)', fontWeight: 400 }}>(optional)</span>
+                {t('rejectReasonLabel') || 'Reason for rejection'} <span style={{ color: 'var(--text-dim)', fontWeight: 400 }}>({t('optional') || 'optional'})</span>
               </label>
               <textarea
                 value={rejectReason}
                 onChange={e => setRejectReason(e.target.value)}
-                placeholder="e.g. Incorrect translation, wrong zone, needs revision..."
+                placeholder={t('rejectReasonPlaceholder') || "e.g. Incorrect translation, wrong zone, needs revision..."}
                 rows={3}
                 className="textarea-field"
                 style={{ fontSize: 13 }}
@@ -290,7 +290,7 @@ export default function ApprovalPage() {
                 className="btn-secondary flex-1 justify-center"
                 style={{ padding: '10px 0' }}
               >
-                Cancel
+                {t('cancel') || 'Cancel'}
               </button>
               <button
                 onClick={handleReject}
@@ -302,7 +302,7 @@ export default function ApprovalPage() {
                 }}
               >
                 {rejecting ? <Loader2 style={{ width: 16, height: 16 }} className="animate-spin" /> : <XCircle style={{ width: 16, height: 16 }} />}
-                Reject & Return to Draft
+                {t('rejectConfirmBtn') || 'Reject & Return to Draft'}
               </button>
             </div>
           </div>

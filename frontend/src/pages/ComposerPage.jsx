@@ -125,10 +125,10 @@ export default function ComposerPage() {
             <MessageSquare style={{ width: 18, height: 18, color: 'var(--accent)' }} />
           </div>
           <div>
-            <p style={{ fontWeight: 600, fontSize: 14 }}>SMS Dispatch</p>
-            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>Messages will be sent via SMS to all matching recipients</p>
+            <p style={{ fontWeight: 600, fontSize: 14 }}>{t('smsDispatch') || "SMS Dispatch"}</p>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{t('smsDispatchDesc') || "Messages will be sent via SMS to all matching recipients"}</p>
           </div>
-          <span style={{ marginLeft: 'auto', padding: '3px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700, background: 'var(--accent-bg)', color: 'var(--accent)', border: '1px solid var(--accent-border)' }}>ACTIVE</span>
+          <span style={{ marginLeft: 'auto', padding: '3px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700, background: 'var(--accent-bg)', color: 'var(--accent)', border: '1px solid var(--accent-border)' }}>{t('activeLabel') || "ACTIVE"}</span>
         </div>
         <div className="glass-card p-5 space-y-3"><label className="block text-sm font-medium text-theme-secondary"><Languages className="w-4 h-4 inline mr-2"/>{t('selectLanguages')}</label><div className="flex flex-wrap gap-2">{LANG_LIST.map(l=>(<LBtn key={l.value} active={form.languages.includes(l.value)} onClick={()=>toggleItem('languages',l.value)}><span>{l.flag}</span> {l.label}</LBtn>))}</div></div>
         <div className="glass-card p-5 space-y-4">
@@ -144,7 +144,7 @@ export default function ComposerPage() {
             {translating ? <><Loader2 className="w-5 h-5 animate-spin"/> {t('translating')}</> : <><Languages className="w-5 h-5"/> {t('translatePreview')}</>}
           </button>
           <button onClick={handleQuickDispatch} disabled={translating || quickDispatching} className="btn-primary flex-1 justify-center py-3 text-base" id="quick-dispatch-btn">
-            {quickDispatching ? <><Loader2 className="w-5 h-5 animate-spin"/> {t('dispatching')}</> : <><Send className="w-5 h-5"/> {t('skipApproval') || 'Quick Dispatch'}</>}
+            {quickDispatching ? <><Loader2 className="w-5 h-5 animate-spin"/> {t('dispatching')}</> : <><Send className="w-5 h-5"/> {t('quickDispatch') || 'Quick Dispatch'}</>}
           </button>
           <button onClick={handleSaveDraft} disabled={saving || translating || quickDispatching} className="btn-secondary flex-1 justify-center py-3 text-base" id="save-draft-btn">
             {saving ? <><Loader2 className="w-5 h-5 animate-spin"/> {t('saving')}</> : <><Save className="w-5 h-5"/> {t('saveDraft')}</>}

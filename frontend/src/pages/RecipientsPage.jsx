@@ -11,10 +11,9 @@ import { useLanguage } from '../i18n/LanguageContext';
 const LANGUAGE_OPTIONS = [
   { value: 'en',      label: 'English',  flag: '🇬🇧' },
   { value: 'hindi',   label: 'Hindi',    flag: '🇮🇳' },
-  { value: 'urdu',    label: 'Urdu',     flag: '🕌' },
-  { value: 'tamil',   label: 'Tamil',    flag: '🏛️' },
-  { value: 'telugu',  label: 'Telugu',   flag: '🏛️' },
-  { value: 'bengali', label: 'Bengali',  flag: '🇧🇩' },
+  { value: 'marathi', label: 'Marathi',  flag: '🇮🇳' },
+  { value: 'tamil',   label: 'Tamil',    flag: '🇮🇳' },
+  { value: 'telugu',  label: 'Telugu',   flag: '🇮🇳' },
 ];
 
 const getLangLabel = (code) => LANGUAGE_OPTIONS.find(l => l.value === code)?.label || code || 'English';
@@ -46,7 +45,7 @@ function RecipientModal({ initial, onSave, onClose, saving }) {
         <div className="p-5 border-b border-[var(--border)] flex items-center justify-between">
           <h2 className="text-lg font-bold flex items-center gap-2">
             <UserPlus style={{ width: 20, height: 20, color: 'var(--accent)' }} />
-            {initial?.id ? 'Edit Recipient' : (t('addRecipient') || 'Add Recipient')}
+            {initial?.id ? (t('editRecipient') || 'Edit Recipient') : (t('addRecipient') || 'Add Recipient')}
           </h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
             <X style={{ width: 20, height: 20 }} />
@@ -57,7 +56,7 @@ function RecipientModal({ initial, onSave, onClose, saving }) {
           {/* Name */}
           <div>
             <label className="block text-sm font-medium mb-1.5 text-theme-secondary">
-              {t('recipientName') || 'Full Name'} <span style={{ color: '#ef4444' }}>*</span>
+              {t('fullName') || 'Full Name'} <span style={{ color: '#ef4444' }}>*</span>
             </label>
             <input
               className="input-field"
@@ -82,7 +81,7 @@ function RecipientModal({ initial, onSave, onClose, saving }) {
               onChange={e => upd('phone', e.target.value)}
             />
             <p className="text-xs text-theme-dim mt-1">
-              Include country code — e.g. +91 for India
+              {t('includeCountryCode') || 'Include country code — e.g. +91 for India'}
             </p>
           </div>
 
@@ -90,7 +89,7 @@ function RecipientModal({ initial, onSave, onClose, saving }) {
           <div>
             <label className="block text-sm font-medium mb-1.5 text-theme-secondary">
               <MapPin style={{ width: 13, height: 13, display: 'inline', marginRight: 4 }} />
-              {t('zone') || 'Zone'} <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>(optional)</span>
+              {t('zone') || 'Zone'} <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>({t('optional') || 'optional'})</span>
             </label>
             <input
               className="input-field"
@@ -134,8 +133,8 @@ function RecipientModal({ initial, onSave, onClose, saving }) {
           <button onClick={onClose} className="btn-secondary">{t('cancel') || 'Cancel'}</button>
           <button onClick={() => onSave(form)} disabled={saving} className="btn-primary">
             {saving
-              ? <><Loader2 style={{ width: 16, height: 16 }} className="animate-spin" /> Saving...</>
-              : <><Save style={{ width: 16, height: 16 }} /> {initial?.id ? 'Save Changes' : (t('addRecipient') || 'Add Recipient')}</>
+              ? <><Loader2 style={{ width: 16, height: 16 }} className="animate-spin" /> {t('saving') || 'Saving...'}</>
+              : <><Save style={{ width: 16, height: 16 }} /> {initial?.id ? (t('saveChanges') || 'Save Changes') : (t('addRecipient') || 'Add Recipient')}</>
             }
           </button>
         </div>
@@ -193,7 +192,7 @@ export default function RecipientsPage() {
     try {
       if (editTarget?.id) {
         await recipientsApi.update(editTarget.id, form);
-        toast.success('Recipient updated');
+        toast.success(t('recipientUpdated') || 'Recipient updated');
       } else {
         await recipientsApi.create(form);
         toast.success(t('recipientAdded') || 'Recipient added');
@@ -209,7 +208,7 @@ export default function RecipientsPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Remove this recipient?')) return;
+    if (!window.confirm(t('removeRecipientConfirm') || 'Remove this recipient?')) return;
     setDeletingId(id);
     try {
       await recipientsApi.delete(id);
@@ -227,7 +226,7 @@ export default function RecipientsPage() {
     try {
       const r = await recipientsApi.sendTest(id);
       if (r.data.success) {
-        toast.success(`✅ Test SMS sent to ${name}`, { duration: 6000, style: { background: '#22c55e', color: '#fff' } });
+        toast.success(`✅ ${(t('testSmsSentTo') || 'Test SMS sent to')} ${name}`, { duration: 6000, style: { background: '#22c55e', color: '#fff' } });
       } else {
         toast.error(`❌ ${r.data.error || 'Failed to send test SMS'}`);
       }
@@ -277,10 +276,10 @@ export default function RecipientsPage() {
 
       {/* ── Stats ─────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px,1fr))', gap: 12 }}>
-        <Stat icon={Users}        label="Total Recipients" value={recipients.length} color="var(--accent)" />
-        <Stat icon={CheckCircle2} label="Active"           value={activeCount}       color="#22c55e" />
-        <Stat icon={MapPin}       label="Zones Covered"    value={zones.length}      color="#f97316" />
-        <Stat icon={Languages}    label="Languages"        value={[...new Set(recipients.map(r => r.language))].length} color="#a855f7" />
+        <Stat icon={Users}        label={t('totalRecipients') || "Total Recipients"} value={recipients.length} color="var(--accent)" />
+        <Stat icon={CheckCircle2} label={t('active') || "Active"}           value={activeCount}       color="#22c55e" />
+        <Stat icon={MapPin}       label={t('zonesCovered') || "Zones Covered"}    value={zones.length}      color="#f97316" />
+        <Stat icon={Languages}    label={t('languages') || "Languages"}        value={[...new Set(recipients.map(r => r.language))].length} color="#a855f7" />
       </div>
 
       {/* ── Filters ─────────────────── */}
@@ -290,7 +289,7 @@ export default function RecipientsPage() {
           <Search style={{ width: 15, height: 15, position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input
             className="input-field"
-            placeholder={t('searchRecipients') || 'Search name, phone, zone...'}
+            placeholder={t('searchRecipientsPlaceholder') || 'Search name, phone, zone...'}
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             style={{ paddingLeft: 32 }}
@@ -302,7 +301,7 @@ export default function RecipientsPage() {
           <div style={{ position: 'relative' }}>
             <MapPin style={{ width: 13, height: 13, position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
             <select className="input-field" value={filterZone} onChange={e => setFilterZone(e.target.value)} style={{ paddingLeft: 26, paddingRight: 28, minWidth: 130 }}>
-              <option value="all">All Zones</option>
+              <option value="all">{t('allZones') || "All Zones"}</option>
               {zones.map(z => <option key={z} value={z}>{z}</option>)}
             </select>
           </div>
@@ -312,7 +311,7 @@ export default function RecipientsPage() {
         <div style={{ position: 'relative' }}>
           <Languages style={{ width: 13, height: 13, position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
           <select className="input-field" value={filterLang} onChange={e => setFilterLang(e.target.value)} style={{ paddingLeft: 26, paddingRight: 28, minWidth: 130 }}>
-            <option value="all">All Languages</option>
+            <option value="all">{t('allLanguages') || "All Languages"}</option>
             {LANGUAGE_OPTIONS.map(l => <option key={l.value} value={l.value}>{l.flag} {l.label}</option>)}
           </select>
         </div>
@@ -326,9 +325,9 @@ export default function RecipientsPage() {
       {filtered.length === 0 ? (
         <div className="glass-card p-12 text-center">
           <Users style={{ width: 48, height: 48, margin: '0 auto 12px', color: 'var(--text-dim)' }} />
-          <h3 style={{ fontWeight: 600, marginBottom: 6 }}>{recipients.length === 0 ? (t('noRecipients') || 'No Recipients Yet') : 'No matches found'}</h3>
+          <h3 style={{ fontWeight: 600, marginBottom: 6 }}>{recipients.length === 0 ? (t('noRecipientsTitle') || 'No Recipients Yet') : (t('noMatchesFound') || 'No matches found')}</h3>
           <p className="text-theme-muted" style={{ fontSize: 13, marginBottom: 16 }}>
-            {recipients.length === 0 ? (t('noRecipientsDesc') || 'Add your first recipient to start sending SMS alerts.') : 'Try adjusting your search or filters.'}
+            {recipients.length === 0 ? (t('noRecipientsDesc') || 'Add your first recipient to start sending SMS alerts.') : (t('adjustSearchFilters') || 'Try adjusting your search or filters.')}
           </p>
           {recipients.length === 0 && (
             <button onClick={() => setShowModal(true)} className="btn-primary">
@@ -343,12 +342,12 @@ export default function RecipientsPage() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ background: 'var(--bg-hover)', borderBottom: '1px solid var(--border)' }}>
-                  <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>Recipient</th>
-                  <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>Phone</th>
-                  <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>Zone</th>
-                  <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>Language</th>
-                  <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>Status</th>
-                  <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>Actions</th>
+                  <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t('recipientCol') || "Recipient"}</th>
+                  <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t('phoneCol') || "Phone"}</th>
+                  <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t('zoneCol') || "Zone"}</th>
+                  <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t('langCol') || "Language"}</th>
+                  <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t('statusCol') || "Status"}</th>
+                  <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t('actionsCol') || "Actions"}</th>
                 </tr>
               </thead>
               <tbody>
@@ -441,7 +440,7 @@ export default function RecipientsPage() {
                             ? <Loader2 style={{ width: 13, height: 13 }} className="animate-spin" />
                             : <Send style={{ width: 13, height: 13 }} />
                           }
-                          Test
+                          {t('testBtn') || "Test"}
                         </button>
 
                         {/* Edit */}

@@ -163,7 +163,7 @@ export default function DashboardPage() {
       <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
         {[
           { key: 'active',  icon: Zap,      label: `${t('activeAlerts') || 'Active'} (${activeMessages.length})`, roles: ['admin', 'user'] },
-          { key: 'drafts',  icon: PenSquare, label: `Drafts (${draftMessages.length})`, roles: ['admin'] },
+          { key: 'drafts',  icon: PenSquare, label: `${t('draftsTab') || 'Drafts'} (${draftMessages.length})`, roles: ['admin'] },
           { key: 'expired', icon: Clock,    label: `${t('expiredAlerts') || 'Expired'} (${expiredMessages.length})`, roles: ['admin', 'user'] },
         ].filter(tb => tb.roles.includes(user.role || 'admin')).map(tb => (
           <button key={tb.key} onClick={() => setActiveTab(tb.key)} className="px-5 py-2 rounded-lg text-sm font-medium flex items-center gap-2" style={{ background: activeTab===tb.key?'var(--accent)':'transparent', color: activeTab===tb.key?'white':'var(--text-muted)', boxShadow: activeTab===tb.key?'var(--shadow-md)':'none', border: 'none', cursor: 'pointer' }}><tb.icon className="w-3.5 h-3.5"/>{tb.label}</button>
@@ -194,7 +194,7 @@ export default function DashboardPage() {
         ))}
       </div>)}
       {activeTab==='drafts' && (<div className="space-y-3">
-        {draftMessages.length===0 ? (<div className="glass-card p-12 text-center"><PenSquare className="w-12 h-12 mx-auto mb-4 text-theme-dim" /><h3 className="text-lg font-medium text-theme-secondary mb-2">No Draft Messages</h3><p className="text-sm text-theme-muted mb-4">Saved drafts will appear here</p><button onClick={()=>navigate('/compose')} className="btn-primary text-sm"><Send className="w-4 h-4" /> Compose</button></div>
+        {draftMessages.length===0 ? (<div className="glass-card p-12 text-center"><PenSquare className="w-12 h-12 mx-auto mb-4 text-theme-dim" /><h3 className="text-lg font-medium text-theme-secondary mb-2">{t('noDraftsTitle') || 'No Draft Messages'}</h3><p className="text-sm text-theme-muted mb-4">{t('noDraftsDesc') || 'Saved drafts will appear here'}</p><button onClick={()=>navigate('/compose')} className="btn-primary text-sm"><Send className="w-4 h-4" /> {t('composeMessage')}</button></div>
         ) : draftMessages.map((msg,i)=>(
           <div key={msg.id} className="glass-card p-5 animate-slide-up" style={{ animationDelay:`${i*60}ms`, borderLeft: '3px solid var(--accent)' }}>
             <div className="flex items-center justify-between gap-4">
@@ -204,8 +204,8 @@ export default function DashboardPage() {
                 <p className="text-xs text-theme-dim mt-1">{t('by')} {msg.sent_by} · {new Date(msg.created_at||Date.now()).toLocaleDateString()}</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <button onClick={()=>navigate('/compose')} className="btn-secondary text-xs py-1.5 px-3"><PenSquare className="w-3 h-3"/> Edit</button>
-                <button onClick={()=>navigate(`/approval/${msg.id}`)} className="btn-primary text-xs py-1.5 px-3"><Send className="w-3 h-3"/> Send</button>
+                <button onClick={()=>navigate('/compose')} className="btn-secondary text-xs py-1.5 px-3"><PenSquare className="w-3 h-3"/> {t('editBtn') || 'Edit'}</button>
+                <button onClick={()=>navigate(`/approval/${msg.id}`)} className="btn-primary text-xs py-1.5 px-3"><Send className="w-3 h-3"/> {t('send')}</button>
                 <button onClick={()=>handleDelete(msg.id)} disabled={actionLoading[`d-${msg.id}`]} className="btn-secondary text-xs py-1.5 px-3" style={{color:'#ef4444',borderColor:'rgba(239,68,68,0.3)'}}>{actionLoading[`d-${msg.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<X className="w-3 h-3"/>}</button>
               </div>
             </div>

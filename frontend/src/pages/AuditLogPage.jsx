@@ -30,15 +30,15 @@ export default function AuditLogPage() {
           <button onClick={handleExport} disabled={exporting} className="btn-primary text-sm">{exporting?<RefreshCw className="w-4 h-4 animate-spin"/>:<Download className="w-4 h-4"/>} {t('exportCSV')||'Export CSV'}</button>
           {/* Clear old entries */}
           <div style={{position:'relative'}}>
-            <button onClick={()=>setShowClearMenu(v=>!v)} disabled={clearing} className="btn-secondary text-sm" style={{borderColor:'rgba(239,68,68,0.3)',color:'#ef4444'}}>
-              {clearing?<RefreshCw className="w-4 h-4 animate-spin"/>:<Trash2 className="w-4 h-4"/>} Clear Old
+            <button onClick={()=>setShowClearMenu(v=>!v)} disabled={clearing} className="btn-secondary text-sm" style={{borderColor: 'rgba(239,68,68,0.3)', color: '#ef4444'}}>
+              {clearing ? <RefreshCw className="w-4 h-4 animate-spin"/> : <Trash2 className="w-4 h-4"/>} {t('clearOld') || 'Clear Old'}
             </button>
             {showClearMenu&&(
               <div className="animate-fade-in" style={{position:'absolute',right:0,top:'100%',marginTop:4,minWidth:180,borderRadius:10,background:'var(--bg-surface)',border:'1px solid var(--border)',boxShadow:'var(--shadow-lg)',zIndex:50,overflow:'hidden'}}>
-                <p style={{fontSize:11,color:'var(--text-muted)',padding:'8px 12px 4px',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em'}}>Delete entries older than</p>
+                <p style={{fontSize:11,color:'var(--text-muted)',padding:'8px 12px 4px',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em'}}>{t('deleteEntriesOlderThan') || 'Delete entries older than'}</p>
                 {[7,30,90].map(days=>(
                   <button key={days} onClick={()=>handleClear(days)} style={{width:'100%',textAlign:'left',padding:'9px 14px',fontSize:13,background:'transparent',color:'#ef4444',border:'none',cursor:'pointer',display:'flex',alignItems:'center',gap:8}} onMouseEnter={e=>e.currentTarget.style.background='rgba(239,68,68,0.08)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-                    <Trash2 style={{width:13,height:13}}/> {days} days
+                    <Trash2 style={{width:13,height:13}}/> {days} {t('daysLabel') || 'days'}
                   </button>
                 ))}
               </div>

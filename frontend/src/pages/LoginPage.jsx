@@ -447,11 +447,11 @@ export default function LoginPage() {
                   />
                   <Field
                     id="reg-dept"
-                    label={<>{t('department') || 'Department'} <span style={{ fontSize: 11, color: 'var(--text-dim)', fontWeight: 400 }}>{t('optional') || '(optional)'}</span></>}
+                    label={<>{t('department') || 'Department'} <span style={{ fontSize: 11, color: 'var(--text-dim)', fontWeight: 400 }}>({t('optional') || 'optional'})</span></>}
                     icon={Building2}
                     value={regDept}
                     onChange={e => setRegDept(e.target.value)}
-                    placeholder="e.g. Central Command"
+                    placeholder={t('deptPlaceholder') || "e.g. Central Command"}
                     autoComplete="organization"
                   />
                   <div>
@@ -462,7 +462,7 @@ export default function LoginPage() {
                       type={showRegPwd ? 'text' : 'password'}
                       value={regPassword}
                       onChange={e => { setRegPassword(e.target.value); setRegError(''); }}
-                      placeholder="Min 8 characters"
+                      placeholder={t('min8Chars') || "Min 8 characters"}
                       autoComplete="new-password"
                       rightEl={<EyeBtn show={showRegPwd} toggle={() => setShowRegPwd(v => !v)} />}
                     />
@@ -470,13 +470,13 @@ export default function LoginPage() {
                     {/* Strength Checklist */}
                     {regPassword && (
                       <div style={{ marginTop: 10, padding: '10px 12px', borderRadius: 8, background: 'var(--bg-hover)', border: '1px solid var(--border)' }}>
-                        <p style={{ fontSize: 11, fontWeight: 700, marginBottom: 6, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Security Requirements</p>
+                        <p style={{ fontSize: 11, fontWeight: 700, marginBottom: 6, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('securityRequirements') || 'Security Requirements'}</p>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 12px' }}>
                           {[
-                            { label: '8+ Characters', met: criteria.length },
-                            { label: 'Uppercase', met: criteria.upper },
-                            { label: 'Number', met: criteria.number },
-                            { label: 'Special Symbol', met: criteria.special },
+                            { label: t('eightPlusChars') || '8+ Characters', met: criteria.length },
+                            { label: t('uppercase') || 'Uppercase', met: criteria.upper },
+                            { label: t('number') || 'Number', met: criteria.number },
+                            { label: t('specialSymbol') || 'Special Symbol', met: criteria.special },
                           ].map(c => (
                             <div key={c.label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: c.met ? 'var(--accent)' : 'var(--text-dim)' }}>
                               <div style={{ width: 12, height: 12, borderRadius: '50%', background: c.met ? 'var(--accent)' : 'transparent', border: `1px solid ${c.met ? 'var(--accent)' : 'var(--border)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -496,9 +496,9 @@ export default function LoginPage() {
                     type={showRegPwd ? 'text' : 'password'}
                     value={regConfirm}
                     onChange={e => { setRegConfirm(e.target.value); setRegError(''); }}
-                    placeholder={t('confirmPassword') || "Re-enter your password"}
+                    placeholder={t('reEnterPassword') || "Re-enter your password"}
                     autoComplete="new-password"
-                    hint={regConfirm && regPassword !== regConfirm ? '⚠ Passwords do not match' : regConfirm && regPassword === regConfirm ? '✓ Passwords match' : ''}
+                    hint={regConfirm && regPassword !== regConfirm ? (t('passwordsDontMatch') || '⚠ Passwords do not match') : regConfirm && regPassword === regConfirm ? (t('passwordsMatch') || '✓ Passwords match') : ''}
                   />
 
                   <div style={{ marginTop: 8 }}>
@@ -509,7 +509,7 @@ export default function LoginPage() {
                       style={{ width: '100%', height: 48, borderRadius: 12, fontSize: 15, fontWeight: 700, gap: 10 }}
                     >
                       {regLoading ? (
-                        <><Loader2 className="animate-spin" style={{ width: 20, height: 20 }} /> Creating Account...</>
+                        <><Loader2 className="animate-spin" style={{ width: 20, height: 20 }} /> {t('creatingAccount') || 'Creating Account...'}</>
                       ) : (
                         <><CheckCircle2 style={{ width: 20, height: 20 }} /> {t('createAccount') || 'Create Account'}</>
                       )}
