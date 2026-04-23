@@ -100,12 +100,23 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold flex items-center gap-3"><TrendingUp className="w-6 h-6" style={{ color: 'var(--accent)' }} />{t('dashboardTitle')}</h1><p className="text-sm mt-1 text-theme-muted">{t('dashboardSubtitle')}</p></div>
+        <div>
+          <h1 className="text-2xl font-bold flex items-center gap-3">
+            <TrendingUp className="w-6 h-6" style={{ color: 'var(--accent)' }} />
+            {isAdmin ? t('dashboardTitle') : 'User Alerts Portal'}
+          </h1>
+          <p className="text-sm mt-1 text-theme-muted">
+            {isAdmin ? t('dashboardSubtitle') : 'Receive and view active emergency updates'}
+          </p>
+        </div>
         <button onClick={fetchData} className="btn-secondary text-sm"><RefreshCw className="w-4 h-4" /> {t('refresh')}</button>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {statCards.map((s,i)=>(<div key={i} className="stat-card animate-slide-up" style={{ animationDelay: `${i*80}ms` }}><div className="flex items-center justify-between"><span className="text-xs uppercase tracking-wider font-medium text-theme-muted">{s.label}</span><s.icon className="w-4 h-4" style={{ color: s.color }} /></div><span className="text-3xl font-bold tracking-tight">{s.value}</span></div>))}
-      </div>
+      
+      {isAdmin && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {statCards.map((s,i)=>(<div key={i} className="stat-card animate-slide-up" style={{ animationDelay: `${i*80}ms` }}><div className="flex items-center justify-between"><span className="text-xs uppercase tracking-wider font-medium text-theme-muted">{s.label}</span><s.icon className="w-4 h-4" style={{ color: s.color }} /></div><span className="text-3xl font-bold tracking-tight">{s.value}</span></div>))}
+        </div>
+      )}
       <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
         {[
           { key: 'active',  icon: Zap,      label: `${t('activeAlerts') || 'Active'} (${activeMessages.length})`, roles: ['admin', 'user'] },
@@ -116,7 +127,13 @@ export default function DashboardPage() {
         ))}
       </div>
       {activeTab==='active' && (<div className="space-y-3">
-        {activeMessages.length===0 ? (<div className="glass-card p-12 text-center"><Activity className="w-12 h-12 mx-auto mb-4 text-theme-dim" /><h3 className="text-lg font-medium text-theme-secondary mb-2">{t('noActiveAlerts')}</h3><p className="text-sm text-theme-muted mb-4">{t('noActiveDesc')}</p><button onClick={()=>navigate('/compose')} className="btn-primary text-sm"><Send className="w-4 h-4" /> {t('composeMessage')}</button></div>
+        {activeMessages.length===0 ? (
+          <div className="glass-card p-12 text-center">
+            <Activity className="w-12 h-12 mx-auto mb-4 text-theme-dim" />
+            <h3 className="text-lg font-medium text-theme-secondary mb-2">{t('noActiveAlerts')}</h3>
+            <p className="text-sm text-theme-muted mb-4">{t('noActiveDesc')}</p>
+            {isAdmin && <button onClick={()=>navigate('/compose')} className="btn-primary text-sm"><Send className="w-4 h-4" /> {t('composeMessage')}</button>}
+          </div>
         ) : activeMessages.map((msg,i)=>(
           <div key={msg.id} className="glass-card p-5 animate-slide-up" style={{ animationDelay:`${i*60}ms` }}>
             <div className="flex flex-col lg:flex-row lg:items-start gap-4">
