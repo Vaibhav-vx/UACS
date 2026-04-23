@@ -26,7 +26,8 @@ router.post('/login', async (req, res) => {
     if (!phone || !password)
       return res.status(400).json({ error: 'Mobile number and password are required' });
 
-    const user = await dbGetOne('users', { email: phone.trim() });
+    const normalizedPhone = phone.trim().replace(/\s+/g, '');
+    const user = await dbGetOne('users', { email: normalizedPhone });
     if (!user) return res.status(401).json({ error: 'Invalid mobile or password' });
 
     const validPassword = bcrypt.compareSync(password, user.password);
@@ -130,21 +131,14 @@ router.post('/otp/send', async (req, res) => {
 // ─── POST /api/auth/register ────────────────────────────
 router.post('/register', async (req, res) => {
   try {
-    const { name, phone, password, department, otp } = req.body;
+    const { name, phone, password, department } = req.body;
 
-    if (!name?.trim() || !phone?.trim() || !password || !otp)
-      return res.status(400).json({ error: 'All fields including OTP are required' });
+    if (!name?.trim() || !phone?.trim() || !password)
+      return res.status(400).json({ error: 'All fields are required' });
 
-    // Verify OTP
-    const cached = OTP_STORE.get(phone);
-    if (!cached || cached.code !== otp || Date.now() > cached.expiry) {
-      return res.status(400).json({ error: 'Invalid or expired verification code' });
-    }
+    const normalizedPhone = phone.trim().replace(/\s+/g, '');
 
-    // OTP Correct -> Clear from cache
-    OTP_STORE.delete(phone);
-
-    if (phone.trim().length < 10)
+    if (normalizedPhone.length < 10)
       return res.status(400).json({ error: 'Valid mobile number is required' });
 
     const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -152,7 +146,7 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Password must be 8+ chars and include uppercase, lowercase, number, and special character' });
 
     // Check phone not already taken (using email column)
-    const existing = await dbGetOne('users', { email: phone.trim() });
+    const existing = await dbGetOne('users', { email: normalizedPhone });
     if (existing)
       return res.status(409).json({ error: 'An account with this mobile number already exists' });
 
@@ -160,23 +154,23 @@ router.post('/register', async (req, res) => {
     const hash = bcrypt.hashSync(password, 10);
     const newUser = await dbInsert('users', {
       name:       name.trim(),
-      email:      phone.trim(), // Use email column to store phone
+      email:      normalizedPhone, // Use email column to store phone
       password:   hash,
       role:       'user', // FORCE USER ROLE - NO EXCEPTIONS
       department: department?.trim() || null,
     });
 
     // AUTO-SYNC TO RECIPIENTS (Deduplicated)
-    const existingRecipient = await dbGetOne('recipients', { phone: phone.trim() });
+    const existingRecipient = await dbGetOne('recipients', { phone: normalizedPhone });
     if (!existingRecipient) {
       await dbInsert('recipients', {
         name:       name.trim(),
-        phone:      phone.trim(),
+        phone:      normalizedPhone,
         zone:       department?.trim() || 'General',
         language:   'english',
         active:     true
       });
-      console.log(`[UACS AUTH] Auto-added ${phone} to Recipients list`);
+      console.log(`[UACS AUTH] Auto-added ${normalizedPhone} to Recipients list`);
     }
 
     // Sign JWT — same shape as login

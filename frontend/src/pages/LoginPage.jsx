@@ -123,10 +123,7 @@ export default function LoginPage() {
   const [regLoading, setRegLoading]       = useState(false);
   const [regError, setRegError]           = useState('');
   const [regSuccess, setRegSuccess]       = useState(false);
-  const [regOtp, setRegOtp]               = useState('');
-  const [otpSent, setOtpSent]             = useState(false);
-  const [otpLoading, setOtpLoading]       = useState(false);
- 
+
   // Password Strength Check
   const getPasswordCriteria = (pwd) => ({
     length: pwd.length >= 8,
@@ -188,31 +185,15 @@ export default function LoginPage() {
     if (!isPasswordStrong) { setRegError('Please meet all password requirements'); return; }
     if (regPassword !== regConfirm) { setRegError('Passwords do not match'); return; }
 
-    if (!otpSent) {
-      setOtpLoading(true);
-      try {
-        await authApi.sendOtp(regPhone.trim());
-        setOtpSent(true);
-      } catch (err) {
-        setRegError(err.response?.data?.error || 'Failed to send verification code');
-      } finally {
-        setOtpLoading(false);
-      }
-      return;
-    }
-
-    if (!regOtp.trim()) { setRegError('Verification code is required'); return; }
-
     setRegLoading(true);
     try {
       const res = await authApi.register({ 
         name: regName.trim(), 
         phone: regPhone.trim(), 
         password: regPassword, 
-        department: regDept.trim(), 
-        otp: regOtp.trim()
+        department: regDept.trim() 
       });
-      localStorage.setItem('uacs_token', res.data.token);
+      toast.success(t('regSuccess') || 'Registration successful!');
       localStorage.setItem('uacs_user', JSON.stringify(res.data.user));
       setRegSuccess(true);
       setTimeout(() => navigate('/dashboard'), 1500);
@@ -520,51 +501,29 @@ export default function LoginPage() {
                     hint={regConfirm && regPassword !== regConfirm ? '⚠ Passwords do not match' : regConfirm && regPassword === regConfirm ? '✓ Passwords match' : ''}
                   />
 
-                  {otpSent && (
-                    <div className="animate-slide-up">
-                      <Field
-                        id="reg-otp"
-                        label="Verification Code (SMS)"
-                        icon={Shield}
-                        type="text"
-                        value={regOtp}
-                        onChange={e => { setRegOtp(e.target.value); setRegError(''); }}
-                        placeholder="Enter 6-digit code"
-                        autoFocus
-                      />
-                      <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: -6, marginLeft: 2 }}>
-                        A code was sent to {regPhone}
-                      </p>
-                    </div>
-                  )}
-
                   <div style={{ marginTop: 8 }}>
                     <button
                       type="submit"
-                      disabled={regLoading || otpLoading}
+                      disabled={regLoading}
                       className="btn-primary"
                       style={{ width: '100%', height: 48, borderRadius: 12, fontSize: 15, fontWeight: 700, gap: 10 }}
                     >
-                      {otpLoading ? (
-                        <><Loader2 className="animate-spin" style={{ width: 20, height: 20 }} /> Sending Code...</>
-                      ) : regLoading ? (
-                        <><Loader2 className="animate-spin" style={{ width: 20, height: 20 }} /> Verifying...</>
+                      {regLoading ? (
+                        <><Loader2 className="animate-spin" style={{ width: 20, height: 20 }} /> Creating Account...</>
                       ) : (
-                        otpSent ? <><CheckCircle2 style={{ width: 20, height: 20 }} /> Verify & Register</> : <><Smartphone style={{ width: 20, height: 20 }} /> Send Verification Code</>
+                        <><CheckCircle2 style={{ width: 20, height: 20 }} /> Create Account</>
                       )}
                     </button>
                     
-                    {!otpSent && (
-                      <button
-                        type="button"
-                        onClick={handleDemoLogin}
-                        disabled={regLoading || otpLoading}
-                        className="btn-secondary"
-                        style={{ width: '100%', height: 48, borderRadius: 12, fontSize: 15, fontWeight: 700, gap: 10, marginTop: 12 }}
-                      >
-                        <UserPlus style={{ width: 20, height: 20 }} /> Try Demo Profile
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={handleDemoLogin}
+                      disabled={regLoading}
+                      className="btn-secondary"
+                      style={{ width: '100%', height: 48, borderRadius: 12, fontSize: 15, fontWeight: 700, gap: 10, marginTop: 12 }}
+                    >
+                      <UserPlus style={{ width: 20, height: 20 }} /> Try Demo Profile
+                    </button>
                   </div>
                 </div>
 

@@ -97,6 +97,45 @@ export default function DashboardPage() {
 
   if (loading) return (<div className="space-y-6"><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">{[1,2,3,4].map(i=><div key={i} className="glass-card p-5 h-24 shimmer rounded-xl"/>)}</div><div className="space-y-3">{[1,2,3].map(i=><div key={i} className="glass-card p-6 h-32 shimmer rounded-xl"/>)}</div></div>);
 
+  if (!isAdmin) {
+    return (
+      <div className="space-y-6 animate-fade-in max-w-4xl mx-auto">
+        <div className="flex items-center gap-3 mb-8">
+          <Activity className="w-8 h-8" style={{ color: 'var(--accent)' }} />
+          <div>
+            <h1 className="text-2xl font-bold">Public Alerts Feed</h1>
+            <p className="text-sm text-theme-muted">Stay informed with the latest official communications.</p>
+          </div>
+        </div>
+
+        {activeMessages.length === 0 ? (
+           <div className="glass-card p-12 text-center rounded-xl" style={{ border: '1px solid var(--border)' }}>
+             <Activity className="w-12 h-12 mx-auto mb-4 text-theme-dim" />
+             <h3 className="text-lg font-medium text-theme-secondary mb-2">No Active Alerts</h3>
+             <p className="text-sm text-theme-muted mb-4">All clear. There are no ongoing emergencies or broadcasts.</p>
+           </div>
+        ) : (
+          <div className="space-y-4">
+             {activeMessages.map((msg, i) => {
+                const borderColors = { critical: '#ef4444', high: '#f97316', normal: 'var(--accent)' };
+                return (
+                  <div key={msg.id} className="glass-card p-6 animate-slide-up rounded-xl" style={{ animationDelay:`${i*60}ms`, borderLeft: `4px solid ${borderColors[msg.urgency] || 'var(--accent)'}` }}>
+                    <div className="flex items-center gap-3 mb-3"><AlertBanner urgency={msg.urgency} /><h3 className="font-semibold text-lg">{msg.title}</h3></div>
+                    <p className="text-theme-primary mb-4 whitespace-pre-wrap">{msg.master_content}</p>
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-theme-muted">
+                      <span className="font-medium text-theme-secondary px-2 py-1 rounded bg-theme-hover">Department: {msg.sent_by}</span>
+                      <span>•</span>
+                      <span>{new Date(msg.created_at).toLocaleString()}</span>
+                    </div>
+                  </div>
+                );
+             })}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">

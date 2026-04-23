@@ -1,6 +1,6 @@
 # 🛡️ UACS — Unified Authority Communication System
 
-**UACS** is a mission-critical centralized communication platform designed for government and civic authorities. It enables officials to compose a single master message that is automatically translated into multiple regional languages and dispatched across a unified channel network (SMS, Twitter, Radio, TV, Website) with built-in approval workflows and lifecycle management.
+**UACS** is a mission-critical centralized communication platform designed for government and civic authorities. It enables officials to compose a single master message that is automatically translated into multiple regional languages and dispatched across a unified channel network (SMS, Twitter, Radio, TV, Website) with built-in approval workflows, lifecycle management, and a robust role-based dual-portal system.
 
 [![UACS Security](https://img.shields.io/badge/Security-Government_Grade-blue?style=for-the-badge&logo=shield)](https://github.com/Vaibhav-vx/UACS)
 [![UACS Translation](https://img.shields.io/badge/Translation-Google_Translate-green?style=for-the-badge&logo=google-translate)](https://github.com/Vaibhav-vx/UACS)
@@ -8,19 +8,32 @@
 
 ---
 
-## ✨ Features
+## ✨ Core Features
 
-- **🎯 Unified Dispatch**: One-click broadcast to SMS (via Twilio), Social Media (Twitter), and legacy channels (Radio/TV).
-- **🌍 Real-time Translation**: Integrated with **Google Translate API** for reliable translations into Hindi, Tamil, Urdu, Bengali, and Telugu.
-- **🛡️ Secure Approval Workflow**: 
-  - **Draft**: Initial composition stage.
-  - **Review**: Approvers verify translations and consistency.
-  - **Reject**: Feedback loop to send messages back to Draft for revisions.
-  - **Approve & Dispatch**: Final authorization for live broadcast.
-- **⏲️ Lifecycle Management**: Live countdown timers for each alert with automated expiry actions (manual extend/expire supported).
-- **🚨 Emergency Broadcast**: Floating emergency trigger for critical situations requiring instant, all-channel, all-language dispatch.
-- **👤 User Profile & Security**: Managed administrative profiles with department tracking and secure password management.
-- **📋 Audit & Compliance**: Full historical log of every status change, rejection, and dispatch action, exportable as CSV.
+### 👥 Dual-Portal Architecture
+UACS features a strict separation of concerns through a role-based access control system:
+- **Admin Portal**: Exclusive access for the Master Admin. Features a full administrative dashboard, message composer, approval queues, recipient management, and detailed audit logs.
+- **User Portal (Public Feed)**: A streamlined, read-only interface for regular users to view the "Public Alerts Feed". Users can only see active emergency and broadcast messages, ensuring they stay informed without administrative clutter.
+
+### 📱 Mobile-First Authentication & Onboarding
+- **Instant Registration**: Users can create accounts directly using their mobile numbers (`XXXXX XXXXX` format) without cumbersome OTP delays.
+- **Demo Profile**: A "Try Demo Profile" button provides instant access to the User Portal for evaluation purposes.
+- **Auto-Formatting**: Built-in, real-time UI formatting ensures phone numbers are always properly structured before touching the database.
+
+### 🎯 Unified Dispatch & Translation
+- **One-Click Broadcast**: Dispatch to SMS (via Twilio), Social Media (Twitter), and legacy channels (Radio/TV).
+- **Automated Twilio Routing**: The backend automatically normalizes phone numbers and attaches the `+91` prefix for guaranteed SMS delivery.
+- **Real-time Translation**: Integrated with **Google Translate API** for reliable translations into Hindi, Tamil, Urdu, Bengali, and Telugu.
+
+### 🛡️ Secure Approval Workflow
+- **Draft**: Initial composition stage.
+- **Review**: Approvers verify translations and consistency.
+- **Reject**: Feedback loop to send messages back to Draft for revisions.
+- **Approve & Dispatch**: Final authorization for live broadcast.
+
+### ⏲️ Lifecycle Management & Emergencies
+- **Live Timers**: Countdown timers for each alert with automated expiry actions (manual extend/expire supported).
+- **Emergency Broadcast**: Floating emergency trigger for critical situations requiring instant, all-channel, all-language dispatch (Admin only).
 
 ---
 
@@ -31,9 +44,9 @@
 - **Backend**: Node.js, Express.js.
 - **Database**: **Supabase (PostgreSQL)** for cloud-native, scalable storage.
 - **Integrations**:
-  - **SMS**: Twilio Messaging Service (Supports Geo-permissions).
+  - **SMS**: Twilio Messaging Service.
   - **Translation**: Google Translate API + MyMemory Fallback.
-  - **Authentication**: JWT-based secure sessions with Argon2/Bcrypt hashing.
+  - **Authentication**: JWT-based secure sessions with bcrypt hashing.
 
 ---
 
@@ -64,7 +77,7 @@ UACS/
 ### Prerequisites
 - Node.js v18+
 - Supabase Project & URL
-- Twilio Account (Account SID, Auth Token, Messaging Service SID)
+- Twilio Account (Account SID, Auth Token, Twilio Phone Number)
 
 ### Installation
 
@@ -87,13 +100,13 @@ UACS/
    ```
 
 4. **Environment Variables**
-   Create a `.env` in the root:
+   Create a `.env` in the root (which Vercel uses during build):
    ```env
    SUPABASE_URL=your_supabase_url
    SUPABASE_SERVICE_KEY=your_supabase_key
    TWILIO_ACCOUNT_SID=your_sid
    TWILIO_AUTH_TOKEN=your_token
-   TWILIO_Messaging_Service_SID=your_msg_svc_sid
+   TWILIO_PHONE_NUMBER=your_twilio_number
    JWT_SECRET=your_random_secret
    ```
 
@@ -109,8 +122,8 @@ UACS/
 ---
 
 ## 🛡️ Audit & Security
-UACS implements a strict **Audit Consistency Score** for all translations, ensuring that regional messages maintain the original intent and urgency of the master English message. The system also supports **Bulk Cleanup** of audit logs to maintain performance.
+UACS implements strict audit logging for all translations and dispatches, ensuring that regional messages maintain the original intent and urgency of the master English message. The system also supports **Bulk Cleanup** of audit logs to maintain performance.
 
 ---
 
-*Built for secure government civic communications • UACS v1.2*
+*Built for secure government civic communications • UACS v2.0*
