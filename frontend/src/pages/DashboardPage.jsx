@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Activity, Clock, AlertTriangle, CheckCircle, Send, Timer, RefreshCw, Eye, RotateCcw, Zap, TrendingUp, X, PenSquare, MapPin, Globe } from 'lucide-react';
+import { Activity, Clock, AlertTriangle, CheckCircle, Send, Timer, RefreshCw, Eye, RotateCcw, Zap, TrendingUp, X, PenSquare, MapPin, Globe, Shield, Info } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { messagesApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
