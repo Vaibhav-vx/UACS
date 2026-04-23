@@ -134,7 +134,7 @@ export default function MapZonePicker({ value, onChange, onClose }) {
 
   const handleConfirm = () => {
     const finalZone = zoneName.trim() || (selectedCoords ? `Zone (${selectedCoords.lat.toFixed(3)}, ${selectedCoords.lng.toFixed(3)})` : '');
-    onChange(finalZone);
+    onChange(finalZone, selectedCoords);
     onClose();
   };
 
@@ -213,13 +213,41 @@ export default function MapZonePicker({ value, onChange, onClose }) {
               </div>
             </div>
 
-            {selectedCoords && (
-              <div className="text-xs text-theme-muted p-2 rounded-lg" style={{ background: 'var(--bg-input)' }}>
-                <div>📍 Lat: {selectedCoords.lat.toFixed(4)}</div>
-                <div>📍 Lng: {selectedCoords.lng.toFixed(4)}</div>
+            {/* Manual Lat/Lng Entry */}
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="text-[10px] font-bold text-theme-muted uppercase">Latitude</label>
+                <input
+                  type="number"
+                  step="0.000001"
+                  value={selectedCoords?.lat || ''}
+                  onChange={e => {
+                    const lat = parseFloat(e.target.value);
+                    const lng = selectedCoords?.lng || 78.9629;
+                    setSelectedCoords({ lat, lng });
+                    import('leaflet').then(L => updateMapOverlay(lat, lng, radius, L));
+                  }}
+                  className="input-field w-full text-xs py-1"
+                />
               </div>
-            )}
-            <p className="text-xs text-theme-dim">💡 Click anywhere on the map to pin a custom zone</p>
+              <div>
+                <label className="text-[10px] font-bold text-theme-muted uppercase">Longitude</label>
+                <input
+                  type="number"
+                  step="0.000001"
+                  value={selectedCoords?.lng || ''}
+                  onChange={e => {
+                    const lng = parseFloat(e.target.value);
+                    const lat = selectedCoords?.lat || 20.5937;
+                    setSelectedCoords({ lat, lng });
+                    import('leaflet').then(L => updateMapOverlay(lat, lng, radius, L));
+                  }}
+                  className="input-field w-full text-xs py-1"
+                />
+              </div>
+            </div>
+
+            <p className="text-xs text-theme-dim">💡 Click anywhere on the map to pin a custom zone or type coordinates manually above.</p>
           </div>
 
           {/* Map */}

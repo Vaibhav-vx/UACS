@@ -59,6 +59,8 @@ CREATE TABLE recipients (
   name             TEXT NOT NULL,
   phone            TEXT NOT NULL,
   zone             TEXT,
+  lat              DECIMAL(10, 8),
+  lng              DECIMAL(11, 8),
   language         TEXT DEFAULT 'en',
   active           BOOLEAN DEFAULT TRUE,
   created_at       TIMESTAMPTZ DEFAULT NOW()

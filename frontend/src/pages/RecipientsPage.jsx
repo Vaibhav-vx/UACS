@@ -48,9 +48,10 @@ function Stat({ label, value, color = 'var(--accent)', icon: Icon }) {
 // ── Add / Edit Modal ───────────────────────────────────
 function RecipientModal({ initial, onSave, onClose, saving }) {
   const { t } = useLanguage();
-  const [form, setForm] = useState(initial || { name: '', phone: '', zone: '', language: 'en' });
+  const [form, setForm] = useState(initial || { name: '', phone: '', zone: '', lat: null, lng: null, language: 'en' });
   const [showMapPicker, setShowMapPicker] = useState(false);
   const upd = (k, v) => setForm(p => ({ ...p, [k]: v }));
+  const updCoords = (v, lat, lng) => setForm(p => ({ ...p, zone: v, lat, lng }));
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
@@ -136,7 +137,7 @@ function RecipientModal({ initial, onSave, onClose, saving }) {
           {showMapPicker && (
             <MapZonePicker 
               value={form.zone} 
-              onChange={v => upd('zone', v)} 
+              onChange={(v, coords) => updCoords(v, coords?.lat, coords?.lng)} 
               onClose={() => setShowMapPicker(false)} 
             />
           )}

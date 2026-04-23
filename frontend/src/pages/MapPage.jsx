@@ -58,7 +58,7 @@ export default function MapPage() {
         setAlerts(msgRes.data);
         
         if (isAdmin) {
-          const stats = {};
+          const stats = { recipientsList: recRes.data };
           recRes.data.forEach(r => {
             const z = r.zone || 'General';
             stats[z] = (stats[z] || 0) + 1;
@@ -161,7 +161,26 @@ export default function MapPage() {
             </Marker>
           ))}
 
-          {/* Admin Stats Overlay on Map */}
+          {/* Recipients (Admin only) */}
+          {isAdmin && zoneStats.recipientsList?.map((rec, idx) => (
+            rec.lat && rec.lng && (
+              <Marker key={rec.id || idx} position={[rec.lat, rec.lng]} icon={L.divIcon({
+                html: `<div class="map-recipient-icon">👤</div>`,
+                className: 'custom-div-icon',
+                iconSize: [20, 20]
+              })}>
+                <Popup>
+                  <div className="p-1 text-xs">
+                    <div className="font-bold text-accent">{rec.name}</div>
+                    <div className="text-theme-muted">{rec.phone}</div>
+                    <div className="mt-1 font-medium">Zone: {rec.zone}</div>
+                  </div>
+                </Popup>
+              </Marker>
+            )
+          ))}
+
+          {/* Admin Stats Overlay on Map (Heatmap markers) */}
           {isAdmin && Object.entries(ZONE_COORDS).map(([name, pos]) => (
             <div key={name}>
               {zoneStats[name] > 0 && (
@@ -199,7 +218,13 @@ export default function MapPage() {
                 {isAdmin && (
                   <div className="flex items-center gap-2 text-xs">
                     <div className="w-4 h-4 rounded bg-accent text-white text-[10px] flex items-center justify-center font-bold">12</div>
-                    <span>Recipient Count</span>
+                    <span>Recipient Heatmap</span>
+                  </div>
+                )}
+                {isAdmin && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <div className="w-4 h-4 rounded-full bg-white border border-accent flex items-center justify-center text-[10px]">👤</div>
+                    <span>Individual Recipient</span>
                   </div>
                 )}
              </div>
@@ -260,6 +285,18 @@ export default function MapPage() {
           justify-content: center;
           border: 2px solid white;
           box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .map-recipient-icon {
+          background: white;
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid var(--accent);
+          font-size: 10px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .custom-popup .leaflet-popup-content-wrapper {
           border-radius: 12px;
