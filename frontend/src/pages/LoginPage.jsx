@@ -176,6 +176,12 @@ export default function LoginPage() {
       const res = await authApi.login(loginPhone.trim(), loginPassword);
       localStorage.setItem('uacs_token', res.data.token);
       localStorage.setItem('uacs_user', JSON.stringify(res.data.user));
+      
+      const portalName = res.data.user.role === 'admin' ? 'Admin Portal' : 'User Alerts Portal';
+      toast.success(`Welcome to ${portalName}`, {
+        icon: res.data.user.role === 'admin' ? '🛡️' : '🔔'
+      });
+
       navigate('/dashboard');
     } catch (err) {
       setLoginError(err.response?.data?.error || 'Invalid mobile or password');
