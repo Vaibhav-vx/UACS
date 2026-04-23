@@ -49,6 +49,9 @@ CREATE TABLE users (
   password         TEXT NOT NULL,
   role             TEXT NOT NULL DEFAULT 'admin',
   department       TEXT,
+  zone             TEXT DEFAULT 'General',
+  lat              DECIMAL(10, 8),
+  lng              DECIMAL(11, 8),
   last_login       TIMESTAMPTZ,
   created_at       TIMESTAMPTZ DEFAULT NOW()
 );

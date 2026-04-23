@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import {
   User, Lock, Building2, Smartphone, Save, Loader2,
   AlertCircle, CheckCircle2, Shield, KeyRound,
-  Eye, EyeOff, LogOut, Globe, MapPin, Bell, Phone
+  Eye, EyeOff, LogOut, Globe, MapPin, Bell, Phone, Map
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { authApi } from '../api';
 import { useTheme } from '../ThemeContext';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useNavigate } from 'react-router-dom';
+import MapZonePicker from '../components/MapZonePicker';
 
 function Section({ title, subtitle, icon: Icon, children }) {
   return (
@@ -78,6 +79,9 @@ export default function ProfilePage() {
   // Preferences section
   const [lang, setLang] = useState('english');
   const [zone, setZone] = useState('General');
+  const [lat, setLat] = useState(null);
+  const [lng, setLng] = useState(null);
+  const [showMapPicker, setShowMapPicker] = useState(false);
   const [smsActive, setSmsActive] = useState(true);
   const [prefSaving, setPrefSaving] = useState(false);
   const [prefMsg, setPrefMsg] = useState({ type: '', text: '' });
@@ -101,6 +105,8 @@ export default function ProfilePage() {
     authApi.getPreferences().then(res => {
       setLang(res.data.language || 'english');
       setZone(res.data.zone || 'General');
+      setLat(res.data.lat);
+      setLng(res.data.lng);
       setSmsActive(res.data.active !== false);
     }).catch(console.error);
   }, []);
@@ -145,7 +151,7 @@ export default function ProfilePage() {
     setPrefMsg({ type: '', text: '' });
     setPrefSaving(true);
     try {
-      await authApi.updatePreferences({ language: lang, zone, active: smsActive });
+      await authApi.updatePreferences({ language: lang, zone, lat, lng, active: smsActive });
       setPrefMsg({ type: 'success', text: 'Preferences saved successfully' });
       // update local storage for dashboard usage
       localStorage.setItem('uacs_pref_zone', zone);
@@ -266,15 +272,41 @@ export default function ProfilePage() {
             </select>
           </Field>
           <Field label={t('alertZone') || 'Alert Zone'} icon={MapPin}>
-            <select className="input-field" value={zone} onChange={e => setZone(e.target.value)}>
-              <option value="General">All Zones (General)</option>
-              <option value="North District">North District</option>
-              <option value="South District">South District</option>
-              <option value="East District">East District</option>
-              <option value="West District">West District</option>
-              <option value="Central Zone">Central Zone</option>
-            </select>
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                className="input-field flex-1" 
+                value={zone} 
+                onChange={e => setZone(e.target.value)} 
+                placeholder={t('zonePlaceholder') || "e.g. Mumbai, Zone 4"}
+              />
+              <button 
+                type="button" 
+                onClick={() => setShowMapPicker(true)} 
+                title="Pick zone on map" 
+                className="btn-secondary px-3 shrink-0"
+              >
+                <Map style={{ width: 16, height: 16 }} />
+              </button>
+            </div>
+            
+            <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>
+              {t('zoneHelp') || 'Critical alerts will be filtered based on this zone.'}
+              {lat && <span> (📍 {lat.toFixed(4)}, {lng.toFixed(4)})</span>}
+            </p>
           </Field>
+
+          {showMapPicker && (
+            <MapZonePicker 
+              value={zone} 
+              onChange={(v, coords) => {
+                setZone(v);
+                setLat(coords?.lat);
+                setLng(coords?.lng);
+              }} 
+              onClose={() => setShowMapPicker(false)} 
+            />
+          )}
           <Field label={t('smsNotifications') || 'SMS Notifications'} icon={Smartphone}>
             <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', background: 'var(--bg-surface)', padding: '12px', borderRadius: '8px', border: '1px solid var(--border)' }}>
               <input type="checkbox" checked={smsActive} onChange={e => setSmsActive(e.target.checked)} style={{ width: 16, height: 16, accentColor: 'var(--accent)' }} />
