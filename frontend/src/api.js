@@ -52,6 +52,9 @@ export const authApi = {
   me:            ()                => api.get('/auth/me'),
   updateProfile: (data)            => api.put('/auth/profile', data),
   changePassword:(data)            => api.put('/auth/password', data),
+  getPreferences:()                => api.get('/auth/preferences'),
+  updatePreferences:(data)         => api.put('/auth/preferences', data),
+  setEmergencyContact:(data)       => api.post('/auth/emergency-contact', data),
 };
 
 // ─── Messages API ───

@@ -116,14 +116,29 @@ export default function DashboardPage() {
            </div>
         ) : (
           <div className="space-y-4">
-             {activeMessages.map((msg, i) => {
+             {activeMessages.filter(msg => {
+                const userZone = localStorage.getItem('uacs_pref_zone') || 'General';
+                if (userZone === 'General') return true; // General sees all
+                if (!msg.target_zone || msg.target_zone === 'All' || msg.target_zone === 'General') return true;
+                return msg.target_zone === userZone;
+             }).map((msg, i) => {
                 const borderColors = { critical: '#ef4444', high: '#f97316', normal: 'var(--accent)' };
+                const prefLang = localStorage.getItem('uacs_pref_lang') || 'english';
+                let displayContent = msg.master_content;
+                if (prefLang !== 'english' && msg.translations) {
+                  try {
+                    const transObj = typeof msg.translations === 'string' ? JSON.parse(msg.translations) : msg.translations;
+                    if (transObj[prefLang]) displayContent = transObj[prefLang];
+                  } catch (e) {}
+                }
+                
                 return (
                   <div key={msg.id} className="glass-card p-6 animate-slide-up rounded-xl" style={{ animationDelay:`${i*60}ms`, borderLeft: `4px solid ${borderColors[msg.urgency] || 'var(--accent)'}` }}>
                     <div className="flex items-center gap-3 mb-3"><AlertBanner urgency={msg.urgency} /><h3 className="font-semibold text-lg">{msg.title}</h3></div>
-                    <p className="text-theme-primary mb-4 whitespace-pre-wrap">{msg.master_content}</p>
+                    <p className="text-theme-primary mb-4 whitespace-pre-wrap">{displayContent}</p>
                     <div className="flex flex-wrap items-center gap-3 text-xs text-theme-muted">
                       <span className="font-medium text-theme-secondary px-2 py-1 rounded bg-theme-hover">Department: {msg.sent_by}</span>
+                      {msg.target_zone && <span className="font-medium text-theme-secondary px-2 py-1 rounded bg-theme-hover">Zone: {msg.target_zone}</span>}
                       <span>•</span>
                       <span>{new Date(msg.created_at).toLocaleString()}</span>
                     </div>

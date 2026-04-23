@@ -253,8 +253,98 @@ router.put('/password', async (req, res) => {
     await dbUpdate('users', decoded.id, { password: bcrypt.hashSync(newPassword, 10) });
     res.json({ success: true, message: 'Password changed successfully' });
   } catch (err) {
-    console.error('[UACS AUTH] Password change error:', err.message);
+    console.error('[UACS AUTH] Password error:', err.message);
     res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── GET /api/auth/preferences ─────────────────────────────
+router.get('/preferences', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) return res.status(401).json({ error: 'No token provided' });
+    const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
+    
+    // Preferences are stored in the recipients table matching the user's phone
+    const recipient = await dbGetOne('recipients', { phone: decoded.phone });
+    if (!recipient) return res.json({ language: 'english', zone: 'General', active: true });
+    
+    res.json({ language: recipient.language, zone: recipient.zone, active: recipient.active });
+  } catch (err) {
+    console.error('[UACS AUTH] Get preferences error:', err.message);
+    res.status(500).json({ error: 'Server error fetching preferences' });
+  }
+});
+
+// ─── PUT /api/auth/preferences ─────────────────────────────
+router.put('/preferences', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) return res.status(401).json({ error: 'No token provided' });
+    const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
+    
+    const { language, zone, active } = req.body;
+    
+    const recipient = await dbGetOne('recipients', { phone: decoded.phone });
+    if (!recipient) {
+      // Create if it doesn't exist
+      const user = await dbGetOne('users', { id: decoded.id });
+      await dbInsert('recipients', {
+        name: user.name,
+        phone: decoded.phone,
+        language: language || 'english',
+        zone: zone || 'General',
+        active: active !== undefined ? active : true
+      });
+    } else {
+      await dbUpdate('recipients', recipient.id, { 
+        language: language || recipient.language,
+        zone: zone || recipient.zone,
+        active: active !== undefined ? active : recipient.active
+      });
+    }
+    
+    res.json({ success: true });
+  } catch (err) {
+    console.error('[UACS AUTH] Update preferences error:', err.message);
+    res.status(500).json({ error: 'Server error updating preferences' });
+  }
+});
+
+// ─── POST /api/auth/emergency-contact ─────────────────────────────
+router.post('/emergency-contact', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) return res.status(401).json({ error: 'No token provided' });
+    const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
+    
+    let { phone, name } = req.body;
+    if (!phone) return res.status(400).json({ error: 'Emergency contact number is required' });
+    
+    const normalizedPhone = '+91' + phone.replace(/\D/g, '');
+    if (normalizedPhone.length < 13) return res.status(400).json({ error: 'Valid mobile number is required' });
+
+    // Check if recipient already exists
+    let existing = await dbGetOne('recipients', { phone: normalizedPhone });
+    if (existing) {
+      return res.json({ success: true, message: 'Contact is already registered in the system.' });
+    }
+
+    const user = await dbGetOne('users', { id: decoded.id });
+    
+    await dbInsert('recipients', {
+      name: `${user.name} (Emergency Contact)`,
+      phone: normalizedPhone,
+      zone: 'Emergency', // Special zone
+      language: 'english',
+      active: true
+    });
+    
+    console.log(`[UACS AUTH] Emergency contact ${normalizedPhone} added by ${user.name}`);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('[UACS AUTH] Add emergency contact error:', err.message);
+    res.status(500).json({ error: 'Server error adding emergency contact' });
   }
 });
 

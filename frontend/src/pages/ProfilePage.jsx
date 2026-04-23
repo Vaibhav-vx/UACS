@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   User, Lock, Building2, Smartphone, Save, Loader2,
   AlertCircle, CheckCircle2, Shield, KeyRound,
-  Eye, EyeOff, LogOut,
+  Eye, EyeOff, LogOut, Globe, MapPin, Bell, Phone
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { authApi } from '../api';
@@ -75,6 +75,18 @@ export default function ProfilePage() {
   const [pwdSaving, setPwdSaving] = useState(false);
   const [pwdMsg,   setPwdMsg]   = useState({ type: '', text: '' });
 
+  // Preferences section
+  const [lang, setLang] = useState('english');
+  const [zone, setZone] = useState('General');
+  const [smsActive, setSmsActive] = useState(true);
+  const [prefSaving, setPrefSaving] = useState(false);
+  const [prefMsg, setPrefMsg] = useState({ type: '', text: '' });
+
+  // Emergency Contact section
+  const [emPhone, setEmPhone] = useState('');
+  const [emSaving, setEmSaving] = useState(false);
+  const [emMsg, setEmMsg] = useState({ type: '', text: '' });
+
   useEffect(() => {
     try {
       const u = JSON.parse(localStorage.getItem('uacs_user') || '{}');
@@ -83,6 +95,13 @@ export default function ProfilePage() {
       setDept(u.department || '');
       setRole(u.role || 'admin');
     } catch {}
+
+    // Load preferences
+    authApi.getPreferences().then(res => {
+      setLang(res.data.language || 'english');
+      setZone(res.data.zone || 'General');
+      setSmsActive(res.data.active !== false);
+    }).catch(console.error);
   }, []);
 
   const saveProfile = async () => {
@@ -118,6 +137,39 @@ export default function ProfilePage() {
       setPwdMsg({ type: 'error', text: err.response?.data?.error || 'Failed to change password' });
     } finally {
       setPwdSaving(false);
+    }
+  };
+
+  const savePreferences = async () => {
+    setPrefMsg({ type: '', text: '' });
+    setPrefSaving(true);
+    try {
+      await authApi.updatePreferences({ language: lang, zone, active: smsActive });
+      setPrefMsg({ type: 'success', text: 'Preferences saved successfully' });
+      // update local storage for dashboard usage
+      localStorage.setItem('uacs_pref_zone', zone);
+      localStorage.setItem('uacs_pref_lang', lang);
+      toast.success('Preferences saved');
+    } catch (err) {
+      setPrefMsg({ type: 'error', text: err.response?.data?.error || 'Failed to update preferences' });
+    } finally {
+      setPrefSaving(false);
+    }
+  };
+
+  const saveEmergencyContact = async () => {
+    setEmMsg({ type: '', text: '' });
+    if (!emPhone.trim()) { setEmMsg({ type: 'error', text: 'Phone number is required' }); return; }
+    setEmSaving(true);
+    try {
+      const res = await authApi.setEmergencyContact({ phone: emPhone });
+      setEmMsg({ type: 'success', text: res.data.message || 'Emergency contact added successfully' });
+      setEmPhone('');
+      toast.success('Emergency contact added');
+    } catch (err) {
+      setEmMsg({ type: 'error', text: err.response?.data?.error || 'Failed to add contact' });
+    } finally {
+      setEmSaving(false);
     }
   };
 
@@ -195,6 +247,56 @@ export default function ProfilePage() {
           {pwdMsg.text && <InlineAlert type={pwdMsg.type} msg={pwdMsg.text} />}
           <button onClick={changePassword} disabled={pwdSaving} className="btn-primary" style={{ width: 'fit-content', gap: 8 }}>
             {pwdSaving ? <><Loader2 style={{ width: 15, height: 15 }} className="animate-spin" /> Changing...</> : <><Shield style={{ width: 15, height: 15 }} /> Change Password</>}
+          </button>
+        </div>
+      </Section>
+
+      {/* Preferences Section */}
+      <Section title="Alert Preferences" subtitle="Customize how you receive alerts" icon={Bell}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <Field label="Preferred Language" icon={Globe}>
+            <select className="input-field" value={lang} onChange={e => setLang(e.target.value)}>
+              <option value="english">English</option>
+              <option value="hindi">Hindi</option>
+              <option value="tamil">Tamil</option>
+              <option value="urdu">Urdu</option>
+              <option value="bengali">Bengali</option>
+              <option value="telugu">Telugu</option>
+            </select>
+          </Field>
+          <Field label="Alert Zone" icon={MapPin}>
+            <select className="input-field" value={zone} onChange={e => setZone(e.target.value)}>
+              <option value="General">All Zones (General)</option>
+              <option value="North District">North District</option>
+              <option value="South District">South District</option>
+              <option value="East District">East District</option>
+              <option value="West District">West District</option>
+              <option value="Central Zone">Central Zone</option>
+            </select>
+          </Field>
+          <Field label="SMS Notifications" icon={Smartphone}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', background: 'var(--bg-surface)', padding: '12px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+              <input type="checkbox" checked={smsActive} onChange={e => setSmsActive(e.target.checked)} style={{ width: 16, height: 16, accentColor: 'var(--accent)' }} />
+              <span style={{ fontSize: 13, fontWeight: 500 }}>Receive critical alerts via SMS</span>
+            </label>
+          </Field>
+          {prefMsg.text && <InlineAlert type={prefMsg.type} msg={prefMsg.text} />}
+          <button onClick={savePreferences} disabled={prefSaving} className="btn-primary" style={{ width: 'fit-content', gap: 8 }}>
+            {prefSaving ? <><Loader2 style={{ width: 15, height: 15 }} className="animate-spin" /> Saving...</> : <><Save style={{ width: 15, height: 15 }} /> Save Preferences</>}
+          </button>
+        </div>
+      </Section>
+
+      {/* Emergency Contact */}
+      <Section title="Emergency Contact" subtitle="Add a trusted contact to receive your critical alerts" icon={Phone}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <Field label="Contact Mobile Number" icon={Smartphone}>
+            <input className="input-field" value={emPhone} onChange={e => setEmPhone(e.target.value)} placeholder="e.g. 98765 43210" />
+            <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>They will automatically receive SMS broadcasts during critical emergencies.</p>
+          </Field>
+          {emMsg.text && <InlineAlert type={emMsg.type} msg={emMsg.text} />}
+          <button onClick={saveEmergencyContact} disabled={emSaving} className="btn-primary" style={{ width: 'fit-content', gap: 8 }}>
+            {emSaving ? <><Loader2 style={{ width: 15, height: 15 }} className="animate-spin" /> Adding...</> : <><Save style={{ width: 15, height: 15 }} /> Add Contact</>}
           </button>
         </div>
       </Section>

@@ -13,7 +13,11 @@
 ### 👥 Dual-Portal Architecture
 UACS features a strict separation of concerns through a role-based access control system:
 - **Admin Portal**: Exclusive access for the Master Admin. Features a full administrative dashboard, message composer, approval queues, recipient management, and detailed audit logs.
-- **User Portal (Public Feed)**: A streamlined, read-only interface for regular users to view the "Public Alerts Feed". Users can only see active emergency and broadcast messages, ensuring they stay informed without administrative clutter.
+- **Interactive User Portal (Public Feed)**: A streamlined, highly functional interface for regular users to view the "Public Alerts Feed". 
+  - **Zone Filtering**: Users can subscribe to a specific zone (e.g., North District) to automatically filter their feed.
+  - **Language Preferences**: The feed automatically translates alerts into the user's preferred language (Hindi, Tamil, Urdu, Bengali, Telugu).
+  - **SMS Subscriptions**: Users can toggle critical SMS alerts on or off directly from their profile.
+  - **Emergency Contacts**: Users can register a trusted contact who will automatically receive emergency SMS broadcasts.
 
 ### 📱 Mobile-First Authentication & Onboarding
 - **Instant Registration**: Users can create accounts directly using their mobile numbers (`XXXXX XXXXX` format) without cumbersome OTP delays.
