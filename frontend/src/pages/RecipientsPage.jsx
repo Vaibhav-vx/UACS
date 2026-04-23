@@ -2,22 +2,15 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   Users, UserPlus, Send, Trash2, Loader2, Phone, MapPin,
   Languages, Search, X, CheckCircle2, AlertCircle, RefreshCw,
-  ChevronDown, ToggleLeft, ToggleRight, Edit2, Save,
+  ChevronDown, ToggleLeft, ToggleRight, Edit2, Save, Map,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { recipientsApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import L from 'leaflet';
+import MapZonePicker from '../components/MapZonePicker';
 import 'leaflet/dist/leaflet.css';
 
-// Fix Leaflet icons
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-});
+
 
 const ZONE_PRESETS = {
   'North District': [19.21, 72.85],
@@ -56,6 +49,7 @@ function Stat({ label, value, color = 'var(--accent)', icon: Icon }) {
 function RecipientModal({ initial, onSave, onClose, saving }) {
   const { t } = useLanguage();
   const [form, setForm] = useState(initial || { name: '', phone: '', zone: '', language: 'en' });
+  const [showMapPicker, setShowMapPicker] = useState(false);
   const upd = (k, v) => setForm(p => ({ ...p, [k]: v }));
 
   return (
@@ -110,29 +104,42 @@ function RecipientModal({ initial, onSave, onClose, saving }) {
               <MapPin style={{ width: 13, height: 13, display: 'inline', marginRight: 4 }} />
               {t('zone') || 'Zone'}
             </label>
+            <div className="flex gap-2 mb-2">
+              <input 
+                type="text"
+                className="input-field flex-1"
+                placeholder={t('zonePlaceholder') || "e.g. Mumbai, Zone 4"}
+                value={form.zone}
+                onChange={e => upd('zone', e.target.value)}
+              />
+              <button 
+                type="button" 
+                onClick={() => setShowMapPicker(true)} 
+                title="Pick zone on map" 
+                className="btn-secondary px-3 shrink-0"
+              >
+                <Map style={{ width: 16, height: 16 }} />
+              </button>
+            </div>
+            
             <select 
-              className="input-field mb-2"
+              className="input-field mb-2 text-xs"
               value={form.zone}
               onChange={e => upd('zone', e.target.value)}
             >
-              <option value="">Select Zone...</option>
+              <option value="">{t('quickPresets') || 'Quick Presets...'}</option>
               {Object.keys(ZONE_PRESETS).map(z => <option key={z} value={z}>{z}</option>)}
               <option value="General">General / All</option>
             </select>
-            
-            {/* Small Map for Zone Visualization */}
-            <div className="h-32 rounded-xl overflow-hidden border border-theme-border">
-              <MapContainer 
-                center={ZONE_PRESETS[form.zone] || [19.07, 72.87]} 
-                zoom={10} 
-                style={{ height: '100%', width: '100%' }}
-                zoomControl={false}
-              >
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                {ZONE_PRESETS[form.zone] && <Marker position={ZONE_PRESETS[form.zone]} />}
-              </MapContainer>
-            </div>
           </div>
+
+          {showMapPicker && (
+            <MapZonePicker 
+              value={form.zone} 
+              onChange={v => upd('zone', v)} 
+              onClose={() => setShowMapPicker(false)} 
+            />
+          )}
 
           {/* Language */}
           <div>
