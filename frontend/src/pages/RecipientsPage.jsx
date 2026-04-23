@@ -205,8 +205,10 @@ export default function RecipientsPage() {
     try {
       const r = await recipientsApi.getAll();
       setRecipients(r.data);
-    } catch {
-      toast.error(t('failedFetch') || 'Failed to load recipients');
+    } catch (err) {
+      console.error('[RECIPIENTS] Fetch error:', err);
+      const msg = err.response?.data?.error || err.message || 'Connection failed';
+      toast.error(`${t('failedFetch') || 'Failed to load recipients'}: ${msg}`);
     } finally {
       setLoading(false);
     }

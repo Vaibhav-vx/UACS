@@ -80,6 +80,17 @@ CREATE TABLE IF NOT EXISTS safety_reports (
   created_at       TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- ── TABLE: safety_reports ───────────────────────────────
+CREATE TABLE safety_reports (
+  id               SERIAL PRIMARY KEY,
+  message_id       INTEGER REFERENCES messages(id),
+  user_id          INTEGER REFERENCES users(id),
+  user_name        TEXT,
+  zone             TEXT,
+  status           TEXT NOT NULL, -- 'safe', 'assistance'
+  created_at       TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ── Indexes ──────────────────────────────────────────────
 CREATE INDEX idx_messages_status     ON messages(status);
 CREATE INDEX idx_messages_expires_at ON messages(expires_at);
@@ -96,6 +107,7 @@ ALTER TABLE messages    DISABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_log   DISABLE ROW LEVEL SECURITY;
 ALTER TABLE users       DISABLE ROW LEVEL SECURITY;
 ALTER TABLE recipients  DISABLE ROW LEVEL SECURITY;
+ALTER TABLE safety_reports DISABLE ROW LEVEL SECURITY;
 
 -- ── Seed: Admin user (password = Admin@123) ───────────────
 INSERT INTO users (name, email, password, role, department)
@@ -115,4 +127,5 @@ VALUES ('Vaibhav Dubey', '+918169825915', 'Mumbai', 'en', TRUE);
 SELECT 'users' as tbl, COUNT(*) as rows FROM users
 UNION ALL SELECT 'recipients', COUNT(*) FROM recipients
 UNION ALL SELECT 'messages', COUNT(*) FROM messages
-UNION ALL SELECT 'audit_log', COUNT(*) FROM audit_log;
+UNION ALL SELECT 'audit_log', COUNT(*) FROM audit_log
+UNION ALL SELECT 'safety_reports', COUNT(*) FROM safety_reports;

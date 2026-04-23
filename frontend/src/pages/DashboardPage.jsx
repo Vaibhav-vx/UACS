@@ -52,7 +52,6 @@ export default function DashboardPage() {
         setSafetyStats(safStats.data);
         setRecentReports(safRecent.data);
       }
-      }
     } catch (err) {
       console.error('[DASHBOARD] Fetch error:', err);
       const msg = err.response?.data?.error || err.message || 'Connection failed';
