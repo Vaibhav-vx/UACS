@@ -126,21 +126,6 @@ export default function LoginPage() {
   const [regOtp, setRegOtp]               = useState('');
   const [otpSent, setOtpSent]             = useState(false);
   const [otpLoading, setOtpLoading]       = useState(false);
-
-  // Phone Formatter (XXXXX XXXXX)
-  const formatPhoneNumber = (val) => {
-    const digits = val.replace(/\D/g, '').slice(0, 10);
-    if (digits.length > 5) {
-      return `${digits.slice(0, 5)} ${digits.slice(5)}`;
-    }
-    return digits;
-  };
-
-  const handlePhoneInput = (val, setter) => {
-    setter(formatPhoneNumber(val));
-    setRegError('');
-    setLoginError('');
-  };
  
   // Password Strength Check
   const getPasswordCriteria = (pwd) => ({
@@ -165,6 +150,16 @@ export default function LoginPage() {
     if (searchParams.get('expired') === '1') setLoginError(t('sessionExpired') || 'Your session has expired. Please log in again.');
   }, [navigate, searchParams, t]);
 
+  // Phone auto-formatter (XXXXX XXXXX)
+  const formatPhoneNumber = (value) => {
+    const cleaned = ('' + value).replace(/\D/g, '').substring(0, 10);
+    const match = cleaned.match(/^(\d{1,5})(\d{0,5})$/);
+    if (match) {
+      return match[2] ? `${match[1]} ${match[2]}` : match[1];
+    }
+    return cleaned;
+  };
+
   // ── Login handler ─────────────────────────────────────
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -176,12 +171,6 @@ export default function LoginPage() {
       const res = await authApi.login(loginPhone.trim(), loginPassword);
       localStorage.setItem('uacs_token', res.data.token);
       localStorage.setItem('uacs_user', JSON.stringify(res.data.user));
-      
-      const portalName = res.data.user.role === 'admin' ? 'Admin Portal' : 'User Alerts Portal';
-      toast.success(`Welcome to ${portalName}`, {
-        icon: res.data.user.role === 'admin' ? '🛡️' : '🔔'
-      });
-
       navigate('/dashboard');
     } catch (err) {
       setLoginError(err.response?.data?.error || 'Invalid mobile or password');
@@ -234,18 +223,19 @@ export default function LoginPage() {
     }
   };
 
-  const handleDemoAccess = () => {
-    const demoUser = {
-      id: 'demo-999',
-      name: 'Demo Visitor',
-      phone: '00000 00000',
-      role: 'user',
-      department: 'Guest'
-    };
-    localStorage.setItem('uacs_token', 'demo-token-123');
-    localStorage.setItem('uacs_user', JSON.stringify(demoUser));
-    toast.success('Welcome to Demo Mode!', { icon: '✨' });
-    navigate('/dashboard');
+  // ── Demo Login handler ────────────────────────────────
+  const handleDemoLogin = async () => {
+    setRegError('');
+    setRegLoading(true);
+    try {
+      const res = await authApi.demo();
+      localStorage.setItem('uacs_token', res.data.token);
+      localStorage.setItem('uacs_user', JSON.stringify(res.data.user));
+      navigate('/dashboard');
+    } catch (err) {
+      setRegError(err.response?.data?.error || 'Failed to login as Demo User');
+      setRegLoading(false);
+    }
   };
 
   const EyeBtn = ({ show, toggle }) => (
@@ -378,8 +368,8 @@ export default function LoginPage() {
                 icon={Smartphone}
                 type="tel"
                 value={loginPhone}
-                onChange={e => { setLoginPhone(e.target.value); setLoginError(''); }}
-                placeholder="+91 99999 99999"
+                onChange={e => { setLoginPhone(formatPhoneNumber(e.target.value)); setLoginError(''); }}
+                placeholder="81698 25915"
                 autoFocus
                 autoComplete="tel"
               />
@@ -468,8 +458,9 @@ export default function LoginPage() {
                     id="reg-phone"
                     label="Mobile Number"
                     icon={Smartphone}
+                    type="tel"
                     value={regPhone}
-                    onChange={e => handlePhoneInput(e.target.value, setRegPhone)}
+                    onChange={e => { setRegPhone(formatPhoneNumber(e.target.value)); setRegError(''); }}
                     placeholder="81698 25915"
                     autoComplete="tel"
                   />
@@ -562,6 +553,18 @@ export default function LoginPage() {
                         otpSent ? <><CheckCircle2 style={{ width: 20, height: 20 }} /> Verify & Register</> : <><Smartphone style={{ width: 20, height: 20 }} /> Send Verification Code</>
                       )}
                     </button>
+                    
+                    {!otpSent && (
+                      <button
+                        type="button"
+                        onClick={handleDemoLogin}
+                        disabled={regLoading || otpLoading}
+                        className="btn-secondary"
+                        style={{ width: '100%', height: 48, borderRadius: 12, fontSize: 15, fontWeight: 700, gap: 10, marginTop: 12 }}
+                      >
+                        <UserPlus style={{ width: 20, height: 20 }} /> Try Demo Profile
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -579,18 +582,6 @@ export default function LoginPage() {
             )}
           </form>
         )}
-
-        <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid var(--border)', textAlign: 'center' }}>
-          <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 12 }}>Want to explore first?</p>
-          <button
-            onClick={handleDemoAccess}
-            className="btn-secondary"
-            style={{ width: '100%', height: 44, borderRadius: 10, fontSize: 13, gap: 8, justifyContent: 'center' }}
-          >
-            <Shield style={{ width: 16, height: 16, color: 'var(--accent)' }} /> 
-            Try Demo Mode
-          </button>
-        </div>
 
         <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--text-dim)', marginTop: 24 }}>
           🇮🇳 Government of India · Unified Authority Communication System

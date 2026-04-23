@@ -15,29 +15,7 @@ const JWT_EXPIRES_IN = '24h';
 import twilio from 'twilio';
 const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
-/**
- * Normalizes number to E.164 for Twilio (+91XXXXXXXXXX)
- */
-const normalizeForTwilio = (phone) => {
-  const digits = phone.replace(/\D/g, '');
-  if (digits.length === 10) return `+91${digits}`;
-  if (digits.startsWith('91') && digits.length === 12) return `+${digits}`;
-  return digits.startsWith('+') ? digits : `+${digits}`;
-};
-
-/**
- * Normalizes number for consistent DB storage (XXXXX XXXXX)
- */
-const normalizeForDB = (phone) => {
-  const digits = phone.replace(/\D/g, '');
-  const last10 = digits.slice(-10);
-  if (last10.length === 10) {
-    return `${last10.slice(0, 5)} ${last10.slice(5)}`;
-  }
-  return phone;
-};
-
-// OTP Cache
+// OTP Cache (In-Memory for single-server stability)
 const OTP_STORE = new Map();
 const OTP_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
 
@@ -48,8 +26,7 @@ router.post('/login', async (req, res) => {
     if (!phone || !password)
       return res.status(400).json({ error: 'Mobile number and password are required' });
 
-    const dbPhone = normalizeForDB(phone);
-    const user = await dbGetOne('users', { email: dbPhone });
+    const user = await dbGetOne('users', { email: phone.trim() });
     if (!user) return res.status(401).json({ error: 'Invalid mobile or password' });
 
     const validPassword = bcrypt.compareSync(password, user.password);
@@ -82,30 +59,67 @@ router.post('/logout', (req, res) => {
   res.json({ success: true, message: 'Logged out successfully' });
 });
 
+// ─── POST /api/auth/demo ───────────────────────────────
+router.post('/demo', async (req, res) => {
+  try {
+    const demoEmail = '00000 00000'; // We use email column for phone
+    let demoUser = await dbGetOne('users', { email: demoEmail });
+
+    if (!demoUser) {
+      // Create demo user if it doesn't exist
+      const hash = bcrypt.hashSync('demo1234', 10);
+      demoUser = await dbInsert('users', {
+        name: 'Demo User',
+        email: demoEmail,
+        password: hash,
+        role: 'user',
+        department: 'Demonstration'
+      });
+      console.log('[UACS AUTH] Created new Demo User');
+    }
+
+    const token = jwt.sign(
+      { id: demoUser.id, phone: demoUser.email, role: demoUser.role },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+
+    console.log(`[UACS AUTH] Demo User logged in`);
+
+    res.json({
+      token,
+      user: { id: demoUser.id, name: demoUser.name, phone: demoUser.email, role: demoUser.role, department: demoUser.department },
+    });
+  } catch (err) {
+    console.error('[UACS AUTH] Demo login error:', err.message);
+    res.status(500).json({ error: 'Server error during demo login' });
+  }
+});
+
 // ─── POST /api/auth/otp/send ─────────────────────────────
 router.post('/otp/send', async (req, res) => {
   try {
     const { phone } = req.body;
     if (!phone) return res.status(400).json({ error: 'Mobile number is required' });
 
-    const normalized = normalizeForTwilio(phone);
-    const dbPhone = normalizeForDB(phone);
-
     // Generate 6-digit code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     const expiry = Date.now() + OTP_EXPIRY_MS;
 
-    // Save to cache (Keyed by the consistent DB format)
-    OTP_STORE.set(dbPhone, { code, expiry });
+    // Save to cache
+    OTP_STORE.set(phone, { code, expiry });
+
+    // Format phone for Twilio (+91 followed by digits only)
+    const twilioPhone = '+91' + phone.replace(/\D/g, '');
 
     // Send via Twilio
     await twilioClient.messages.create({
-      body: `Your UACS verification code is: ${code}. Valid for 5 minutes.`,
+      body: `Your UACS registration code is: ${code}. Valid for 5 minutes.`,
       from: process.env.TWILIO_PHONE_NUMBER,
-      to: normalized,
+      to: twilioPhone,
     });
 
-    console.log(`[UACS OTP] Code ${code} sent to ${normalized} (DB: ${dbPhone})`);
+    console.log(`[UACS OTP] Code ${code} sent to ${phone}`);
     res.json({ success: true, message: 'Verification code sent' });
   } catch (err) {
     console.error('[UACS OTP] Send error:', err.message);
@@ -117,19 +131,18 @@ router.post('/otp/send', async (req, res) => {
 router.post('/register', async (req, res) => {
   try {
     const { name, phone, password, department, otp } = req.body;
+
     if (!name?.trim() || !phone?.trim() || !password || !otp)
       return res.status(400).json({ error: 'All fields including OTP are required' });
 
-    const dbPhone = normalizeForDB(phone);
-
     // Verify OTP
-    const cached = OTP_STORE.get(dbPhone);
+    const cached = OTP_STORE.get(phone);
     if (!cached || cached.code !== otp || Date.now() > cached.expiry) {
       return res.status(400).json({ error: 'Invalid or expired verification code' });
     }
 
     // OTP Correct -> Clear from cache
-    OTP_STORE.delete(dbPhone);
+    OTP_STORE.delete(phone);
 
     if (phone.trim().length < 10)
       return res.status(400).json({ error: 'Valid mobile number is required' });
@@ -138,10 +151,8 @@ router.post('/register', async (req, res) => {
     if (!pwdRegex.test(password))
       return res.status(400).json({ error: 'Password must be 8+ chars and include uppercase, lowercase, number, and special character' });
 
-    const dbPhone = normalizeForDB(phone);
-    
     // Check phone not already taken (using email column)
-    const existing = await dbGetOne('users', { email: dbPhone });
+    const existing = await dbGetOne('users', { email: phone.trim() });
     if (existing)
       return res.status(409).json({ error: 'An account with this mobile number already exists' });
 
@@ -149,7 +160,7 @@ router.post('/register', async (req, res) => {
     const hash = bcrypt.hashSync(password, 10);
     const newUser = await dbInsert('users', {
       name:       name.trim(),
-      email:      dbPhone, // Store phone in email column
+      email:      phone.trim(), // Use email column to store phone
       password:   hash,
       role:       'user', // FORCE USER ROLE - NO EXCEPTIONS
       department: department?.trim() || null,

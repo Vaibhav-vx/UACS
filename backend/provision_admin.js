@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
-const MASTER_PHONE = '81698 25915';
+const MASTER_PHONE = '8169825915';
 const MASTER_PASS  = 'vaibhav-vx';
 
 async function run() {

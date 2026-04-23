@@ -94,7 +94,6 @@ function LanguageSwitcher() {
 function AppLayout() {
   const [user, setUser]               = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [loading, setLoading]         = useState(true);
   const navigate                      = useNavigate();
   const { theme, toggleTheme }        = useTheme();
   const { t }                         = useLanguage();
@@ -103,15 +102,8 @@ function AppLayout() {
     const token  = localStorage.getItem('uacs_token');
     const stored = localStorage.getItem('uacs_user');
     if (!token || !stored) { navigate('/login'); return; }
-    try { 
-      setUser(JSON.parse(stored));
-      setLoading(false);
-    }
-    catch { 
-      localStorage.removeItem('uacs_token'); 
-      localStorage.removeItem('uacs_user'); 
-      navigate('/login'); 
-    }
+    try { setUser(JSON.parse(stored)); }
+    catch { localStorage.removeItem('uacs_token'); localStorage.removeItem('uacs_user'); navigate('/login'); }
   }, [navigate]);
 
   const handleLogout = () => {
@@ -121,8 +113,7 @@ function AppLayout() {
     navigate('/login');
   };
 
-  if (loading) return null;
-  const isAdmin = user?.role === 'admin';
+  if (!user) return null;
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -238,7 +229,7 @@ function AppLayout() {
 
           {/* Nav links */}
           <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto' }}>
-            {NAV_ITEMS.filter(item => item.roles.includes(user?.role)).map(item => (
+            {NAV_ITEMS.filter(item => item.roles.includes(user?.role || 'admin')).map(item => (
               <NavLink
                 key={item.path}
                 to={item.path}
@@ -327,12 +318,12 @@ function AppLayout() {
           <div style={{ padding: '24px 20px', maxWidth: '1280px', margin: '0 auto' }}>
             <Routes>
               <Route path="/dashboard"    element={<DashboardPage />} />
-              <Route path="/templates"    element={isAdmin ? <TemplatesPage /> : <Navigate to="/dashboard" replace />} />
-              <Route path="/compose"      element={isAdmin ? <ComposerPage /> : <Navigate to="/dashboard" replace />} />
-              <Route path="/approval"     element={isAdmin ? <ApprovalPage /> : <Navigate to="/dashboard" replace />} />
-              <Route path="/approval/:id" element={isAdmin ? <ApprovalPage /> : <Navigate to="/dashboard" replace />} />
-              <Route path="/recipients"   element={isAdmin ? <RecipientsPage /> : <Navigate to="/dashboard" replace />} />
-              <Route path="/audit"        element={isAdmin ? <AuditLogPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/templates"    element={user?.role === 'admin' ? <TemplatesPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/compose"      element={user?.role === 'admin' ? <ComposerPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/approval"     element={user?.role === 'admin' ? <ApprovalPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/approval/:id" element={user?.role === 'admin' ? <ApprovalPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/recipients"   element={user?.role === 'admin' ? <RecipientsPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/audit"        element={user?.role === 'admin' ? <AuditLogPage /> : <Navigate to="/dashboard" replace />} />
               <Route path="/profile"      element={<ProfilePage />} />
               <Route path="*"             element={<Navigate to="/dashboard" replace />} />
             </Routes>
