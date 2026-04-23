@@ -70,6 +70,9 @@ export const messagesApi = {
   extend:   (id, expires_at) => api.put(`/messages/${id}/extend`, { expires_at }),
   delete:   (id)     => api.delete(`/messages/${id}`),
   emergency: (data)  => api.post('/messages/emergency', data),
+  submitSafety: (id, status) => api.post(`/messages/${id}/safety`, { status }),
+  getSafetyStats: () => api.get('/messages/safety/stats'),
+  getRecentSafety: () => api.get('/messages/safety/recent'),
 };
 
 // ─── Translation API ───

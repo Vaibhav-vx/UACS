@@ -366,4 +366,58 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// ─── POST /api/messages/:id/safety ─────────────────────
+router.post('/:id/safety', async (req, res) => {
+  try {
+    const { status } = req.body;
+    const messageId = req.params.id;
+    const userId = req.user?.id;
+    const userName = req.user?.name || 'Anonymous';
+    const zone = req.user?.zone || 'Unknown';
+
+    if (!['safe', 'assistance'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid status' });
+    }
+
+    const report = await dbInsert('safety_reports', {
+      message_id: messageId,
+      user_id: userId,
+      user_name: userName,
+      zone: zone,
+      status: status,
+    });
+
+    res.json(report);
+  } catch (err) {
+    console.error('[UACS SAFETY] POST error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── GET /api/messages/safety/stats ────────────────────
+router.get('/safety/stats', async (req, res) => {
+  try {
+    const reports = await dbSelect('safety_reports', {}, { limit: 5000 });
+    const stats = {
+      safe: reports.filter(r => r.status === 'safe').length,
+      assistance: reports.filter(r => r.status === 'assistance').length,
+    };
+    res.json(stats);
+  } catch (err) {
+    console.error('[UACS SAFETY] Stats error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── GET /api/messages/safety/recent ───────────────────
+router.get('/safety/recent', async (req, res) => {
+  try {
+    const reports = await dbSelect('safety_reports', {}, { orderBy: 'created_at', ascending: false, limit: 10 });
+    res.json(reports);
+  } catch (err) {
+    console.error('[UACS SAFETY] Recent error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

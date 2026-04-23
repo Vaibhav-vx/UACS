@@ -1,8 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Activity, Clock, AlertTriangle, CheckCircle, Send, Timer, RefreshCw, Eye, RotateCcw, Zap, TrendingUp, X, PenSquare, MapPin, Globe, Shield, Info } from 'lucide-react';
+import { 
+  Activity, Clock, AlertTriangle, CheckCircle, Send, Timer, RefreshCw, Eye, RotateCcw, 
+  Zap, TrendingUp, X, PenSquare, MapPin, Globe, Shield, Info, Activity as SafetyIcon 
+} from 'lucide-react';
 import toast from 'react-hot-toast';
-import { messagesApi } from '../api';
+import { messagesApi, authApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
 import ExpiryTimer from '../components/ExpiryTimer';
 import ChannelBadge from '../components/ChannelBadge';
@@ -17,6 +20,8 @@ export default function DashboardPage() {
   const [loading, setLoading]                  = useState(true);
   const [actionLoading, setActionLoading]      = useState({});
   const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState(false);
+  const [safetyStats, setSafetyStats] = useState({ safe: 0, assistance: 0 });
+  const [recentReports, setRecentReports] = useState([]);
   const [emergencyText, setEmergencyText] = useState('');
   const [emergencyZone, setEmergencyZone] = useState('');
   const [emergencyLoading, setEmergencyLoading] = useState(false);
@@ -38,12 +43,21 @@ export default function DashboardPage() {
       setExpiredMessages(e.data);
       setDraftMessages(d.data);
       setStats(s.data);
+
+      if (isAdmin) {
+        const [safStats, safRecent] = await Promise.all([
+          messagesApi.getSafetyStats(),
+          messagesApi.getRecentSafety(),
+        ]);
+        setSafetyStats(safStats.data);
+        setRecentReports(safRecent.data);
+      }
     } catch {
       toast.error(t('failedFetch') || 'Failed to load data — is the backend running?');
     } finally {
       setLoading(false);
     }
-  }, [t]);
+  }, [t, isAdmin]);
 
   useEffect(() => { fetchData(); const iv = setInterval(fetchData, 30000); return () => clearInterval(iv); }, [fetchData]);
 
@@ -182,18 +196,28 @@ export default function DashboardPage() {
                             </h4>
                             <div className="flex flex-col sm:flex-row gap-3">
                               <button 
-                                onClick={() => {
-                                  toast.success("Glad to hear you're safe!");
-                                  // In real app, call messagesApi.submitSafety(msg.id, 'safe')
+                                onClick={async () => {
+                                  try {
+                                    await messagesApi.submitSafety(msg.id, 'safe');
+                                    toast.success("Glad to hear you're safe!");
+                                    fetchData();
+                                  } catch (e) {
+                                    toast.error("Failed to submit status");
+                                  }
                                 }}
                                 className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-600/20"
                               >
                                 <CheckCircle className="w-5 h-5" /> {t('iAmSafe') || 'YES, I AM SAFE'}
                               </button>
                               <button 
-                                onClick={() => {
-                                  toast.error("Assistance request sent to authorities");
-                                  // In real app, call messagesApi.submitSafety(msg.id, 'assistance')
+                                onClick={async () => {
+                                  try {
+                                    await messagesApi.submitSafety(msg.id, 'assistance');
+                                    toast.error("Assistance request sent to authorities");
+                                    fetchData();
+                                  } catch (e) {
+                                    toast.error("Failed to submit SOS");
+                                  }
                                 }}
                                 className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-red-600/20"
                               >
@@ -260,6 +284,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Safety Analytics Section */}
+      {isAdmin && (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="glass-card p-6 rounded-2xl border-0 shadow-lg relative overflow-hidden">
           <div style={{ position: 'absolute', top: 0, right: 0, width: '100px', height: '100px', background: 'radial-gradient(circle, var(--accent-bg) 0%, transparent 70%)', opacity: 0.3 }} />
@@ -268,11 +293,11 @@ export default function DashboardPage() {
           </h2>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
-              <div className="text-2xl font-black text-green-500">842</div>
+              <div className="text-2xl font-black text-green-500">{safetyStats.safe}</div>
               <div className="text-[10px] font-bold uppercase tracking-wider text-green-600/70">{t('markedSafe') || 'Marked Safe'}</div>
             </div>
             <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20">
-              <div className="text-2xl font-black text-red-500">12</div>
+              <div className="text-2xl font-black text-red-500">{safetyStats.assistance}</div>
               <div className="text-[10px] font-bold uppercase tracking-wider text-red-600/70">{t('needAssistance') || 'Need Assistance'}</div>
             </div>
           </div>
@@ -283,24 +308,26 @@ export default function DashboardPage() {
 
         <div className="glass-card p-6 rounded-2xl border-0 shadow-lg">
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-accent" /> {t('recentSafetyReports') || 'Recent Safety Reports'}
+            <SafetyIcon className="w-5 h-5 text-accent" /> {t('recentSafetyReports') || 'Recent Safety Reports'}
           </h2>
           <div className="space-y-3">
-             <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-theme-hover">
-               <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500" /> <span>John D. (Zone 4)</span></div>
-               <span className="text-theme-dim">2 mins ago</span>
-             </div>
-             <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-theme-hover">
-               <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-red-500" /> <span className="font-bold">SOS: Priya S. (Zone 2)</span></div>
-               <span className="text-theme-dim">5 mins ago</span>
-             </div>
-             <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-theme-hover">
-               <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500" /> <span>Rahul K. (Zone 4)</span></div>
-               <span className="text-theme-dim">8 mins ago</span>
-             </div>
+             {recentReports.length === 0 ? (
+               <div className="text-center py-8 text-theme-muted text-sm">No recent safety reports</div>
+             ) : recentReports.map((r, idx) => (
+               <div key={r.id || idx} className="flex items-center justify-between text-xs p-2 rounded-lg bg-theme-hover">
+                 <div className="flex items-center gap-2">
+                   <div className={`w-2 h-2 rounded-full ${r.status === 'safe' ? 'bg-green-500' : 'bg-red-500'}`} /> 
+                   <span className={r.status === 'assistance' ? 'font-bold' : ''}>
+                     {r.status === 'assistance' ? 'SOS: ' : ''}{r.user_name} ({r.zone || 'Unknown'})
+                   </span>
+                 </div>
+                 <span className="text-theme-dim">{new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+               </div>
+             ))}
           </div>
         </div>
       </div>
+      )}
       <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
         {[
           { key: 'active',  icon: Zap,      label: `${t('activeAlerts') || 'Active'} (${activeMessages.length})`, roles: ['admin', 'user'] },
