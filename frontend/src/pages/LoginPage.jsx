@@ -126,6 +126,21 @@ export default function LoginPage() {
   const [regOtp, setRegOtp]               = useState('');
   const [otpSent, setOtpSent]             = useState(false);
   const [otpLoading, setOtpLoading]       = useState(false);
+
+  // Phone Formatter (XXXXX XXXXX)
+  const formatPhoneNumber = (val) => {
+    const digits = val.replace(/\D/g, '').slice(0, 10);
+    if (digits.length > 5) {
+      return `${digits.slice(0, 5)} ${digits.slice(5)}`;
+    }
+    return digits;
+  };
+
+  const handlePhoneInput = (val, setter) => {
+    setter(formatPhoneNumber(val));
+    setRegError('');
+    setLoginError('');
+  };
  
   // Password Strength Check
   const getPasswordCriteria = (pwd) => ({
@@ -433,10 +448,9 @@ export default function LoginPage() {
                     id="reg-phone"
                     label="Mobile Number"
                     icon={Smartphone}
-                    type="tel"
                     value={regPhone}
-                    onChange={e => { setRegPhone(e.target.value); setRegError(''); }}
-                    placeholder="+91 99999 99999"
+                    onChange={e => handlePhoneInput(e.target.value, setRegPhone)}
+                    placeholder="81698 25915"
                     autoComplete="tel"
                   />
                   <Field
