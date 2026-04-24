@@ -4,7 +4,14 @@ import toast from 'react-hot-toast';
 import { auditApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
 
-const ACTION_COLORS = { created: { bg:'rgba(59,130,246,0.15)', color:'#3b82f6' }, approved: { bg:'rgba(34,197,94,0.15)', color:'#22c55e' }, dispatched: { bg:'rgba(168,85,247,0.15)', color:'#a855f7' }, expired: { bg:'rgba(239,68,68,0.15)', color:'#ef4444' }, edited: { bg:'rgba(234,179,8,0.15)', color:'#eab308' } };
+const ACTION_COLORS = { 
+  created: { bg:'rgba(59,130,246,0.15)', color:'#3b82f6' }, 
+  approved: { bg:'rgba(34,197,94,0.15)', color:'#22c55e' }, 
+  dispatched: { bg:'rgba(168,85,247,0.15)', color:'#a855f7' }, 
+  expired: { bg:'rgba(239,68,68,0.15)', color:'#ef4444' }, 
+  edited: { bg:'rgba(234,179,8,0.15)', color:'#eab308' },
+  rejected: { bg:'rgba(239,68,68,0.15)', color:'#ef4444' }
+};
 
 export default function AuditLogPage() {
   const { t } = useLanguage();
@@ -48,7 +55,7 @@ export default function AuditLogPage() {
       </div>
       {showFilters&&(<div className="glass-card p-5 animate-slide-up"><div className="flex items-center justify-between mb-4"><h3 className="text-sm font-medium text-theme-secondary">{t('filterAudit')}</h3>{hasActive&&<button onClick={clearFilters} className="text-xs text-theme-muted flex items-center gap-1" style={{background:'none',border:'none',cursor:'pointer'}}><X className="w-3 h-3"/> {t('clearAll')}</button>}</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-          <div><label className="text-xs text-theme-muted mb-1 block">{t('action')}</label><div className="relative"><select value={filters.action} onChange={e=>setFilters(p=>({...p,action:e.target.value}))} className="input-field text-sm appearance-none pr-8"><option value="">{t('allActions')}</option><option value="created">{t('created')}</option><option value="approved">{t('approved')}</option><option value="dispatched">{t('dispatched')}</option><option value="expired">{t('expired')}</option><option value="edited">{t('edited')}</option></select><ChevronDown className="w-3.5 h-3.5 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-theme-muted"/></div></div>
+          <div><label className="text-xs text-theme-muted mb-1 block">{t('action')}</label><div className="relative"><select value={filters.action} onChange={e=>setFilters(p=>({...p,action:e.target.value}))} className="input-field text-sm appearance-none pr-8"><option value="">{t('allActions')}</option><option value="created">{t('created')}</option><option value="approved">{t('approved')}</option><option value="dispatched">{t('dispatched')}</option><option value="expired">{t('expired')}</option><option value="edited">{t('edited')}</option><option value="rejected">{t('rejected')||'Rejected'}</option></select><ChevronDown className="w-3.5 h-3.5 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-theme-muted"/></div></div>
           <div><label className="text-xs text-theme-muted mb-1 block">{t('channel')}</label><div className="relative"><select value={filters.channel} onChange={e=>setFilters(p=>({...p,channel:e.target.value}))} className="input-field text-sm appearance-none pr-8"><option value="">{t('allChannels')}</option><option value="sms">{t('sms')}</option><option value="twitter">{t('twitter')}</option><option value="radio">{t('radio')}</option><option value="tv">{t('tv')}</option><option value="website">{t('website')}</option></select><ChevronDown className="w-3.5 h-3.5 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-theme-muted"/></div></div>
           <div><label className="text-xs text-theme-muted mb-1 block">{t('performedBy')}</label><input type="text" value={filters.performed_by} onChange={e=>setFilters(p=>({...p,performed_by:e.target.value}))} placeholder={t('searchPlaceholder')} className="input-field text-sm"/></div>
           <div><label className="text-xs text-theme-muted mb-1 block">{t('from')}</label><input type="date" value={filters.date_from} onChange={e=>setFilters(p=>({...p,date_from:e.target.value}))} className="input-field text-sm"/></div>

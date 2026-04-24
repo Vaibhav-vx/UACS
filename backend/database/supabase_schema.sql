@@ -26,9 +26,10 @@ CREATE TABLE IF NOT EXISTS messages (
 CREATE TABLE IF NOT EXISTS audit_log (
   id               SERIAL PRIMARY KEY,
   message_id       INTEGER REFERENCES messages(id) ON DELETE CASCADE,
-  action           TEXT CHECK(action IN ('created', 'approved', 'dispatched', 'expired', 'edited')),
+  action           TEXT CHECK(action IN ('created', 'approved', 'dispatched', 'expired', 'edited', 'rejected')),
   performed_by     TEXT,
-  details          TEXT,
+  channel          TEXT,
+  notes            TEXT,
   timestamp        TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -91,6 +92,17 @@ BEGIN
   END IF;
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='recipients' AND column_name='lng') THEN
     ALTER TABLE recipients ADD COLUMN lng DECIMAL(11, 8);
+  END IF;
+
+  -- Audit Log table columns
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='audit_log' AND column_name='channel') THEN
+    ALTER TABLE audit_log ADD COLUMN channel TEXT;
+  END IF;
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='audit_log' AND column_name='details') THEN
+    ALTER TABLE audit_log RENAME COLUMN details TO notes;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='audit_log' AND column_name='notes') THEN
+    ALTER TABLE audit_log ADD COLUMN notes TEXT;
   END IF;
 END $$;
 

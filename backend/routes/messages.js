@@ -104,7 +104,7 @@ router.post('/', async (req, res) => {
       message_id:   newMsg.id,
       action:       'created',
       performed_by: req.user?.name || 'Unknown',
-      notes:        `Message "${title}" created as draft`,
+      notes:        `Initial draft created`,
     });
 
     res.status(201).json(parseMsg(newMsg));
@@ -168,7 +168,7 @@ router.put('/:id/approve', async (req, res) => {
       message_id: req.params.id,
       action: 'approved',
       performed_by: req.user?.name || 'Unknown',
-      notes: 'Message approved for dispatch',
+      notes: 'Ready for dispatch',
     });
 
     res.json(parseMsg(updated));
@@ -189,9 +189,9 @@ router.put('/:id/reject', async (req, res) => {
     await dbUpdate('messages', req.params.id, { status: 'draft', approved_by: null });
     await dbInsert('audit_log', {
       message_id:   req.params.id,
-      action:       'edited',
+      action:       'rejected',
       performed_by: req.user?.name || 'Unknown',
-      notes:        `Message rejected and returned to draft${reason ? `. Reason: ${reason}` : '.'}`,
+      notes:        `Rejected${reason ? `: ${reason}` : ''}`,
     });
 
     res.json({ success: true, message: `Message ${req.params.id} rejected and returned to draft` });

@@ -110,8 +110,8 @@ router.post('/:id', async (req, res) => {
           message_id:   msg.id,
           action:       'dispatched',
           performed_by: req.user?.name || 'System',
-          channel,
-          notes:        result.success ? `Dispatched via ${channel}: ${result.message}` : `FAILED: ${result.message}`,
+          channel:      channel.toUpperCase(),
+          notes:        result.success ? `Sent: ${result.message}` : `Error: ${result.message}`,
         });
 
         return { channel, status: result.success ? 'sent' : 'failed', detail: result.message };
@@ -121,9 +121,9 @@ router.post('/:id', async (req, res) => {
           message_id:   msg.id,
           action:       'dispatched',
           performed_by: req.user?.name || 'System',
-          channel,
-          notes:        `FAILED: ${err.message}`,
-        }).catch(() => {}); // don't crash if audit log insert also fails
+          channel:      channel.toUpperCase(),
+          notes:        `Error: ${err.message}`,
+        }).catch(() => {});
         return { channel, status: 'failed', detail: err.message };
       }
     }));
