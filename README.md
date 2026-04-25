@@ -49,6 +49,36 @@ UACS is built to ensure that **no citizen is left behind** during a crisis. By u
 
 ---
 
+## 🏗 Administrative Command Modules
+
+The UACS Admin Portal is divided into specialized modules, each designed for high-pressure emergency management:
+
+### 📊 Admin Dashboard (The Nerve Center)
+*   **Functions**: Real-time KPI tracking (Active vs Expired alerts), **Safety Analytics** (Aggregated SOS/Safe reports), and the **Resizable Situation Map**.
+*   **Purpose**: Provides an instantaneous "360-degree view" of both the disaster's progress and the effectiveness of the communication response.
+
+### ✍️ Message Composer (Precision Drafting)
+*   **Functions**: Multi-channel drafting, automated translation into 5 regional languages, and urgency level assignment (Critical/High/Normal).
+*   **Purpose**: Streamlines the complex task of crafting accurate, localized information for diverse platforms (SMS, Twitter, Web) in seconds.
+
+### ⚖️ Approval Queue (The Final Safeguard)
+*   **Functions**: Reviewing draft messages, final content verification, and manual "Dispatch" triggers for SMS and social channels.
+*   **Purpose**: Prevents the accidental broadcast of incorrect or unauthorized information, ensuring all public alerts are verified by a second authority.
+
+### 📜 Audit Log (Accountability & History)
+*   **Functions**: Grouped lifecycle tracking of every message ever sent, from initial draft to final expiration. Includes detailed timestamps and operator IDs.
+*   **Purpose**: Essential for post-disaster analysis, legal accountability, and debugging delivery performance across different channels.
+
+### 👥 Recipients & Zone Management (Targeted Outreach)
+*   **Functions**: Managing the citizen database, assigning users to specific safety zones using an interactive map picker, and syncing portal credentials.
+*   **Purpose**: Ensures that emergency communications are **targeted**, reaching only the people in danger zones to prevent panic in unaffected areas.
+
+### 📋 Templates Library (Speed-of-Response)
+*   **Functions**: Management of pre-configured alert messages for common disasters (Floods, Earthquakes, Industrial Leaks).
+*   **Purpose**: Saves life-critical minutes during the onset of a disaster by allowing admins to launch verified alerts from proven presets.
+
+---
+
 ## 🛠 Technical Architecture
 
 ### Frontend (Modern Stack)
