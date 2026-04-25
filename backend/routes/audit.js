@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
     const { action, channel, performed_by, date_from, date_to, message_id, limit = 100 } = req.query;
     const sb = getSupabase();
 
-    let q = sb.from('audit_log').select('*').order('timestamp', { ascending: false }).limit(Number(limit));
+    let q = sb.from('audit_log').select('*, messages(title)').order('timestamp', { ascending: false }).limit(Number(limit));
     if (action)       q = q.eq('action', action);
     if (channel)      q = q.eq('channel', channel);
     if (message_id)   q = q.eq('message_id', Number(message_id));
@@ -23,7 +23,13 @@ router.get('/', async (req, res) => {
     const { data, error } = await q;
     if (error) throw new Error(error.message);
 
-    res.json(data || []);
+    // Flatten the message title for the frontend
+    const flattened = (data || []).map(e => ({
+      ...e,
+      message_title: e.messages?.title || null
+    }));
+
+    res.json(flattened);
   } catch (err) {
     console.error('[UACS AUDIT] GET error:', err.message);
     res.status(500).json({ error: err.message });
