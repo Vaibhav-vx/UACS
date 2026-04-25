@@ -233,6 +233,7 @@ function AppLayout() {
 
           {/* Nav links */}
           <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto' }}>
+            {console.log('Rendering Sidebar for role:', user?.role, 'Items:', NAV_ITEMS.filter(item => item.roles.includes(user?.role || 'admin')))}
             {NAV_ITEMS.filter(item => item.roles.includes(user?.role || 'admin')).map(item => (
               <NavLink
                 key={item.path}

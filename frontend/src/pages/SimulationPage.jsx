@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Play, Pause, SkipForward, RotateCcw, Send, Activity, 
-  Shield, AlertTriangle, CheckCircle, Clock, Zap, Globe, 
+  Shield, AlertTriangle, CheckCircle2, Clock, Zap, Globe, 
   MessageSquare, Twitter, Radio, Tv, AlertCircle, TrendingUp,
   Flame, Wind, Battery, HeartPulse, Construction, Info, X
 } from 'lucide-react';
@@ -190,7 +190,7 @@ export default function SimulationPage() {
         <section className="space-y-8 animate-fade-in">
           <div className="text-center py-6">
             <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-green-500/10 text-green-500 font-black border border-green-500/30">
-              <CheckCircle className="w-5 h-5" /> SIMULATION COMPLETE
+              <CheckCircle2 className="w-5 h-5" /> SIMULATION COMPLETE
             </div>
           </div>
 
@@ -221,7 +221,7 @@ export default function SimulationPage() {
                {scenario.steps.map((step, idx) => (
                  <div key={idx} className="flex flex-col items-center gap-2 z-10">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-500 ${idx <= currentStep ? 'bg-accent text-white scale-110 shadow-lg' : 'bg-theme-surface text-theme-muted'}`}>
-                      {idx < currentStep ? <CheckCircle className="w-5 h-5" /> : step.time}
+                      {idx < currentStep ? <CheckCircle2 className="w-5 h-5" /> : step.time}
                     </div>
                     <span className={`text-[10px] font-bold uppercase tracking-wider ${idx === currentStep ? 'text-accent' : 'text-theme-dim'}`}>{step.title}</span>
                  </div>
@@ -321,7 +321,7 @@ export default function SimulationPage() {
                           </div>
                         )}
                         <p className="text-xs text-accent font-bold flex items-center gap-1">
-                          <CheckCircle className="w-3 h-3" /> {step.with.result}
+                          <CheckCircle2 className="w-3 h-3" /> {step.with.result}
                         </p>
                       </div>
                     )}
