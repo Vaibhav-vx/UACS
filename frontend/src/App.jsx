@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, NavLink, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, NavLink, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useState, useEffect, useRef } from 'react';
 import {
@@ -101,6 +101,8 @@ function AppLayout() {
   const navigate                      = useNavigate();
   const { theme, toggleTheme }        = useTheme();
   const { t }                         = useLanguage();
+  const location                      = useLocation();
+  const isSimulation                  = location.pathname === '/admin/simulation';
 
   useEffect(() => {
     const token  = localStorage.getItem('uacs_token');
@@ -120,9 +122,10 @@ function AppLayout() {
   if (!user) return null;
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: isSimulation ? 'hidden' : 'auto' }}>
 
       {/* ── Mobile top bar ── */}
+      {!isSimulation && (
       <header
         className="lg:hidden"
         style={{
@@ -159,12 +162,14 @@ function AppLayout() {
           </button>
         </div>
       </header>
+      )}
 
-      {/* ── Body row ── */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
         {/* ── Sidebar ── */}
-        <aside
+        {!isSimulation && (
+          <>
+          <aside
           style={{
             width: '240px',
             flexShrink: 0,
@@ -300,8 +305,6 @@ function AppLayout() {
             </div>
           </div>
         </aside>
-
-        {/* Overlay for mobile */}
         {sidebarOpen && (
           <div
             onClick={() => setSidebarOpen(false)}
@@ -309,6 +312,8 @@ function AppLayout() {
             className="lg:hidden"
           />
         )}
+        </>
+      )}
 
         {/* ── Main content ── */}
         <main
@@ -320,7 +325,13 @@ function AppLayout() {
           }}
           className="main-with-sidebar"
         >
-          <div style={{ padding: '24px 20px', maxWidth: '1280px', margin: '0 auto' }}>
+          <div style={{ 
+            padding: isSimulation ? '0' : '24px 20px', 
+            maxWidth: isSimulation ? 'none' : '1280px', 
+            margin: '0 auto',
+            width: '100%',
+            height: isSimulation ? '100vh' : 'auto'
+          }}>
             <Routes>
               <Route path="/dashboard"    element={<DashboardPage />} />
               <Route path="/templates"    element={user?.role?.toLowerCase() === 'admin' ? <TemplatesPage /> : <Navigate to="/dashboard" replace />} />

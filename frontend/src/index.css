@@ -458,3 +458,86 @@ p, span, h1, h2, h3, h4, h5, h6, div, td, th {
   .map-card-large { height: 600px; }
 }
 
+/* ── Cinematic Simulation Animations ──────────────────────── */
+@keyframes rain-fall {
+  0% { transform: translateY(-100vh) translateX(0); opacity: 0; }
+  20% { opacity: 0.5; }
+  80% { opacity: 0.5; }
+  100% { transform: translateY(100vh) translateX(20px); opacity: 0; }
+}
+
+@keyframes shatter-out {
+  0% { transform: scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: scale(1.5) rotate(15deg); opacity: 0; filter: blur(10px); }
+}
+
+@keyframes assemble-logo {
+  0% { letter-spacing: 2em; filter: blur(20px); opacity: 0; }
+  100% { letter-spacing: 0.2em; filter: blur(0); opacity: 1; }
+}
+
+@keyframes beam-flow {
+  0% { stroke-dashoffset: 100; opacity: 0; }
+  50% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+@keyframes pulse-glitch {
+  0% { transform: translate(0); text-shadow: none; }
+  20% { transform: translate(-2px, 2px); text-shadow: 2px 0 red, -2px 0 blue; }
+  40% { transform: translate(2px, -2px); text-shadow: -2px 0 red, 2px 0 blue; }
+  60% { transform: translate(-2px, -2px); text-shadow: 2px 0 red, -2px 0 blue; }
+  80% { transform: translate(2px, 2px); text-shadow: -2px 0 red, 2px 0 blue; }
+  100% { transform: translate(0); text-shadow: none; }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes scaleUp {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-rain { animation: rain-fall 2s linear infinite; }
+.animate-shatter { animation: shatter-out 1s ease-in forwards; }
+.animate-assemble { animation: assemble-logo 2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-beam { stroke-dasharray: 20; animation: beam-flow 1.5s linear infinite; }
+.animate-glitch { animation: pulse-glitch 0.3s ease-in-out infinite; }
+.animate-float { animation: float-slow 3s ease-in-out infinite; }
+.animate-scale-up { animation: scaleUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+.cinematic-text {
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.cinematic-bg {
+  background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0f 100%);
+}
+
+.typewriter-cursor::after {
+  content: '|';
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  from, to { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ── Screen Shatter Effect ───────────────────────────────── */
+.shatter-piece {
+  position: absolute;
+  background: inherit;
+  transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.shattering .shatter-piece:nth-child(1) { transform: translate(-100%, -100%) rotate(-45deg); opacity: 0; }
+.shattering .shatter-piece:nth-child(2) { transform: translate(100%, -100%) rotate(45deg); opacity: 0; }
+.shattering .shatter-piece:nth-child(3) { transform: translate(-100%, 100%) rotate(45deg); opacity: 0; }
+.shattering .shatter-piece:nth-child(4) { transform: translate(100%, 100%) rotate(-45deg); opacity: 0; }
+
+
