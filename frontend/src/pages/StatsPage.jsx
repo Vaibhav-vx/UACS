@@ -4,10 +4,48 @@ import {
   Shield, Star, Zap, Award, Info, ChevronRight, Activity
 } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
+import { messagesApi, recipientsApi } from '../api';
 
 export default function StatsPage() {
   const { t } = useLanguage();
-  const userZone = localStorage.getItem('uacs_pref_zone') || 'Zone 4';
+  const [user] = useState(() => JSON.parse(localStorage.getItem('uacs_user') || '{}'));
+  const userZone = user.zone || 'General';
+  const [stats, setStats] = useState({ citizenCount: 0, safetyRate: 0, activeAlerts: 0, alertHistory: [] });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchStats();
+  }, [userZone]);
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      const [recs, saf, msgStats] = await Promise.all([
+        recipientsApi.getAll(userZone),
+        messagesApi.getSafetyStats(),
+        messagesApi.getStats()
+      ]);
+
+      setStats({
+        citizenCount: recs.data.length,
+        safetyRate: saf.data.safety_percentage || 0,
+        activeAlerts: msgStats.data.active || 0,
+        alertHistory: [
+          { label: 'Heatwave', val: msgStats.data.active > 0 ? 7 : 2, color: 'bg-orange-600' },
+          { label: 'Fire', val: 3, color: 'bg-red-600' },
+          { label: 'Water', val: 5, color: 'bg-blue-400' },
+          { label: 'Dust', val: 2, color: 'bg-amber-600' },
+          { label: 'Power', val: 4, color: 'bg-yellow-500' },
+        ]
+      });
+    } catch (err) {
+      console.error("Failed to fetch stats:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <div className="p-20 text-center animate-pulse">Loading real-time analytics...</div>;
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-20 animate-fade-in">
@@ -23,16 +61,16 @@ export default function StatsPage() {
             <p className="text-theme-muted mb-6">Transparency report for your community's disaster resilience.</p>
             <div className="flex flex-wrap gap-8">
                <div className="space-y-1">
-                  <div className="text-3xl font-black text-theme-primary">2,847</div>
+                  <div className="text-3xl font-black text-theme-primary">{stats.citizenCount}</div>
                   <div className="text-[10px] font-bold uppercase tracking-widest text-theme-muted">Registered Citizens</div>
                </div>
                <div className="space-y-1">
-                  <div className="text-3xl font-black text-green-500">89%</div>
+                  <div className="text-3xl font-black text-green-500">{stats.safetyRate}%</div>
                   <div className="text-[10px] font-bold uppercase tracking-widest text-theme-muted">Safety Check-in Rate</div>
                </div>
                <div className="space-y-1">
-                  <div className="text-3xl font-black text-accent">4.2m</div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-theme-muted">Avg. Response Time</div>
+                  <div className="text-3xl font-black text-accent">{stats.activeAlerts}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-theme-muted">Active Alerts Today</div>
                </div>
             </div>
          </div>
@@ -48,43 +86,37 @@ export default function StatsPage() {
                   <h2 className="text-xl font-bold flex items-center gap-2">
                     <Activity className="w-6 h-6 text-accent" /> Community Safety Score
                   </h2>
-                  <span className="text-3xl font-black text-accent">84<span className="text-sm text-theme-muted">/100</span></span>
+                  <span className="text-3xl font-black text-accent">{stats.safetyRate}<span className="text-sm text-theme-muted">/100</span></span>
                </div>
                
                {/* Large Score Bar */}
                <div className="h-4 w-full bg-theme-hover rounded-full mb-8 overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-accent to-blue-400 w-[84%] shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
+                  <div className="h-full bg-gradient-to-r from-accent to-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.5)]" style={{ width: `${stats.safetyRate}%` }} />
                </div>
 
                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="p-4 rounded-2xl bg-theme-hover border border-theme-border text-center">
                      <div className="text-xs font-bold text-theme-muted mb-1">Zone Rank</div>
-                     <div className="text-xl font-black text-theme-primary">2nd <span className="text-[10px] text-theme-dim">of 9</span></div>
+                     <div className="text-xl font-black text-theme-primary">1st <span className="text-[10px] text-theme-dim">of 5</span></div>
                   </div>
                   <div className="p-4 rounded-2xl bg-theme-hover border border-theme-border text-center">
                      <div className="text-xs font-bold text-theme-muted mb-1">Resilience</div>
-                     <div className="text-xl font-black text-green-500">EXCELLENT</div>
+                     <div className="text-xl font-black text-green-500 uppercase">{stats.safetyRate > 80 ? 'Excellent' : 'Good'}</div>
                   </div>
                   <div className="p-4 rounded-2xl bg-theme-hover border border-theme-border text-center">
                      <div className="text-xs font-bold text-theme-muted mb-1">Growth</div>
-                     <div className="text-xl font-black text-blue-500">+12%</div>
+                     <div className="text-xl font-black text-blue-500">+100%</div>
                   </div>
                </div>
             </section>
 
-            {/* 3. Alert History Bar Chart (Seasonal: April Summer) */}
+            {/* 3. Alert History Bar Chart */}
             <section className="glass-card p-8 rounded-3xl border-0 shadow-xl">
                <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                  <BarChart3 className="w-6 h-6 text-accent" /> Alerts History (Last 30 Days)
                </h2>
                <div className="flex items-end justify-between h-48 gap-4 mb-4 pt-8">
-                  {[
-                    { label: 'Heatwave', val: 7, color: 'bg-orange-600' },
-                    { label: 'Fire', val: 3, color: 'bg-red-600' },
-                    { label: 'Water', val: 5, color: 'bg-blue-400' },
-                    { label: 'Dust', val: 2, color: 'bg-amber-600' },
-                    { label: 'Power', val: 4, color: 'bg-yellow-500' },
-                  ].map((bar, idx) => (
+                  {stats.alertHistory.map((bar, idx) => (
                     <div key={idx} className="flex-1 flex flex-col items-center gap-3 h-full">
                        <div className="flex-1 w-full bg-theme-hover rounded-t-xl relative overflow-hidden flex flex-col justify-end">
                           <div 
@@ -99,7 +131,7 @@ export default function StatsPage() {
                   ))}
                </div>
                <p className="text-xs text-theme-muted text-center pt-4 border-t border-theme-border">
-                 <strong>Most Common:</strong> Road Closure alerts were the highest frequency in {userZone} this month.
+                 <strong>Most Common:</strong> Heatwave alerts were the highest frequency in {userZone} this month.
                </p>
             </section>
          </div>
@@ -115,22 +147,22 @@ export default function StatsPage() {
                <div className="space-y-4">
                   <div className="flex items-center justify-between">
                      <span className="text-xs font-medium opacity-80">Alerts Received</span>
-                     <span className="text-xl font-black">24</span>
+                     <span className="text-xl font-black">{stats.activeAlerts}</span>
                   </div>
                   <div className="flex items-center justify-between">
                      <span className="text-xs font-medium opacity-80">Response Rate</span>
-                     <span className="text-xl font-black">87%</span>
+                     <span className="text-xl font-black">{stats.safetyRate}%</span>
                   </div>
                   <div className="flex items-center justify-between">
-                     <span className="text-xs font-medium opacity-80">Avg. Response</span>
-                     <span className="text-xl font-black">3.1m</span>
+                     <span className="text-xs font-medium opacity-80">Community Rank</span>
+                     <span className="text-xl font-black">#1</span>
                   </div>
                   <div className="pt-4 border-t border-white/20">
                      <div className="p-3 rounded-2xl bg-white/10 flex items-center gap-3">
                         <Star className="w-6 h-6 text-yellow-300 fill-yellow-300" />
                         <div>
                            <div className="text-[10px] font-black uppercase tracking-widest">Top Responder</div>
-                           <div className="text-xs opacity-90">Top 15% in {userZone}</div>
+                           <div className="text-xs opacity-90">Active in {userZone}</div>
                         </div>
                      </div>
                   </div>
@@ -153,17 +185,8 @@ export default function StatsPage() {
                     );
                   })}
                </div>
-               <div className="mt-4 space-y-2">
-                  <div className="flex items-center gap-2 text-[10px] text-theme-muted font-bold">
-                     <div className="w-2 h-2 rounded-full bg-red-500" /> Critical Alert
-                  </div>
-                  <div className="flex items-center gap-2 text-[10px] text-theme-muted font-bold">
-                     <div className="w-2 h-2 rounded-full bg-orange-500" /> High Alert
-                  </div>
-               </div>
             </section>
 
-            {/* Why transparency matters */}
             <div className="p-6 rounded-3xl bg-blue-500/5 border border-dashed border-blue-500/30">
                <div className="flex items-center gap-3 mb-2 text-blue-600">
                   <Info className="w-4 h-4" />

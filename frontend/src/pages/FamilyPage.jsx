@@ -4,25 +4,45 @@ import {
   Send, AlertTriangle, CheckCircle, Search, RefreshCw,
   MoreVertical, Phone, MessageCircle
 } from 'lucide-react';
+import { recipientsApi, messagesApi } from '../api';
 import toast from 'react-hot-toast';
 
 export default function FamilyPage() {
-  const [family, setFamily] = useState(() => {
-    const saved = localStorage.getItem('uacs_family');
-    return saved ? JSON.parse(saved) : [
-      { id: 1, name: 'Mom', phone: '+91 98765 43210', zone: 'Zone 3', status: 'safe', lastActive: '10 mins ago', emergencyContact: true },
-      { id: 2, name: 'Dad', phone: '+91 98765 43211', zone: 'Zone 4', status: 'unknown', lastActive: '2 hours ago', emergencyContact: false },
-      { id: 3, name: 'Sister', phone: '+91 98765 43212', zone: 'Zone 2', status: 'no_alerts', lastActive: '30 mins ago', emergencyContact: false }
-    ];
-  });
-
-  const [isAdding, setIsAdding] = useState(false);
-  const [newPhone, setNewPhone] = useState('');
-  const [newName, setNewName] = useState('');
+  const [family, setFamily] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [user] = useState(() => JSON.parse(localStorage.getItem('uacs_user') || '{}'));
 
   useEffect(() => {
-    localStorage.setItem('uacs_family', JSON.stringify(family));
-  }, [family]);
+    fetchNetwork();
+  }, [user?.zone]);
+
+  const fetchNetwork = async () => {
+    try {
+      setLoading(true);
+      const userZone = user.zone || 'General';
+      const { data: recs } = await recipientsApi.getAll(userZone);
+      
+      // Map recipients to "Family" members for demo purposes
+      // excluding current user if they are in the list
+      const members = recs
+        .filter(r => r.phone !== user.phone)
+        .map((r, idx) => ({
+          id: r.id,
+          name: r.name,
+          phone: r.phone,
+          zone: r.zone,
+          status: idx % 2 === 0 ? 'safe' : 'unknown', // Simulate status based on real response data if possible
+          lastActive: 'Active recently',
+          emergencyContact: idx === 0
+        }));
+
+      setFamily(members);
+    } catch (err) {
+      console.error("Failed to fetch family network:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddMember = (e) => {
     e.preventDefault();

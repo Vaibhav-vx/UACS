@@ -6,7 +6,7 @@ import {
   Navigation, Heart, History, BarChart3, CloudRain
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { messagesApi, authApi } from '../api';
+import { messagesApi, authApi, recipientsApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
 import ExpiryTimer from '../components/ExpiryTimer';
 import ChannelBadge from '../components/ChannelBadge';
@@ -27,8 +27,9 @@ export default function DashboardPage() {
   const [recentReports, setRecentReports] = useState([]);
   const [emergencyText, setEmergencyText] = useState('');
   const [emergencyZone, setEmergencyZone] = useState('');
-  const [emergencyLoading, setEmergencyLoading] = useState(false);
   const [emergencyError, setEmergencyError] = useState('');
+  const [emergencyLoading, setEmergencyLoading] = useState(false);
+  const [citizenStats, setCitizenStats] = useState({ count: 0, safeToday: 0 });
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('uacs_user') || '{}'));
@@ -54,6 +55,19 @@ export default function DashboardPage() {
         ]);
         setSafetyStats(safStats.data);
         setRecentReports(safRecent.data);
+      }
+
+      // Fetch Citizen Stats for User View
+      if (!isAdmin) {
+        const userZone = localStorage.getItem('uacs_pref_zone') || 'General';
+        const [rec, saf] = await Promise.all([
+          recipientsApi.getAll(userZone),
+          messagesApi.getSafetyStats()
+        ]);
+        setCitizenStats({
+          count: rec.data.length,
+          safeToday: saf.data.total_safe || 0
+        });
       }
     } catch (err) {
       console.error('[DASHBOARD] Fetch error:', err);
@@ -180,7 +194,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             
-            {/* 1. MY ZONE SUMMARY */}
+            {/* 1. MY ZONE SUMMARY (REAL DATA) */}
             <section className="glass-card p-6 rounded-3xl border-0 shadow-xl grid grid-cols-2 md:grid-cols-4 gap-4 bg-accent/5">
                <div className="space-y-1">
                   <div className="text-xs font-bold text-theme-muted uppercase tracking-wider">Your Zone</div>
@@ -188,15 +202,15 @@ export default function DashboardPage() {
                </div>
                <div className="space-y-1">
                   <div className="text-xs font-bold text-theme-muted uppercase tracking-wider">Registered</div>
-                  <div className="text-lg font-black text-theme-primary">2,847</div>
+                  <div className="text-lg font-black text-theme-primary">{citizenStats.count}</div>
                </div>
                <div className="space-y-1">
                   <div className="text-xs font-bold text-theme-muted uppercase tracking-wider">Marked Safe</div>
-                  <div className="text-lg font-black text-green-500">1,203</div>
+                  <div className="text-lg font-black text-green-500">{citizenStats.safeToday}</div>
                </div>
                <div className="space-y-1">
-                  <div className="text-xs font-bold text-theme-muted uppercase tracking-wider">Last Alert</div>
-                  <div className="text-lg font-black text-accent">2h ago</div>
+                  <div className="text-xs font-bold text-theme-muted uppercase tracking-wider">Active Alerts</div>
+                  <div className="text-lg font-black text-accent">{myAlerts.length}</div>
                </div>
             </section>
 
