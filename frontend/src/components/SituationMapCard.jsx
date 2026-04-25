@@ -88,7 +88,7 @@ export default function SituationMapCard() {
         </div>
       </div>
 
-      <MapContainer center={[19.07, 72.87]} zoom={11} style={{ height: '100%', width: '100%' }}>
+      <MapContainer center={[20.5937, 78.9629]} zoom={5} style={{ height: '100%', width: '100%' }}>
         <LayersControl position="topright">
           <BaseLayer checked name="World Labels (Professional)">
             <TileLayer

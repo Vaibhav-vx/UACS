@@ -27,9 +27,11 @@ const ZONE_COORDS = {
 
 const EAPS = [
   { name: 'Community Center Alpha', pos: [19.22, 72.86], capacity: 500, type: 'Medical + Food' },
-  { name: 'District School B', pos: [18.94, 72.82], capacity: 300, type: 'Shelter' },
+  { name: 'Delhi Safe Zone 1', pos: [28.61, 77.21], capacity: 1500, type: 'Shelter + Medical' },
+  { name: 'Bangalore Safety Hub', pos: [12.97, 77.59], capacity: 1200, type: 'Mass Assembly' },
+  { name: 'Kolkata Rescue Point', pos: [22.57, 88.36], capacity: 1000, type: 'Food + Water' },
+  { name: 'Chennai Coastal Shelter', pos: [13.08, 80.27], capacity: 900, type: 'Cyclonic Shelter' },
   { name: 'Central Stadium', pos: [19.03, 72.86], capacity: 2000, type: 'Mass Assembly' },
-  { name: 'East Plaza Shelters', pos: [19.09, 72.93], capacity: 800, type: 'Shelter' },
 ];
 
 function SetViewOnClick({ coords }) {
@@ -107,7 +109,7 @@ export default function MapPage() {
       </div>
 
       <div className="flex-1 rounded-2xl md:rounded-3xl overflow-hidden border border-theme-border shadow-2xl relative">
-        <MapContainer center={[19.07, 72.87]} zoom={11} style={{ height: '100%', width: '100%' }}>
+        <MapContainer center={[20.5937, 78.9629]} zoom={5} style={{ height: '100%', width: '100%' }}>
           <LayersControl position="topright">
             <BaseLayer checked name="World Labels (Professional)">
               <TileLayer
@@ -252,19 +254,6 @@ export default function MapPage() {
           </div>
         </div>
 
-        {/* Zone Selector for quick jump */}
-        <div className="absolute top-4 right-4 md:top-6 md:right-6 z-[1000]">
-          <div className="glass-card p-1.5 md:p-2 rounded-lg md:rounded-xl border border-theme-border shadow-xl flex items-center gap-2">
-            <select 
-              className="bg-transparent border-0 text-[10px] md:text-xs font-bold focus:ring-0 cursor-pointer p-0 pr-6"
-              onChange={(e) => setSelectedZone(e.target.value)}
-              value={selectedZone || ''}
-            >
-              <option value="">{t('jumpToZone') || 'Jump...'}</option>
-              {Object.keys(ZONE_COORDS).map(z => <option key={z} value={z}>{z}</option>)}
-            </select>
-          </div>
-        </div>
       </div>
 
       <style>{`
