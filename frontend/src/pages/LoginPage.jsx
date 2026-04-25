@@ -366,7 +366,7 @@ export default function LoginPage() {
                 type="text"
                 value={loginPhone}
                 onChange={handleLoginPhoneChange}
-                placeholder="+91 1234567890"
+                placeholder="Your Number"
                 autoFocus
               />
               <Field
