@@ -154,15 +154,24 @@ export default function FamilyPage() {
              </div>
 
              <div className="grid grid-cols-2 gap-3">
-                <button className="py-2.5 rounded-xl bg-theme-surface border border-theme-border text-xs font-bold flex items-center justify-center gap-2 hover:border-accent hover:text-accent transition-all">
+                <button 
+                  onClick={() => toast.success(`Message sent to ${member.name}`, { icon: '💬' })}
+                  className="py-2.5 rounded-xl bg-theme-surface border border-theme-border text-xs font-bold flex items-center justify-center gap-2 hover:border-accent hover:text-accent transition-all"
+                >
                    <MessageCircle className="w-4 h-4" /> Message
                 </button>
                 {member.status === 'unknown' ? (
-                  <button className="py-2.5 rounded-xl bg-orange-500 text-white text-xs font-black shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 animate-pulse">
+                  <button 
+                    onClick={() => toast.success(`Safety reminder sent to ${member.name}`, { icon: '🔔' })}
+                    className="py-2.5 rounded-xl bg-orange-500 text-white text-xs font-black shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 animate-pulse"
+                  >
                      <Send className="w-4 h-4" /> Remind Now
                   </button>
                 ) : (
-                  <button className="py-2.5 rounded-xl bg-theme-surface border border-theme-border text-xs font-bold flex items-center justify-center gap-2 hover:border-accent hover:text-accent transition-all">
+                  <button 
+                    onClick={() => toast.success(`Checking for status updates for ${member.name}`)}
+                    className="py-2.5 rounded-xl bg-theme-surface border border-theme-border text-xs font-bold flex items-center justify-center gap-2 hover:border-accent hover:text-accent transition-all"
+                  >
                      <RefreshCw className="w-4 h-4" /> Refresh
                   </button>
                 )}

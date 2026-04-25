@@ -12,6 +12,7 @@ const DISASTERS = [
     icon: Activity,
     color: 'bg-orange-500',
     description: 'Sudden shaking of the ground caused by seismic waves.',
+    videoUrl: 'https://www.youtube.com/watch?v=BLEPakj1YTY',
     before: [
       'Identify safe spots in each room (under sturdy tables).',
       'Secure heavy furniture to walls.',
@@ -35,6 +36,7 @@ const DISASTERS = [
     icon: Droplets,
     color: 'bg-blue-500',
     description: 'Overflow of water onto normally dry land.',
+    videoUrl: 'https://www.youtube.com/watch?v=43M5mZuzM7o',
     before: [
       'Identify high ground in your neighborhood.',
       'Keep important documents in waterproof bags.',
@@ -57,6 +59,7 @@ const DISASTERS = [
     icon: Wind,
     color: 'bg-indigo-500',
     description: 'High-speed rotating winds with heavy rain.',
+    videoUrl: 'https://www.youtube.com/watch?v=vV68V-oYv-c',
     before: [
       'Check your roof and clear gutters.',
       'Trim tree branches near your house.',
@@ -79,6 +82,7 @@ const DISASTERS = [
     icon: Flame,
     color: 'bg-red-500',
     description: 'Rapid combustion causing heat, smoke, and flames.',
+    videoUrl: 'https://www.youtube.com/watch?v=680D1RrePqE',
     before: [
       'Install smoke detectors on every floor.',
       'Know at least two exit routes from every room.',
@@ -101,6 +105,7 @@ const DISASTERS = [
     icon: Zap,
     color: 'bg-amber-600',
     description: 'Prolonged period of excessively hot weather.',
+    videoUrl: 'https://www.youtube.com/watch?v=9_H53A_G27Y',
     before: [
       'Stock up on ORS and electrolytes.',
       'Insulate windows with reflective film.',
@@ -194,14 +199,17 @@ export default function SurvivalGuidePage() {
                  </div>
                  <ExternalLink className="w-4 h-4 text-theme-dim group-hover:text-accent" />
               </button>
-              <button className="w-full p-6 rounded-3xl bg-theme-surface border border-theme-border flex items-center justify-between hover:border-accent transition-all group">
+              <button 
+                onClick={() => window.open('https://ndma.gov.in/Resources/Handbooks', '_blank')}
+                className="w-full p-6 rounded-3xl bg-theme-surface border border-theme-border flex items-center justify-between hover:border-accent transition-all group"
+              >
                  <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-accent/10 text-accent rounded-full flex items-center justify-center">
                        <Download className="w-5 h-5" />
                     </div>
                     <div className="text-left">
                        <h4 className="font-bold text-sm">Download Offline PDF</h4>
-                       <p className="text-[10px] text-theme-muted uppercase font-bold">Pocket reference</p>
+                       <p className="text-[10px] text-theme-muted uppercase font-bold">National Guide</p>
                     </div>
                  </div>
                  <FileText className="w-4 h-4 text-theme-dim group-hover:text-accent" />
@@ -222,7 +230,10 @@ export default function SurvivalGuidePage() {
                        <p className="text-theme-muted font-medium">{selectedDisaster.description}</p>
                     </div>
                  </div>
-                 <button className="px-5 py-2 bg-theme-hover rounded-full text-xs font-black flex items-center gap-2 hover:bg-accent hover:text-white transition-all">
+                 <button 
+                   onClick={() => window.open(selectedDisaster.videoUrl, '_blank')}
+                   className="px-5 py-2 bg-theme-hover rounded-full text-xs font-black flex items-center gap-2 hover:bg-accent hover:text-white transition-all shadow-lg"
+                 >
                     <PlayCircle className="w-4 h-4" /> WATCH TRAINING
                  </button>
               </div>

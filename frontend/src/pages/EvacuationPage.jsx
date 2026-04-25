@@ -94,8 +94,11 @@ export default function EvacuationPage() {
                           <span className="text-accent font-bold">~{(idx * 0.5 + 0.8).toFixed(1)} km</span>
                        </div>
                     </div>
-                    <button className="w-full sm:w-auto px-5 py-2.5 bg-accent text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-accent/20">
-                       <Navigation className="w-4 h-4" /> Directions
+                    <button 
+                       onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${eap.pos[0]},${eap.pos[1]}`, '_blank')}
+                       className="w-full sm:w-auto px-5 py-2.5 bg-accent text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-accent/20 hover:bg-accent/80 transition-all"
+                    >
+                       <Navigation className="w-4 h-4" /> Get Directions
                     </button>
                  </div>
                ))}
@@ -196,18 +199,22 @@ export default function EvacuationPage() {
              </h2>
              <div className="space-y-2">
                 {[
-                  { name: 'Police', num: '100', color: 'text-blue-600' },
-                  { name: 'Fire Brigade', num: '101', color: 'text-red-600' },
-                  { name: 'Ambulance', num: '108', color: 'text-green-600' },
-                  { name: 'Disaster Helpline', num: '1078', color: 'text-orange-600' },
-                  { name: 'NDRF Control', num: '011-24363260', color: 'text-indigo-600' },
+                  { name: 'Police', num: '100', color: 'text-blue-600', desc: 'Police Emergency' },
+                  { name: 'Fire', num: '101', color: 'text-red-600', desc: 'Fire & Rescue' },
+                  { name: 'Ambulance', num: '108', color: 'text-green-600', desc: 'Medical Emergency' },
+                  { name: 'Disaster', num: '1078', color: 'text-orange-600', desc: 'National Disaster Helpline' },
+                  { name: 'Women', num: '1091', color: 'text-pink-600', desc: 'Women Helpline' },
+                  { name: 'Air Ambulance', num: '9540161344', color: 'text-indigo-600', desc: 'Private SOS' },
                 ].map((contact, idx) => (
                   <a 
                     key={idx} 
                     href={`tel:${contact.num}`}
                     className="flex items-center justify-between p-3 rounded-xl bg-white/50 dark:bg-black/20 border border-theme-border hover:border-accent transition-all group"
                   >
-                    <span className="text-sm font-medium">{contact.name}</span>
+                    <div className="flex flex-col">
+                       <span className="text-sm font-bold">{contact.name}</span>
+                       <span className="text-[9px] text-theme-muted uppercase font-black">{contact.desc}</span>
+                    </div>
                     <span className={`font-black ${contact.color} group-hover:scale-110 transition-transform`}>{contact.num}</span>
                   </a>
                 ))}

@@ -304,7 +304,10 @@ export default function DashboardPage() {
                           <span className="text-[10px] font-bold text-accent px-2 py-0.5 rounded-full bg-accent/10">Active</span>
                        </div>
                        <p className="text-[10px] text-theme-muted mb-3">{eap.type} • Capacity: {eap.capacity}</p>
-                       <button className="w-full py-2 bg-theme-hover rounded-xl text-[10px] font-bold flex items-center justify-center gap-2 hover:bg-accent hover:text-white transition-all">
+                       <button 
+                         onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${eap.pos[0]},${eap.pos[1]}`, '_blank')}
+                         className="w-full py-2 bg-theme-hover rounded-xl text-[10px] font-bold flex items-center justify-center gap-2 hover:bg-accent hover:text-white transition-all"
+                       >
                          <Navigation className="w-3 h-3" /> {t('getDirections') || 'GET DIRECTIONS'}
                        </button>
                     </div>
