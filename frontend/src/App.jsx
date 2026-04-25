@@ -16,6 +16,7 @@ import TemplatesPage   from './pages/TemplatesPage';
 import RecipientsPage  from './pages/RecipientsPage';
 import ProfilePage     from './pages/ProfilePage';
 import MapPage         from './pages/MapPage';
+import SimulationPage  from './pages/SimulationPage';
 
 const NAV_ITEMS = [
   { path: '/dashboard',  labelKey: 'dashboard',  icon: LayoutDashboard, roles: ['admin', 'user'] },
@@ -25,6 +26,7 @@ const NAV_ITEMS = [
   { path: '/recipients', labelKey: 'recipients',  icon: Users,           roles: ['admin'] },
   { path: '/audit',      labelKey: 'auditLog',    icon: ScrollText,      roles: ['admin'] },
   { path: '/map',        labelKey: 'map',         icon: Map,             roles: ['admin', 'user'] },
+  { path: '/admin/simulation', labelKey: 'simulation', icon: Play,        roles: ['admin'] },
 ];
 
 /* ── Language Switcher ─────────────────────────────── */
@@ -326,6 +328,7 @@ function AppLayout() {
               <Route path="/approval/:id" element={user?.role === 'admin' ? <ApprovalPage /> : <Navigate to="/dashboard" replace />} />
               <Route path="/recipients"   element={user?.role === 'admin' ? <RecipientsPage /> : <Navigate to="/dashboard" replace />} />
               <Route path="/audit"        element={user?.role === 'admin' ? <AuditLogPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/admin/simulation" element={user?.role === 'admin' ? <SimulationPage /> : <Navigate to="/dashboard" replace />} />
               <Route path="/profile"      element={<ProfilePage />} />
               <Route path="/map"          element={<MapPage />} />
               <Route path="*"             element={<Navigate to="/dashboard" replace />} />
