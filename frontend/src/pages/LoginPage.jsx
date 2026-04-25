@@ -148,7 +148,7 @@ export default function LoginPage() {
     if (searchParams.get('expired') === '1') setLoginError(t('sessionExpired') || 'Your session has expired. Please log in again.');
   }, [navigate, searchParams, t]);
 
-  // Phone auto-formatter (XXXXX XXXXX)
+  // Phone auto-formatter (XXXXX XXXXX) — only for registration
   const formatPhoneNumber = (value) => {
     const cleaned = ('' + value).replace(/\D/g, '').substring(0, 10);
     const match = cleaned.match(/^(\d{1,5})(\d{0,5})$/);
@@ -156,6 +156,17 @@ export default function LoginPage() {
       return match[2] ? `${match[1]} ${match[2]}` : match[1];
     }
     return cleaned;
+  };
+
+  const handleLoginPhoneChange = (e) => {
+    const val = e.target.value;
+    // If it contains letters or @, don't format it as a phone number
+    if (/[a-zA-Z@]/.test(val)) {
+      setLoginPhone(val);
+    } else {
+      setLoginPhone(formatPhoneNumber(val));
+    }
+    setLoginError('');
   };
 
   // ── Login handler ─────────────────────────────────────
@@ -350,14 +361,13 @@ export default function LoginPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <Field
                 id="login-phone"
-                label={t('mobileNumber') || 'Mobile Number'}
-                icon={Smartphone}
-                type="tel"
+                label={t('mobileOrEmail') || 'Mobile Number or Admin Email'}
+                icon={Mail}
+                type="text"
                 value={loginPhone}
-                onChange={e => { setLoginPhone(formatPhoneNumber(e.target.value)); setLoginError(''); }}
-                placeholder="81698 25915"
+                onChange={handleLoginPhoneChange}
+                placeholder="81698 25915 or admin@uacs.gov"
                 autoFocus
-                autoComplete="tel"
               />
               <Field
                 id="login-password"
