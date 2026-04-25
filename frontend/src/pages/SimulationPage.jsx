@@ -75,15 +75,287 @@ const SCENARIO_DATA = {
     ],
     impact: { timeWithout: "47m", timeWith: "2m", langWithout: "1", langWith: "5", consWithout: "23%", consWith: "96%", confWithout: "67%", confWith: "4%" }
   },
-  // Other scenarios would follow the same pattern... I will implement flood as the primary for now and add generic data for others
-};
-
-// Fill in other scenarios with similar structure but different content
-['fire', 'cyclone', 'power', 'health', 'road'].forEach(sid => {
-  if (!SCENARIO_DATA[sid]) {
-    SCENARIO_DATA[sid] = { ...SCENARIO_DATA.flood, name: SCENARIOS.find(s => s.id === sid).name };
+  fire: {
+    masterMessage: "Wildfire detected near Zone 2 boundary. High winds expected. Residents should prepare for potential evacuation. Close all windows.",
+    steps: [
+      {
+        time: "T+0:00",
+        title: "Detection",
+        without: { action: "Manual reporting via phone lines. Departments argue over zone boundaries.", problem: "Confusion over who is in charge", status: "error" },
+        with: { action: "Satellite/Sensor data triggers UACS incident. Zone 2 auto-selected.", result: "Instant boundary lock", status: "success" }
+      },
+      {
+        time: "T+3:00",
+        title: "Drafting",
+        without: { action: "Typing 10 different SMS messages for different service providers.", problem: "Typo in evacuation route on 2 versions.", status: "error" },
+        with: { action: "One 'master' draft used for all operators.", result: "Eliminated human error", status: "success" }
+      },
+      {
+        time: "T+6:00",
+        title: "Dispatch",
+        without: {
+          channels: {
+            sms: "Fire near Zone 2. Watch out.",
+            twitter: "Smoke reported in North District. Be careful.",
+            radio: "Minor fire incident. No immediate danger.",
+            tv: "Zone 2 Fire: Evacuate if you see smoke."
+          },
+          problems: ["Mixed signals", "Radio says 'No Danger' but TV says 'Evacuate'"],
+          consistency: 31,
+          status: "error"
+        },
+        with: {
+          channels: {
+            sms: "🔥 UACS FIRE ALERT: Zone 2 residents prepare for evacuation. Wind speed high.",
+            twitter: "🔥 ALERT: Zone 2 Wildfire. Prepare for evacuation. #UACS #Zone2",
+            radio: "UACS Authority: Zone 2 wildfire alert. Prepare for evacuation.",
+            tv: "🔥 FIRE ALERT ZONE 2: PREPARE FOR EVACUATION"
+          },
+          results: ["Unified urgency", "Identical instructions", "98% consistency"],
+          consistency: 98,
+          status: "success"
+        }
+      },
+      {
+        time: "T+10:00",
+        title: "Scaling",
+        without: { action: "Network congestion blocks manual SMS blasts.", problem: "Delayed delivery", status: "error" },
+        with: { action: "UACS uses priority government channel (Twilio High Priority).", result: "99.9% delivery rate", status: "success" }
+      },
+      {
+        time: "T+4hrs",
+        title: "Cleanup",
+        without: { action: "Fire out. People still calling emergency line asking if it's safe.", problem: "Phone lines clogged unnecessarily.", status: "error" },
+        with: { action: "UACS sends automated 'All Clear' and updates Web Portal.", result: "Public informed instantly", status: "success" }
+      }
+    ],
+    impact: { timeWithout: "52m", timeWith: "4m", langWithout: "1", langWith: "5", consWithout: "31%", consWith: "98%", confWithout: "55%", confWith: "2%" }
+  },
+  cyclone: {
+    masterMessage: "Cyclone Warning: Zone 1 coastal areas expect heavy rain and winds up to 120kmph. Stay indoors. Fishermen should not go to sea.",
+    steps: [
+      {
+        time: "T+0:00",
+        title: "Forecast",
+        without: { action: "Weather dept faxes warning to Admin office. Fax is missed.", problem: "20 min delay in reading warning", status: "error" },
+        with: { action: "Weather API auto-creates draft in UACS dashboard.", result: "Zero delay in awareness", status: "success" }
+      },
+      {
+        time: "T+5:00",
+        title: "Approval",
+        without: { action: "Admin drives to office to sign physical approval form.", problem: "Physical transit time loss", status: "error" },
+        with: { action: "Admin approves via UACS Mobile App with secure login.", result: "Remote approval in 30s", status: "success" }
+      },
+      {
+        time: "T+10:00",
+        title: "Broadcast",
+        without: {
+          channels: {
+            sms: "Cyclone coming. Stay safe.",
+            twitter: "Rain expected tomorrow. #Weather",
+            radio: "High tides in Zone 1. Warning issued.",
+            tv: "Coastal Alert: Storm expected."
+          },
+          problems: ["Vague timings", "No specific actions mentioned"],
+          consistency: 40,
+          status: "error"
+        },
+        with: {
+          channels: {
+            sms: "🌪️ UACS CYCLONE: Zone 1, heavy rain/120kmph winds. STAY INDOORS.",
+            twitter: "🌪️ UACS: Cyclone Warning Zone 1. 120kmph winds. Stay indoors. #Cyclone",
+            radio: "UACS Alert: Cyclone Zone 1. Stay indoors immediately.",
+            tv: "🌪️ UACS CYCLONE WARNING: STAY INDOORS (ZONE 1)"
+          },
+          results: ["Specific metrics (120kmph)", "Clear action (Stay indoors)"],
+          consistency: 94,
+          status: "success"
+        }
+      },
+      {
+        time: "T+15:00",
+        title: "Reach",
+        without: { action: "Coastal villages with poor internet miss the Twitter update.", problem: "Silent zones in rural areas", status: "error" },
+        with: { action: "UACS triggers Radio and TV interrupts simultaneously.", result: "Rural coverage ensured", status: "success" }
+      },
+      {
+        time: "T+12hrs",
+        title: "Retraction",
+        without: { action: "Storm passed. People still hiding in shelters 6 hours late.", problem: "Economic productivity loss", status: "error" },
+        with: { action: "Scheduled retraction releases 'Safe to Exit' alert.", result: "Return to normalcy 6hr faster", status: "success" }
+      }
+    ],
+    impact: { timeWithout: "65m", timeWith: "6m", langWithout: "1", langWith: "5", consWithout: "40%", consWith: "94%", confWithout: "48%", confWith: "5%" }
+  },
+  power: {
+    masterMessage: "Emergency Power Outage in Zone 5 due to grid failure. Restoration expected by 10:00 PM. Vital services moving to backup.",
+    steps: [
+      {
+        time: "T+0:00",
+        title: "Blackout",
+        without: { action: "Public calls electric board. No one answers. Panic spreads.", problem: "Information vacuum", status: "error" },
+        with: { action: "Grid monitor triggers UACS notification to Zone 5.", result: "Pre-emptive info dispatch", status: "success" }
+      },
+      {
+        time: "T+10:00",
+        title: "Guidance",
+        without: { action: "No official word. People think it's a permanent failure.", problem: "Panic buying of supplies", status: "error" },
+        with: { action: "UACS sends 'Expectation Management' alert (10 PM fix).", result: "Reduced anxiety", status: "success" }
+      },
+      {
+        time: "T+15:00",
+        title: "Impact",
+        without: {
+          channels: {
+            sms: "Power cut. Working on it.",
+            twitter: "Grid down. Maintenance soon.",
+            radio: "Electricity issue in some parts.",
+            tv: "Power interruption reported."
+          },
+          problems: ["No mention of Zone 5 specifically", "No estimated time"],
+          consistency: 18,
+          status: "error"
+        },
+        with: {
+          channels: {
+            sms: "⚡ UACS: Power Outage Zone 5. Fix by 10PM. Vital services active.",
+            twitter: "⚡ UACS: Zone 5 Grid Outage. Fix by 10PM. #UACS #Zone5",
+            radio: "UACS: Zone 5 power restoration by 10PM.",
+            tv: "⚡ ZONE 5 POWER OUTAGE: RESTORATION AT 10PM"
+          },
+          results: ["Time-bound expectation", "Zone-specific targeting"],
+          consistency: 99,
+          status: "success"
+        }
+      },
+      {
+        time: "T+20:00",
+        title: "Critical Sync",
+        without: { action: "Hospitals in Zone 5 unaware of total grid failure duration.", problem: "Generator fuel management risk", status: "error" },
+        with: { action: "UACS sends high-priority technical brief to hospitals.", result: "Life-saving coordination", status: "success" }
+      },
+      {
+        time: "T+FIX",
+        title: "Restoration",
+        without: { action: "Power back. People still don't know it's stable.", problem: "Hesitation to resume ops", status: "error" },
+        with: { action: "Instant 'Restored' notification sent via UACS.", result: "Full recovery in seconds", status: "success" }
+      }
+    ],
+    impact: { timeWithout: "30m", timeWith: "2m", langWithout: "1", langWith: "5", consWithout: "18%", consWith: "99%", confWithout: "78%", confWith: "1%" }
+  },
+  health: {
+    masterMessage: "Public Health Emergency: Zone 3 clinic reports outbreak. Mask mandate in effect for Zone 3. Avoid large gatherings until further notice.",
+    steps: [
+      {
+        time: "T+0:00",
+        title: "Outbreak",
+        without: { action: "Doctors call Health Dept. Info gets stuck in bureaucracy.", problem: "72 hour delay in public alert", status: "error" },
+        with: { action: "Clinic uploads report to UACS. Alert drafted in 5 mins.", result: "Contained in hours, not days", status: "success" }
+      },
+      {
+        time: "T+1hr",
+        title: "Instruction",
+        without: { action: "People in Zone 3 continue attending a local fair.", problem: "Super-spreader event occurs", status: "error" },
+        with: { action: "UACS sends mandatory mask/distancing alert.", result: "Immediate public compliance", status: "success" }
+      },
+      {
+        time: "T+2hr",
+        title: "Sourcing",
+        without: {
+          channels: {
+            sms: "Wear masks. Health issue.",
+            twitter: "Be safe. #HealthUpdate",
+            radio: "Flu reported. Take care.",
+            tv: "Health Advisory: Stay home."
+          },
+          problems: ["No specific action mentioned", "Confused with common flu"],
+          consistency: 15,
+          status: "error"
+        },
+        with: {
+          channels: {
+            sms: "🏥 UACS HEALTH: Zone 3 Outbreak. Mask mandate active. Avoid crowds.",
+            twitter: "🏥 UACS: Zone 3 Health Alert. Wear Masks. Avoid crowds. #Health",
+            radio: "UACS: Zone 3 mandatory mask warning active.",
+            tv: "🏥 HEALTH EMERGENCY ZONE 3: MASK MANDATE ACTIVE"
+          },
+          results: ["Uniform protocol", "Clear mandate", "Zero ambiguity"],
+          consistency: 97,
+          status: "success"
+        }
+      },
+      {
+        time: "T+5hr",
+        title: "Data",
+        without: { action: "No way to track if people are okay.", problem: "Zero field feedback", status: "error" },
+        with: { action: "UACS 'Safe/Help' button allows citizens to report symptoms.", result: "Heatmap of spread created", status: "success" }
+      },
+      {
+        time: "T+REMEDY",
+        title: "Conclusion",
+        without: { action: "Fear persists for weeks after danger is gone.", problem: "Economic shutdown continues", status: "error" },
+        with: { action: "UACS releases 'Safe Zone' status update.", result: "Rapid economic bounceback", status: "success" }
+      }
+    ],
+    impact: { timeWithout: "72h", timeWith: "1h", langWithout: "1", langWith: "5", consWithout: "15%", consWith: "97%", confWithout: "89%", confWith: "3%" }
+  },
+  road: {
+    masterMessage: "Major Road Closure: Zone 4 main highway blocked due to landslide. Use Old Bridge bypass. Expected clearance: 6 hours.",
+    steps: [
+      {
+        time: "T+0:00",
+        title: "Incident",
+        without: { action: "Traffic police manually divert cars at the spot.", problem: "5km traffic jam forms in 15 mins", status: "error" },
+        with: { action: "Landslide sensor triggers UACS road alert.", result: "Diverted at source 10km away", status: "success" }
+      },
+      {
+        time: "T+5:00",
+        title: "Navigation",
+        without: { action: "People follow Google Maps into the jam.", problem: "Google takes 10 mins to update", status: "error" },
+        with: { action: "UACS push notification gives bypass instructions.", result: "Smooth flow through bypass", status: "success" }
+      },
+      {
+        time: "T+10:00",
+        title: "Consistency",
+        without: {
+          channels: {
+            sms: "Road closed. Take bypass.",
+            twitter: "Traffic jam in Zone 4. #Traffic",
+            radio: "Avoid Zone 4 highway.",
+            tv: "Landslide in Zone 4."
+          },
+          problems: ["Bypass name not mentioned in all", "Wait time not mentioned"],
+          consistency: 33,
+          status: "error"
+        },
+        with: {
+          channels: {
+            sms: "🚧 UACS ROAD: Zone 4 Highway CLOSED. Use Old Bridge Bypass. 6h wait.",
+            twitter: "🚧 UACS: Zone 4 Landslide. Use Old Bridge Bypass. #Traffic #Zone4",
+            radio: "UACS: Zone 4 highway closed. Bypass via Old Bridge.",
+            tv: "🚧 ZONE 4 HIGHWAY CLOSED: BYPASS VIA OLD BRIDGE"
+          },
+          results: ["Same detour name", "Accurate wait time estimate"],
+          consistency: 95,
+          status: "success"
+        }
+      },
+      {
+        time: "T+15:00",
+        title: "Logistics",
+        without: { action: "Emergency vehicles get stuck in the traffic jam.", problem: "Delayed relief access", status: "error" },
+        with: { action: "UACS clears a 'Green Lane' by notifying all cars to move.", result: "Emergency access maintained", status: "success" }
+      },
+      {
+        time: "T+6hrs",
+        title: "Reopening",
+        without: { action: "Road opens but people still taking the long bypass.", problem: "Wasted fuel and time", status: "error" },
+        with: { action: "UACS sends 'Road Open' notification to all diversions.", result: "Traffic restored instantly", status: "success" }
+      }
+    ],
+    impact: { timeWithout: "40m", timeWith: "3m", langWithout: "1", langWith: "5", consWithout: "33%", consWith: "95%", confWithout: "62%", confWith: "2%" }
   }
-});
+};
 
 export default function SimulationPage() {
   const { t } = useLanguage();
