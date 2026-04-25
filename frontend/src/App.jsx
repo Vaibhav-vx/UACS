@@ -3,7 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard, PenSquare, CheckCircle2, ScrollText, LogOut,
-  Shield, Menu, X, Sun, Moon, Globe, ChevronDown, Users, BookTemplate, Map
+  Shield, Menu, X, Sun, Moon, Globe, ChevronDown, Users, BookTemplate, Map, Play
 } from 'lucide-react';
 import { ThemeProvider, useTheme } from './ThemeContext';
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
