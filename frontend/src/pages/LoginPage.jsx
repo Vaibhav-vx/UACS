@@ -361,12 +361,12 @@ export default function LoginPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <Field
                 id="login-phone"
-                label={t('mobileOrEmail') || 'Mobile Number or Admin Email'}
+                label={t('Mobile No.') || 'Mobile Number'}
                 icon={Mail}
                 type="text"
                 value={loginPhone}
                 onChange={handleLoginPhoneChange}
-                placeholder="81698 25915 or admin@uacs.gov"
+                placeholder="+91 1234567890"
                 autoFocus
               />
               <Field
