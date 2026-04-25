@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, Circle, LayersControl } from 'r
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Maximize2, Minimize2, Map as MapIcon, Shield, Layers, MapPin } from 'lucide-react';
-import { messagesApi } from '../api';
+import { messagesApi, nasaApi } from '../api';
 
 const { BaseLayer } = LayersControl;
 
@@ -28,12 +28,17 @@ export default function SituationMapCard() {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mapSize, setMapSize] = useState('medium'); // small, medium, large
+  const [nasaEvents, setNasaEvents] = useState([]);
 
   useEffect(() => {
     const fetchAlerts = async () => {
       try {
-        const res = await messagesApi.getAll('active');
-        setAlerts(res.data);
+        const [msgRes, nasaRes] = await Promise.all([
+          messagesApi.getAll('active'),
+          nasaApi.getEvents(30).catch(() => ({ data: { events: [] } }))
+        ]);
+        setAlerts(msgRes.data);
+        setNasaEvents(nasaRes.data.events || []);
       } catch (err) {
         console.error('Failed to fetch dashboard map alerts:', err);
       } finally {
@@ -56,6 +61,21 @@ export default function SituationMapCard() {
     className: 'custom-div-icon',
     iconSize: [30, 30],
   });
+
+  const nasaIcon = (categories) => {
+    const catId = categories[0]?.id?.toLowerCase() || '';
+    let emoji = '🌍';
+    if (catId.includes('fire')) emoji = '🔥';
+    if (catId.includes('storm')) emoji = '🌪️';
+    if (catId.includes('flood')) emoji = '🌊';
+    if (catId.includes('volcano')) emoji = '🌋';
+    if (catId.includes('earthquake')) emoji = '🫨';
+    return L.divIcon({
+      html: `<div class="map-nasa-icon">${emoji}</div>`,
+      className: 'custom-div-icon',
+      iconSize: [22, 22],
+    });
+  };
 
   return (
     <div className={`glass-card overflow-hidden transition-all duration-500 map-card-resizable ${sizeClasses[mapSize]} relative shadow-2xl border-0`}>
@@ -141,6 +161,24 @@ export default function SituationMapCard() {
             </div>
           );
         })}
+
+        {/* NASA Events */}
+        {nasaEvents.map(event => {
+          const geometry = event.geometry[event.geometry.length - 1];
+          if (!geometry || !Array.isArray(geometry.coordinates)) return null;
+          const pos = [geometry.coordinates[1], geometry.coordinates[0]];
+          return (
+            <Marker key={event.id} position={pos} icon={nasaIcon(event.categories)}>
+              <Popup>
+                <div className="p-1">
+                  <div className="font-bold text-[10px] text-blue-600 uppercase mb-1">NASA: {event.categories[0]?.title}</div>
+                  <h4 className="font-bold text-xs mb-1">{event.title}</h4>
+                  <div className="text-[8px] text-theme-muted">{new Date(geometry.date).toLocaleDateString()}</div>
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
 
       <style>{`
@@ -158,6 +196,18 @@ export default function SituationMapCard() {
           height: 30px;
           border: 2px solid white;
           animation: map-bounce 2s infinite;
+        }
+        .map-nasa-icon {
+          background: #1e3a8a;
+          border-radius: 50%;
+          width: 22px;
+          height: 22px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 1.5px solid #60a5fa;
+          font-size: 12px;
+          box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
         }
         @keyframes map-bounce {
           0%, 100% { transform: translateY(0); }

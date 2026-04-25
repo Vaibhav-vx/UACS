@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, Circle, LayersControl, useMap }
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapPin, Shield, AlertTriangle, Info, Users, Navigation } from 'lucide-react';
-import { messagesApi, recipientsApi } from '../api';
+import { messagesApi, recipientsApi, nasaApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
 
 const { BaseLayer } = LayersControl;
@@ -50,16 +50,21 @@ export default function MapPage() {
   const isAdmin = user.role === 'admin';
   const { t } = useLanguage();
   const [selectedZone, setSelectedZone] = useState(null);
+  const [nasaEvents, setNasaEvents] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const [msgRes, recRes] = await Promise.all([
+        const [msgRes, recRes, nasaRes] = await Promise.all([
           messagesApi.getAll('active'),
-          isAdmin ? recipientsApi.getAll() : Promise.resolve({ data: [] })
+          isAdmin ? recipientsApi.getAll() : Promise.resolve({ data: [] }),
+          nasaApi.getEvents(45).catch(err => {
+            console.error('NASA API Error:', err);
+            return { data: { events: [] } };
+          })
         ]);
         
         setAlerts(msgRes.data);
+        setNasaEvents(nasaRes.data.events || []);
         
         if (isAdmin) {
           const stats = { recipientsList: recRes.data };
@@ -89,6 +94,24 @@ export default function MapPage() {
     className: 'custom-div-icon',
     iconSize: [24, 24],
   });
+
+  const nasaIcon = (categories) => {
+    const catId = categories[0]?.id?.toLowerCase() || '';
+    let emoji = '🌍';
+    if (catId.includes('fire')) emoji = '🔥';
+    if (catId.includes('storm')) emoji = '🌪️';
+    if (catId.includes('flood')) emoji = '🌊';
+    if (catId.includes('volcano')) emoji = '🌋';
+    if (catId.includes('iceberg')) emoji = '🧊';
+    if (catId.includes('earthquake')) emoji = '🫨';
+    if (catId.includes('snow')) emoji = '❄️';
+
+    return L.divIcon({
+      html: `<div class="map-nasa-icon shadow-lg">${emoji}</div>`,
+      className: 'custom-div-icon',
+      iconSize: [26, 26],
+    });
+  };
 
   return (
     <div className="flex flex-col gap-4 animate-fade-in" style={{ height: 'calc(100vh - 120px)', minHeight: '500px' }}>
@@ -174,6 +197,32 @@ export default function MapPage() {
             );
           })}
 
+          {/* NASA Disaster Events */}
+          {nasaEvents.map(event => {
+            const geometry = event.geometry[event.geometry.length - 1]; // Get latest point
+            if (!geometry || (geometry.type !== 'Point' && !Array.isArray(geometry.coordinates))) return null;
+            // EONET coords are [lng, lat]
+            const pos = [geometry.coordinates[1], geometry.coordinates[0]];
+            
+            return (
+              <Marker key={event.id} position={pos} icon={nasaIcon(event.categories)}>
+                <Popup className="custom-popup">
+                  <div className="p-1">
+                    <div className="flex flex-col gap-1 mb-2">
+                       <span className="w-fit bg-blue-600 text-white px-1.5 py-0.5 rounded text-[8px] font-black uppercase">NASA EONET ACTIVE</span>
+                       <h4 className="font-bold text-xs m-0 leading-tight">{event.title}</h4>
+                    </div>
+                    <p className="text-[10px] text-theme-secondary mb-2">Type: {event.categories[0]?.title}</p>
+                    <div className="text-[9px] text-theme-muted flex items-center justify-between border-t border-theme-border pt-2">
+                       <span>{new Date(geometry.date).toLocaleDateString()}</span>
+                       <a href={event.sources[0]?.url} target="_blank" rel="noreferrer" className="text-accent hover:underline font-bold">SOURCE API</a>
+                    </div>
+                  </div>
+                </Popup>
+              </Marker>
+            );
+          })}
+
           {/* EAPs */}
           {EAPS.map((eap, i) => (
             <Marker key={i} position={eap.pos} icon={eapIcon}>
@@ -244,6 +293,10 @@ export default function MapPage() {
                   <span className="text-xs md:text-base">🏥</span>
                   <span>Safety Point</span>
                 </div>
+                <div className="flex items-center gap-2 text-[10px] md:text-xs">
+                  <span className="text-xs md:text-base">🌍</span>
+                  <span>NASA Global Event</span>
+                </div>
                 {isAdmin && (
                   <div className="flex items-center gap-2 text-[10px] md:text-xs">
                     <div className="w-3 h-3 md:w-4 md:h-4 rounded bg-accent text-white text-[8px] md:text-[10px] flex items-center justify-center font-bold">12</div>
@@ -297,16 +350,24 @@ export default function MapPage() {
           box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .map-recipient-icon {
-          background: white;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .map-nasa-icon {
+          background: #1e3a8a;
           border-radius: 50%;
-          width: 20px;
-          height: 20px;
+          width: 26px;
+          height: 26px;
           display: flex;
           align-items: center;
           justify-content: center;
-          border: 2px solid var(--accent);
-          font-size: 10px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          border: 2px solid #60a5fa;
+          font-size: 14px;
+          box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+          animation: pulse-nasa 3s infinite;
+        }
+        @keyframes pulse-nasa {
+          0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(37, 99, 235, 0.4); }
+          50% { transform: scale(1.1); box-shadow: 0 0 25px rgba(37, 99, 235, 0.6); }
         }
         .custom-popup .leaflet-popup-content-wrapper {
           border-radius: 12px;

@@ -106,4 +106,9 @@ export const recipientsApi = {
   sendTest: (id) => api.post(`/recipients/${id}/test`),
 };
 
+// ─── NASA Disaster API (EONET) ───
+export const nasaApi = {
+  getEvents: (days = 30) => axios.get('https://eonet.gsfc.nasa.gov/api/v3/events', { params: { status: 'open', days } }),
+};
+
 export default api;
