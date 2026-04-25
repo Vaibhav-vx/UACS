@@ -54,6 +54,7 @@ export default function MapPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      try {
         const [msgRes, recRes, nasaRes] = await Promise.all([
           messagesApi.getAll('active'),
           isAdmin ? recipientsApi.getAll() : Promise.resolve({ data: [] }),
