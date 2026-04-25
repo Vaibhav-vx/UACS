@@ -122,10 +122,30 @@ ALTER TABLE users          DISABLE ROW LEVEL SECURITY;
 ALTER TABLE recipients     DISABLE ROW LEVEL SECURITY;
 ALTER TABLE safety_reports DISABLE ROW LEVEL SECURITY;
 
--- ── Seed Data ────────────────────────────────────────────
--- (Using ON CONFLICT to avoid duplicate seed errors)
+-- ── Seed: Users (ON CONFLICT DO NOTHING) ──────────────────
+-- Admin: Vaibhav
 INSERT INTO users (name, email, password, role, department)
-VALUES ('Admin', 'admin@uacs.gov', '$2b$10$JYVIN2TSVvPymoxantR9se2dWU1rABAh2mZY5sq.x5/Jojv/SvhyK', 'admin', 'Central Command')
+VALUES ('Vaibhav', '8169825915', '$2b$10$V.fsgQjclQDmQGHtwzZ4Iu1CapFxE1BaC7Zsyb8ScqxlpOobfljci', 'admin', 'Central Command')
+ON CONFLICT (email) DO NOTHING;
+
+-- User: Krish
+INSERT INTO users (name, email, password, role, department)
+VALUES ('Krish', '7710962809', '$2b$10$TyeeN/X2YUank/zgd78eW.ZYhZKDnKHiQPvVqFtwWp93GWPEA.5k2', 'user', 'Field Ops')
+ON CONFLICT (email) DO NOTHING;
+
+-- User: Vedant
+INSERT INTO users (name, email, password, role, department)
+VALUES ('Vedant', '9653159474', '$2b$10$1EE6ZSSKILdPJ4ctzsXyfOcyRfSOSukR7UiPp8ydimEcXNYjxa7Pu', 'user', 'Field Ops')
+ON CONFLICT (email) DO NOTHING;
+
+-- User: Anurag
+INSERT INTO users (name, email, password, role, department)
+VALUES ('Anurag', '8482832474', '$2b$10$nSghXzF79jHXZcScY6TdDOFjanWVSTJJ/FSN6wtql/xkWt1PRFv9u', 'user', 'Field Ops')
+ON CONFLICT (email) DO NOTHING;
+
+-- Fallback Admin
+INSERT INTO users (name, email, password, role, department)
+VALUES ('Admin', 'admin@uacs.gov', '$2b$10$JYVIN2TSVvPymoxantR9se2dWU1rABAh2mZY5sq.x5/Jojv/SvhyK', 'admin', 'System')
 ON CONFLICT (email) DO NOTHING;
 
 -- ── Verify ───────────────────────────────────────────────
