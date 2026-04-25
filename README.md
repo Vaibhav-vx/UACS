@@ -77,6 +77,10 @@ The UACS Admin Portal is divided into specialized modules, each designed for hig
 *   **Functions**: Management of pre-configured alert messages for common disasters (Floods, Earthquakes, Industrial Leaks).
 *   **Purpose**: Saves life-critical minutes during the onset of a disaster by allowing admins to launch verified alerts from proven presets.
 
+### 🎮 Live Simulation (Problem vs. Solution)
+*   **Functions**: Interactive side-by-side comparison of manual disaster response vs. automated UACS response.
+*   **Purpose**: A powerful tool for training and demonstration that visualizes the time saved, consistency gained, and confusion reduced by using UACS.
+
 ---
 
 ## 🛠 Technical Architecture
