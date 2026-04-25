@@ -457,7 +457,7 @@ export default function LoginPage() {
                     type="tel"
                     value={regPhone}
                     onChange={e => { setRegPhone(formatPhoneNumber(e.target.value)); setRegError(''); }}
-                    placeholder="81698 25915"
+                    placeholder="Your Number"
                     autoComplete="tel"
                   />
                   <Field
