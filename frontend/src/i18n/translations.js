@@ -1,6 +1,7 @@
 const translations = {
   "en": {
     "dashboard": "Dashboard",
+    "survivalGuide": "Survival Guide",
     "history": "Alert History",
     "evacuation": "Evacuation Guide",
     "family": "Family Network",

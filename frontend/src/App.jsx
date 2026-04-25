@@ -3,7 +3,8 @@ import { Toaster } from 'react-hot-toast';
 import { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard, PenSquare, CheckCircle2, ScrollText, LogOut,
-  Shield, Menu, X, Sun, Moon, Globe, ChevronDown, Users, BookTemplate, Map, Play
+  Shield, Menu, X, Sun, Moon, Globe, ChevronDown, Users, BookTemplate, Map, Play,
+  BookOpen
 } from 'lucide-react';
 import { ThemeProvider, useTheme } from './ThemeContext';
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
@@ -22,9 +23,11 @@ import EvacuationPage from './pages/EvacuationPage';
 import FamilyPage     from './pages/FamilyPage';
 import StatsPage      from './pages/StatsPage';
 import SettingsPage   from './pages/SettingsPage';
+import SurvivalGuidePage from './pages/SurvivalGuidePage';
 
 const NAV_ITEMS = [
   { path: '/dashboard',  labelKey: 'dashboard',  icon: LayoutDashboard, roles: ['admin', 'user'] },
+  { path: '/survival',   labelKey: 'survivalGuide', icon: BookOpen,        roles: ['user'] },
   { path: '/history',    labelKey: 'history',    icon: ScrollText,      roles: ['user'] },
   { path: '/evacuation', labelKey: 'evacuation', icon: Shield,          roles: ['user'] },
   { path: '/map',        labelKey: 'map',         icon: Map,             roles: ['admin', 'user'] },
@@ -346,6 +349,7 @@ function AppLayout() {
           }}>
             <Routes>
               <Route path="/dashboard"    element={<DashboardPage />} />
+              <Route path="/survival"     element={<SurvivalGuidePage />} />
               <Route path="/history"      element={<NotificationsPage />} />
               <Route path="/evacuation"   element={<EvacuationPage />} />
               <Route path="/family"       element={<FamilyPage />} />
