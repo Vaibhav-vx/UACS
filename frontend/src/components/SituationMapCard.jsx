@@ -59,13 +59,7 @@ export default function SituationMapCard() {
 
   return (
     <div className={`glass-card overflow-hidden transition-all duration-500 map-card-resizable ${sizeClasses[mapSize]} relative shadow-2xl border-0`}>
-      {/* Header Overlay (Left side only) */}
-      <div className="absolute top-4 left-4 z-[1000] pointer-events-none">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-theme-surface/80 backdrop-blur-md border border-theme-border shadow-lg pointer-events-auto">
-          <Shield className="w-4 h-4 text-accent" />
-          <span className="text-xs font-bold uppercase tracking-wider">{loading ? 'Loading Map...' : 'Live Situation Overview'}</span>
-        </div>
-      </div>
+
 
       {/* Map Size Controls (Bottom Right) */}
       <div className="absolute bottom-6 right-6 z-[1000] pointer-events-none">
