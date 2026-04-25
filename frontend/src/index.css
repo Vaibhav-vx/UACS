@@ -361,9 +361,19 @@
   animation: emergency-pulse 2s infinite ease-in-out;
 }
 
-/* ═══════════════════════════════════════════════════════ */
-/* Responsive Sidebar Layout                               */
-/* ═══════════════════════════════════════════════════════ */
+/* Prevent horizontal scroll and fix mobile layout */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Base text wrapping fixes */
+p, span, h1, h2, h3, h4, h5, h6, div, td, th {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
 
 /* Desktop: sidebar always visible, push main content */
 @media (min-width: 1024px) {
@@ -390,18 +400,28 @@
   .lg-sidebar {
     top: 56px !important; /* below the mobile header */
     height: calc(100vh - 56px) !important;
+    width: 280px !important;
+    z-index: 1000 !important;
   }
 
   .main-with-sidebar {
     margin-left: 0 !important;
-    padding-top: 0;
+    padding-top: 1rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
   }
-}
 
-/* Prevent horizontal scroll on mobile */
-html, body {
-  overflow-x: hidden;
-  max-width: 100vw;
+  .glass-card {
+    border-radius: 0.5rem;
+    padding: 1rem !important;
+  }
+
+  h1 { font-size: 1.5rem !important; }
+  h2 { font-size: 1.25rem !important; }
+
+  .stat-card {
+    padding: 1rem !important;
+  }
 }
 
 /* Prevent long translated strings from overflowing anywhere */
@@ -421,3 +441,20 @@ html, body {
 .leaflet-bottom {
   z-index: 401 !important;
 }
+
+/* Resizable Map Card (Admin) */
+.map-card-resizable {
+  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.map-card-small { height: 300px; }
+.map-card-medium { height: 500px; }
+.map-card-large { height: 800px; }
+
+@media (max-width: 640px) {
+  .map-card-small { height: 250px; }
+  .map-card-medium { height: 400px; }
+  .map-card-large { height: 600px; }
+}
+

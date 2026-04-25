@@ -87,25 +87,25 @@ export default function MapPage() {
   });
 
   return (
-    <div className="h-[calc(100vh-140px)] flex flex-col gap-4 animate-fade-in">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-4 animate-fade-in" style={{ height: 'calc(100vh - 120px)', minHeight: '500px' }}>
+      <div className="flex items-center justify-between flex-wrap gap-2 px-1">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-3">
-            <Shield className="w-6 h-6 text-accent" />
+          <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2 md:gap-3">
+            <Shield className="w-5 h-5 md:w-6 md:h-6 text-accent" />
             {t('interactiveMap') || 'Interactive Situation Map'}
           </h1>
-          <p className="text-sm text-theme-muted">{t('mapSubtitle') || 'Visualizing active alerts and evacuation assembly points.'}</p>
+          <p className="text-[10px] md:text-sm text-theme-muted">{t('mapSubtitle') || 'Visualizing active alerts and evacuation points.'}</p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full bg-theme-hover border border-theme-border">
+          <div className="hidden sm:flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full bg-theme-hover border border-theme-border">
             <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            LIVE SYSTEM
+            LIVE
           </div>
         </div>
       </div>
 
-      <div className="flex-1 rounded-3xl overflow-hidden border border-theme-border shadow-2xl relative">
-        <MapContainer center={[19.07, 72.87]} zoom={12} style={{ height: '100%', width: '100%' }}>
+      <div className="flex-1 rounded-2xl md:rounded-3xl overflow-hidden border border-theme-border shadow-2xl relative">
+        <MapContainer center={[19.07, 72.87]} zoom={11} style={{ height: '100%', width: '100%' }}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -199,32 +199,26 @@ export default function MapPage() {
         </MapContainer>
 
         {/* Legend / Overlay UI */}
-        <div className="absolute bottom-6 left-6 z-[1000] flex flex-col gap-2">
-          <div className="glass-card p-4 rounded-2xl border border-theme-border shadow-xl min-w-[180px]">
-             <h4 className="text-xs font-bold mb-3 border-b border-theme-border pb-2 uppercase tracking-wider">Map Legend</h4>
-             <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs">
-                  <div className="w-3 h-3 rounded-full bg-red-500" />
-                  <span>Critical Alert Zone</span>
+        <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6 z-[1000] flex flex-col gap-2 max-w-[calc(100vw-2rem)]">
+          <div className="glass-card p-3 md:p-4 rounded-xl md:rounded-2xl border border-theme-border shadow-xl min-w-[140px] md:min-w-[180px]">
+             <h4 className="text-[10px] md:text-xs font-bold mb-2 md:mb-3 border-b border-theme-border pb-2 uppercase tracking-wider">Map Legend</h4>
+             <div className="space-y-1.5 md:space-y-2">
+                <div className="flex items-center gap-2 text-[10px] md:text-xs">
+                  <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-red-500" />
+                  <span>Critical Alert</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <div className="w-3 h-3 rounded-full bg-orange-500" />
-                  <span>High Alert Zone</span>
+                <div className="flex items-center gap-2 text-[10px] md:text-xs">
+                  <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-orange-500" />
+                  <span>High Alert</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="text-base">🏥</span>
-                  <span>Safety Point (EAP)</span>
+                <div className="flex items-center gap-2 text-[10px] md:text-xs">
+                  <span className="text-xs md:text-base">🏥</span>
+                  <span>Safety Point</span>
                 </div>
                 {isAdmin && (
-                  <div className="flex items-center gap-2 text-xs">
-                    <div className="w-4 h-4 rounded bg-accent text-white text-[10px] flex items-center justify-center font-bold">12</div>
-                    <span>Recipient Heatmap</span>
-                  </div>
-                )}
-                {isAdmin && (
-                  <div className="flex items-center gap-2 text-xs">
-                    <div className="w-4 h-4 rounded-full bg-white border border-accent flex items-center justify-center text-[10px]">👤</div>
-                    <span>Individual Recipient</span>
+                  <div className="flex items-center gap-2 text-[10px] md:text-xs">
+                    <div className="w-3 h-3 md:w-4 md:h-4 rounded bg-accent text-white text-[8px] md:text-[10px] flex items-center justify-center font-bold">12</div>
+                    <span>Heatmap</span>
                   </div>
                 )}
              </div>
@@ -232,14 +226,14 @@ export default function MapPage() {
         </div>
 
         {/* Zone Selector for quick jump */}
-        <div className="absolute top-6 right-6 z-[1000]">
-          <div className="glass-card p-2 rounded-xl border border-theme-border shadow-xl flex items-center gap-2">
+        <div className="absolute top-4 right-4 md:top-6 md:right-6 z-[1000]">
+          <div className="glass-card p-1.5 md:p-2 rounded-lg md:rounded-xl border border-theme-border shadow-xl flex items-center gap-2">
             <select 
-              className="bg-transparent border-0 text-xs font-bold focus:ring-0 cursor-pointer"
+              className="bg-transparent border-0 text-[10px] md:text-xs font-bold focus:ring-0 cursor-pointer p-0 pr-6"
               onChange={(e) => setSelectedZone(e.target.value)}
               value={selectedZone || ''}
             >
-              <option value="">{t('jumpToZone') || 'Jump to Zone...'}</option>
+              <option value="">{t('jumpToZone') || 'Jump...'}</option>
               {Object.keys(ZONE_COORDS).map(z => <option key={z} value={z}>{z}</option>)}
             </select>
           </div>

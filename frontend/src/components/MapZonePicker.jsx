@@ -153,11 +153,11 @@ export default function MapZonePicker({ value, onChange, onClose }) {
         </div>
 
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden" style={{ minHeight: 0 }}>
-          {/* Sidebar */}
-          <div className="w-full md:w-64 shrink-0 p-4 border-b md:border-b-0 md:border-r border-[var(--border)] space-y-4 overflow-y-auto">
+          {/* Sidebar / Controls */}
+          <div className="w-full md:w-72 shrink-0 p-4 border-b md:border-b-0 md:border-r border-[var(--border)] space-y-4 overflow-y-auto bg-theme-surface/30">
             {/* Search */}
             <div>
-              <label className="text-xs font-semibold text-theme-muted uppercase tracking-wider">Search Location</label>
+              <label className="text-[10px] md:text-xs font-bold text-theme-muted uppercase tracking-widest">Search Location</label>
               <div className="flex gap-2 mt-1.5">
                 <input
                   type="text"
@@ -251,8 +251,8 @@ export default function MapZonePicker({ value, onChange, onClose }) {
           </div>
 
           {/* Map */}
-          <div className="flex-1 relative" style={{ minHeight: '320px' }}>
-            <div ref={mapRef} className="w-full h-full" style={{ minHeight: '320px' }} />
+          <div className="flex-1 relative min-h-[250px] md:min-h-[400px]">
+            <div ref={mapRef} className="w-full h-full" />
           </div>
         </div>
 

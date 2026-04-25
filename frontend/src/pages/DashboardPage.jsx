@@ -10,6 +10,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 import ExpiryTimer from '../components/ExpiryTimer';
 import ChannelBadge from '../components/ChannelBadge';
 import AlertBanner from '../components/AlertBanner';
+import SituationMapCard from '../components/SituationMapCard';
 
 export default function DashboardPage() {
   const [activeMessages, setActiveMessages]   = useState([]);
@@ -274,6 +275,8 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {isAdmin && <SituationMapCard />}
+      
       <div className="flex items-center justify-between">
         <div><h1 className="text-2xl font-bold flex items-center gap-3"><TrendingUp className="w-6 h-6" style={{ color: 'var(--accent)' }} />{t('dashboardTitle')}</h1><p className="text-sm mt-1 text-theme-muted">{t('dashboardSubtitle')}</p></div>
         <button onClick={fetchData} className="btn-secondary text-sm"><RefreshCw className="w-4 h-4" /> {t('refresh')}</button>
