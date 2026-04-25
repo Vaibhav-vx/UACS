@@ -1,108 +1,136 @@
 # Unified Authority Communication System (UACS)
 
-![UACS Portal](https://img.shields.io/badge/UACS-Secure_Communication-3b82f6?style=for-the-badge&logo=shield)
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Leaflet](https://img.shields.io/badge/Leaflet-199900?style=for-the-badge&logo=leaflet&logoColor=white)
-![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
+![UACS Header](https://img.shields.io/badge/UACS-Emergency_Command_Center-3b82f6?style=for-the-badge&logo=shield)
+![Status](https://img.shields.io/badge/Status-Live_Production-22c55e?style=for-the-badge)
+![React](https://img.shields.io/badge/React_18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Node](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase_DB-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
 
-The **Unified Authority Communication System (UACS)** is a high-availability, mission-critical emergency communication platform. It bridges the gap between administrative authorities and citizens during disasters, providing real-time alerts, safety check-ins, and interactive situational awareness.
-
----
-
-## 🌟 Key Features
-
-### 1. Dual-Portal Personalized Experience
-- **Admin Command Center**: Complete oversight of the communication pipeline. Tools for composing multi-channel broadcasts, managing recipients via map-based zone picking, and monitoring real-time safety response analytics.
-- **Citizen Safety Portal**: A personalized dashboard for users featuring:
-  - **Dynamic Greetings**: Localized welcomes in 5 languages.
-  - **Zone-Filtered Alerts**: Citizens only see alerts relevant to their configured safety zone.
-  - **Safety Check-in System**: Interactive banners during critical emergencies asking "Are you safe?" with one-tap status reporting.
-
-### 2. Interactive Situation Map
-- **Live Alert Visualization**: Real-time rendering of active emergency zones with urgency-based color coding.
-- **Evacuation Points (EAPs)**: Dynamic markers for assembly points and shelters with instant routing directions.
-- **Admin Heatmap**: Administrators can visualize recipient density by zone to prioritize rescue efforts.
-
-### 3. Integrated Safety Check-in Logic
-- During **CRITICAL** alerts, users receive a prominent safety banner.
-- Tapping **"YES, I AM SAFE"** or **"SOS: ASSISTANCE REQUIRED"** instantly updates the central Admin Analytics dashboard.
-- Admin dashboard provides real-time counts and names of citizens requiring urgent help.
-
-### 4. Emergency Contact Auto-Notification
-- **High-Priority Registration**: Users can register a trusted emergency contact (e.g., Mom, Spouse).
-- **Automated Bypass**: Whenever a CRITICAL alert is issued in a user's zone, the system automatically dispatches a parallel SMS to their emergency contact, ensuring family awareness without user intervention.
-
-### 5. Multi-Channel & Multilingual Dispatch
-- **5 Core Languages**: English, Hindi, Marathi, Tamil, and Telugu.
-- **Omni-Channel**: SMS (Twilio), Twitter/X, Radio Scripts, TV Tickers, and Website Banners.
-- **Phone Normalization**: Intelligent +91 formatting ensures delivery success across all Indian carriers.
+The **Unified Authority Communication System (UACS)** is a state-of-the-art, mission-critical emergency communication platform designed to bridge the gap between administrative authorities and citizens during disasters. It provides a centralized "Command and Control" hub for multi-channel alert dispatching, real-time situation monitoring, and citizen safety coordination.
 
 ---
 
-## 🛠 Tech Stack
-
-**Frontend:**
-- React 18 + Vite
-- **React-Leaflet / Leaflet.js** (Mapping & GIS)
-- Lucide React (Iconography)
-- Glassmorphism Design System (Custom CSS)
-
-**Backend:**
-- Node.js & Express
-- Supabase (PostgreSQL + Realtime)
-- Twilio API (SMS Gateway)
+## 🚀 Vision & Purpose
+UACS is built to ensure that **no citizen is left behind** during a crisis. By unifying SMS, Social Media, Radio, and TV alerts into a single dashboard, authorities can broadcast life-saving information in seconds, across multiple languages, with guaranteed delivery tracking.
 
 ---
 
-## 🚀 Getting Started
+## 🌟 Core Features & Modules
 
-### Prerequisites
-- Node.js (v18+)
-- Supabase Account
-- Twilio Account
+### 1. Unified Dispatch Command Center
+*   **Omni-Channel Broadcast**: Send alerts simultaneously via **SMS (Twilio)**, **Twitter/X**, **Emergency Radio**, **TV Tickers**, and **Website Banners**.
+*   **Multilingual Core**: Built-in support for **English, Hindi, Marathi, Tamil, and Telugu**. Automated translation pipeline ensures consistent messaging.
+*   **Smart Composition**: Create alerts with master content and specialized instructions for different channels (e.g., short 160-char SMS vs. detailed web reports).
 
-### Environment Variables
-Create a `.env` file in `/backend`:
-```env
-PORT=5000
-SUPABASE_URL=...
-SUPABASE_KEY=...
-JWT_SECRET=...
-TWILIO_ACCOUNT_SID=...
-TWILIO_AUTH_TOKEN=...
-TWILIO_PHONE_NUMBER=...
+### 2. Interactive Situation & Heatmap (Admin)
+*   **Resizable Map Card**: A dynamic dashboard map with **Small, Medium, and Large** toggles, allowing admins to switch between a compact overview and a detailed "ClearView" for monitoring.
+*   **Zone-Based Visualization**: Active alerts are rendered as pulse zones on a Leaflet-powered map.
+*   **Recipient Heatmap**: Admins can see the density of citizens in various zones to prioritize rescue operations.
+*   **Assembly Points (EAP)**: Visual markers for Medical Centers, Shelters, and Assembly points with capacity tracking.
+
+### 3. Citizen Safety Portal
+*   **Zone-Filtered Alerts**: Citizens receive only the alerts that affect their specific safety zone, reducing "alert fatigue."
+*   **One-Tap Safety Check-in**: During Critical alerts, users see a prominent banner asking "Are you safe?". Responses (Safe / Need Assistance) are instantly beamed to the Admin Analytics dashboard.
+*   **Emergency Contact Sync**: Users can register an emergency contact who is **automatically notified** via SMS whenever a critical alert is issued in the user's zone.
+
+### 4. Robust SMS Gateway
+*   **Batch Processing**: Optimized for mass delivery. The system automatically batches SMS alerts (10 at a time) with staggered delays to prevent Twilio rate-limiting.
+*   **Marathi Character Support**: Full support for Unicode characters to ensure Marathi and other regional alerts are readable on all devices.
+*   **Number Normalization**: Intelligent +91 formatting handles various user input styles automatically.
+
+### 5. Advanced Audit & Lifecycle Tracking
+*   **Grouped Audit Logs**: A clean, chronological view of alert lifecycles. Instead of thousands of lines, entries are grouped by "Message ID."
+*   **Expandable History**: Click any alert log to see its entire lifecycle: *Created -> Edited -> Approved -> Dispatched*.
+*   **Full Accountability**: Every action is logged with the timestamp, channel, and the administrator who performed it.
+
+### 6. Recipient & User Synchronization
+*   **Unified Management**: Adding a recipient to the system automatically creates a Citizen Portal account for them.
+*   **Credential Auto-Gen**: Portals are secured using the recipient's mobile number as the username and a standardized `name-sx` password format for easy onboarding.
+
+---
+
+## 🛠 Technical Architecture
+
+### Frontend (Modern Stack)
+*   **React 18 + Vite**: Lightning-fast development and optimized production builds.
+*   **Tailwind CSS v4**: Utility-first styling with a custom Glassmorphism design system.
+*   **React-Leaflet**: Integrated GIS mapping for interactive situational awareness.
+*   **Lucide Icons**: Professional, consistent iconography across all modules.
+
+### Backend (Secure & Scalable)
+*   **Node.js & Express**: High-performance API layer.
+*   **Supabase (PostgreSQL)**: Secure, scalable database with real-time capabilities.
+*   **Twilio API**: Enterprise-grade SMS gateway integration.
+*   **JWT Authentication**: Secure session management for Admins and Citizens.
+
+---
+
+## 📂 Project Structure
+
+```text
+UACS/
+├── frontend/             # React (Vite) Application
+│   ├── src/
+│   │   ├── api/          # Axios API service layer
+│   │   ├── components/   # Reusable UI (MapCard, ExpiryTimer, etc.)
+│   │   ├── i18n/         # Language context and translations
+│   │   └── pages/        # Main route views (Dashboard, Audit, Map)
+├── backend/              # Node.js Express Server
+│   ├── routes/           # API Endpoints (Auth, Messages, Audit, Recipients)
+│   ├── integrations/     # Third-party (SMS Gateway, Social APIs)
+│   └── database/         # Supabase connection & schema
+└── .env                  # Environment configurations
 ```
 
-### Installation & Run
+---
 
-1. **Backend**:
-   ```bash
-   cd backend && npm install && npm run dev
-   ```
+## ⚙️ Setup & Installation
 
-2. **Frontend**:
-   ```bash
-   cd frontend && npm install && npm run dev
-   ```
+### 1. Prerequisites
+*   **Node.js** (v18.0 or higher)
+*   **Supabase Project** (Database & Auth)
+*   **Twilio Account** (SID, Token, and Phone Number)
+
+### 2. Environment Configuration
+Create a `.env` file in the root directory:
+```env
+PORT=5000
+SUPABASE_URL=your_supabase_url
+SUPABASE_KEY=your_supabase_service_role_key
+JWT_SECRET=your_secure_random_secret
+
+# SMS Gateway (Twilio)
+TWILIO_ACCOUNT_SID=your_sid
+TWILIO_AUTH_TOKEN=your_token
+TWILIO_PHONE_NUMBER=your_number
+```
+
+### 3. Installation
+```bash
+# Install Backend Dependencies
+cd backend && npm install
+
+# Install Frontend Dependencies
+cd ../frontend && npm install
+```
+
+### 4. Running the Project
+```bash
+# Start Backend (Port 5000)
+cd backend && npm run dev
+
+# Start Frontend (Vite)
+cd ../frontend && npm run dev
+```
 
 ---
 
-## 📖 Usage Guide
-
-### Demo Access
-The system includes a high-fidelity **Demo Portal**. Click **"Try Demo Profile"** on the login page to enter as a standard user with pre-configured preferences (Zone 4, Hindi) to experience the personalized safety features instantly.
-
-### Admin Credentials
-- **Access**: Restricted to authorized government personnel.
-- **Features**: Approval Queue, Audit Logs, Recipient Map Management, and Safety Analytics.
-
-### Registration
-Standard registration is open to all citizens. Upon registering, users should immediately:
-1. Set their **Safety Zone**.
-2. Add an **Emergency Contact Name & Mobile**.
-3. Toggle **SMS Notifications** to "On".
+## 🛡 Security & Compliance
+*   **Role-Based Access Control (RBAC)**: Distinct permissions for `admin` and `user` roles.
+*   **Secure API Layers**: All management endpoints require valid JWT tokens.
+*   **Encrypted Storage**: Sensitive data and preferences are handled via secure Supabase policies.
 
 ---
 
-## 📜 License
-*Unified Authority Communication System - Secure Government Portal. For internal administrative deployment only.*
+## 📜 License & Ownership
+*Unified Authority Communication System (UACS) - Secure Government Portal. Developed for internal administrative and emergency response deployment.*
