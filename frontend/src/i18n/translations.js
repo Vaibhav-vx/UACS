@@ -1,6 +1,13 @@
 const translations = {
   "en": {
     "dashboard": "Dashboard",
+    "history": "Alert History",
+    "evacuation": "Evacuation Guide",
+    "family": "Family Network",
+    "statistics": "Statistics",
+    "settings": "Settings",
+    "recipients": "Recipients",
+    "templates": "Templates",
     "compose": "Compose",
     "approval": "Approval",
     "auditLog": "Audit Log",

@@ -17,16 +17,28 @@ import RecipientsPage  from './pages/RecipientsPage';
 import ProfilePage     from './pages/ProfilePage';
 import MapPage         from './pages/MapPage';
 import SimulationPage  from './pages/SimulationPage';
+import NotificationsPage from './pages/NotificationsPage';
+import EvacuationPage from './pages/EvacuationPage';
+import FamilyPage     from './pages/FamilyPage';
+import StatsPage      from './pages/StatsPage';
+import SettingsPage   from './pages/SettingsPage';
 
 const NAV_ITEMS = [
   { path: '/dashboard',  labelKey: 'dashboard',  icon: LayoutDashboard, roles: ['admin', 'user'] },
+  { path: '/history',    labelKey: 'history',    icon: ScrollText,      roles: ['user'] },
+  { path: '/evacuation', labelKey: 'evacuation', icon: Shield,          roles: ['user'] },
+  { path: '/map',        labelKey: 'map',         icon: Map,             roles: ['admin', 'user'] },
+  { path: '/family',     labelKey: 'family',     icon: Users,           roles: ['user'] },
+  { path: '/stats',      labelKey: 'statistics', icon: BookTemplate,    roles: ['user'] },
+  { path: '/settings',   labelKey: 'settings',   icon: Globe,           roles: ['user'] },
+  
+  // Admin Only
   { path: '/admin/simulation', labelKey: 'simulation', icon: Play,        roles: ['admin'] },
   { path: '/templates',  labelKey: 'templates',   icon: BookTemplate,    roles: ['admin'] },
   { path: '/compose',    labelKey: 'compose',     icon: PenSquare,       roles: ['admin'] },
   { path: '/approval',   labelKey: 'approval',    icon: CheckCircle2,    roles: ['admin'] },
   { path: '/recipients', labelKey: 'recipients',  icon: Users,           roles: ['admin'] },
   { path: '/audit',      labelKey: 'auditLog',    icon: ScrollText,      roles: ['admin'] },
-  { path: '/map',        labelKey: 'map',         icon: Map,             roles: ['admin', 'user'] },
 ];
 
 /* ── Language Switcher ─────────────────────────────── */
@@ -334,6 +346,12 @@ function AppLayout() {
           }}>
             <Routes>
               <Route path="/dashboard"    element={<DashboardPage />} />
+              <Route path="/history"      element={<NotificationsPage />} />
+              <Route path="/evacuation"   element={<EvacuationPage />} />
+              <Route path="/family"       element={<FamilyPage />} />
+              <Route path="/stats"        element={<StatsPage />} />
+              <Route path="/settings"     element={<SettingsPage />} />
+              
               <Route path="/templates"    element={user?.role?.toLowerCase() === 'admin' ? <TemplatesPage /> : <Navigate to="/dashboard" replace />} />
               <Route path="/compose"      element={user?.role?.toLowerCase() === 'admin' ? <ComposerPage /> : <Navigate to="/dashboard" replace />} />
               <Route path="/approval"     element={user?.role?.toLowerCase() === 'admin' ? <ApprovalPage /> : <Navigate to="/dashboard" replace />} />

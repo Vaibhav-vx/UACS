@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Activity, Clock, AlertTriangle, CheckCircle, Send, Timer, RefreshCw, Eye, RotateCcw, 
-  Zap, TrendingUp, X, PenSquare, MapPin, Globe, Shield, Info, Activity as SafetyIcon 
+  Zap, TrendingUp, X, PenSquare, MapPin, Globe, Shield, Info, Activity as SafetyIcon,
+  Navigation, Heart, History, BarChart3, CloudRain
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { messagesApi, authApi } from '../api';
@@ -130,145 +131,165 @@ export default function DashboardPage() {
 
     return (
       <div className="space-y-8 animate-fade-in max-w-5xl mx-auto pb-12">
-        {/* Personalized Header */}
-        <div className="glass-card p-8 rounded-3xl relative overflow-hidden border-0 shadow-2xl">
+        {/* Status Header */}
+        <div className="glass-card p-8 rounded-3xl relative overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-theme-surface to-accent/5">
            <div style={{ position: 'absolute', top: 0, right: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg, transparent, var(--accent-bg))', opacity: 0.5, pointerEvents: 'none' }} />
-           <div className="relative z-10">
-             <h1 className="text-3xl font-extrabold mb-2">
-               {t('greetingPrefix') || 'Good morning'}, {user.name?.split(' ')[0]} 👋
-             </h1>
-             <div className="flex flex-wrap items-center gap-4 text-sm">
-               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
-                 <MapPin className="w-4 h-4 text-accent" />
-                 <span className="font-semibold text-theme-secondary">Zone: {userZone}</span>
-               </div>
-               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
-                 <Globe className="w-4 h-4 text-accent" />
-                 <span className="font-semibold text-theme-secondary">Language: {localStorage.getItem('uacs_pref_lang')?.toUpperCase() || 'EN'}</span>
-               </div>
-             </div>
-            </div>
-            <div className="relative z-10 flex flex-col items-end gap-2">
-               <button 
-                 onClick={async () => {
-                    const ok = window.confirm("🚨 This will send an SOS signal with your current location to all emergency responders. Are you sure?");
-                    if (ok) {
-                      try {
-                        await messagesApi.submitSafety('SOS-GENERAL', 'assistance');
-                        toast.error("SOS Signal Transmitted Successfully", { duration: 5000, position: 'top-center', icon: '🚨' });
-                      } catch (e) { toast.error("SOS Transmission Failed"); }
-                    }
-                 }}
-                 className="px-6 py-3 bg-red-600 text-white rounded-2xl font-black text-xl shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-3 border-4 border-red-500/50 emergency-btn-pulse"
-               >
-                 <Zap className="w-6 h-6 fill-white" /> SOS
-               </button>
-               <span className="text-[10px] font-bold text-red-500/70 uppercase tracking-widest">Global Panic Button</span>
-            </div>
+           
+           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2">
+                 <div className="flex items-center gap-2 mb-1">
+                    <span className={`w-3 h-3 rounded-full ${myAlerts.length === 0 ? 'bg-green-500' : 'bg-red-500 animate-pulse'}`} />
+                    <span className={`text-xs font-black uppercase tracking-[0.2em] ${myAlerts.length === 0 ? 'text-green-500' : 'text-red-500'}`}>
+                      {myAlerts.length === 0 ? 'Live: All Clear' : 'Live: Critical Alert'}
+                    </span>
+                 </div>
+                 <h1 className="text-4xl font-black tracking-tight">
+                   {myAlerts.length === 0 ? '🟢 YOU ARE SAFE' : '🔴 ALERT IN YOUR ZONE'}
+                 </h1>
+                 <div className="flex flex-wrap items-center gap-4 text-sm font-bold opacity-80">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-accent" /> {userZone}
+                    </div>
+                    <span className="opacity-30">|</span>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-accent" /> Last checked in: 2 hours ago
+                    </div>
+                 </div>
+              </div>
+
+              <div className="flex flex-col items-end gap-2">
+                 <button 
+                   onClick={async () => {
+                      const ok = window.confirm("🚨 This will send an SOS signal with your current location to all emergency responders. Are you sure?");
+                      if (ok) {
+                        try {
+                          await messagesApi.submitSafety('SOS-GENERAL', 'assistance');
+                          toast.error("SOS Signal Transmitted Successfully", { duration: 5000, position: 'top-center', icon: '🚨' });
+                        } catch (e) { toast.error("SOS Transmission Failed"); }
+                      }
+                   }}
+                   className="px-8 py-4 bg-red-600 text-white rounded-3xl font-black text-2xl shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-3 border-4 border-red-500/50 emergency-btn-pulse"
+                 >
+                   <Zap className="w-7 h-7 fill-white" /> SOS
+                 </button>
+                 <span className="text-[10px] font-black text-red-500/70 uppercase tracking-widest mr-2">Personal Panic Button</span>
+              </div>
            </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
+            
+            {/* 1. MY ZONE SUMMARY */}
+            <section className="glass-card p-6 rounded-3xl border-0 shadow-xl grid grid-cols-2 md:grid-cols-4 gap-4 bg-accent/5">
+               <div className="space-y-1">
+                  <div className="text-xs font-bold text-theme-muted uppercase tracking-wider">Your Zone</div>
+                  <div className="text-lg font-black text-theme-primary">{userZone}</div>
+               </div>
+               <div className="space-y-1">
+                  <div className="text-xs font-bold text-theme-muted uppercase tracking-wider">Registered</div>
+                  <div className="text-lg font-black text-theme-primary">2,847</div>
+               </div>
+               <div className="space-y-1">
+                  <div className="text-xs font-bold text-theme-muted uppercase tracking-wider">Marked Safe</div>
+                  <div className="text-lg font-black text-green-500">1,203</div>
+               </div>
+               <div className="space-y-1">
+                  <div className="text-xs font-bold text-theme-muted uppercase tracking-wider">Last Alert</div>
+                  <div className="text-lg font-black text-accent">2h ago</div>
+               </div>
+            </section>
 
-        {/* YOUR ACTIVE ALERTS */}
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold flex items-center gap-3">
-              <Zap className="w-6 h-6 text-red-500 fill-red-500/20" />
-              {t('yourActiveAlerts') || 'YOUR ACTIVE ALERTS'} ({myAlerts.length})
-            </h2>
-          </div>
+            {/* 2. WEATHER WIDGET */}
+            <section className="glass-card p-6 rounded-3xl border-0 shadow-xl flex items-center justify-between bg-blue-500/5 border border-blue-500/10">
+               <div className="flex items-center gap-6">
+                  <div className="text-5xl animate-bounce-slow">🌧️</div>
+                  <div>
+                     <h3 className="text-2xl font-black">Heavy Rain — Mumbai</h3>
+                     <div className="flex items-center gap-4 text-sm font-bold text-theme-muted mt-1">
+                        <span>Humidity: 89%</span>
+                        <span>•</span>
+                        <span>Wind: 23 km/h</span>
+                     </div>
+                  </div>
+               </div>
+               <div className="hidden md:block px-4 py-2 rounded-2xl bg-orange-500/10 border border-orange-500/30 text-orange-600 font-bold text-xs">
+                 ⚠️ Conditions may cause flooding
+               </div>
+            </section>
 
-          {myAlerts.length === 0 ? (
-             <div className="glass-card p-12 text-center rounded-2xl border-dashed border-2">
-               <CheckCircle className="w-12 h-12 mx-auto mb-4 text-green-500" />
-               <h3 className="text-lg font-bold">{t('allClear') || 'All Clear in Your Zone'}</h3>
-               <p className="text-sm text-theme-muted">{t('noActiveZoneAlerts') || 'There are no active emergency alerts matching your current zone.'}</p>
-             </div>
-          ) : (
-            <div className="grid gap-6">
-               {myAlerts.map((msg, i) => {
-                  const borderColors = { critical: '#ef4444', high: '#f97316', normal: 'var(--accent)' };
-                  const prefLang = localStorage.getItem('uacs_pref_lang') || 'english';
-                  let displayContent = msg.master_content;
-                  if (prefLang !== 'english' && msg.translations) {
-                    try {
-                      const transObj = typeof msg.translations === 'string' ? JSON.parse(msg.translations) : msg.translations;
-                      if (transObj[prefLang]) displayContent = transObj[prefLang];
-                    } catch (e) {}
-                  }
-                  
-                  return (
-                    <div key={msg.id} className="glass-card overflow-hidden rounded-2xl border-0 shadow-lg group hover:shadow-2xl transition-all duration-300">
-                      <div style={{ height: 4, background: borderColors[msg.urgency] || 'var(--accent)' }} />
-                      <div className="p-6">
-                        <div className="flex items-start justify-between gap-4 mb-4">
-                          <div className="flex items-center gap-3">
-                            <AlertBanner urgency={msg.urgency} />
-                            <h3 className="font-bold text-xl">{msg.title}</h3>
-                          </div>
-                          <span className="text-xs font-bold px-2 py-1 rounded bg-theme-hover text-theme-dim">{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                        </div>
-                        
-                        <p className="text-lg leading-relaxed text-theme-primary mb-6 whitespace-pre-wrap">{displayContent}</p>
+            {/* 3. YOUR ACTIVE ALERTS */}
+            <section className="space-y-4">
+              <h2 className="text-xl font-bold flex items-center gap-3">
+                <Zap className="w-6 h-6 text-red-500 fill-red-500/20" />
+                {t('yourActiveAlerts') || 'YOUR ACTIVE ALERTS'} ({myAlerts.length})
+              </h2>
 
-                        {/* Safety Check-in Banner for Critical Alerts */}
-                        {msg.urgency === 'critical' && (
-                          <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 mb-6 animate-pulse-slow">
-                            <h4 className="font-bold text-red-500 text-lg mb-4 flex items-center gap-2">
-                              <AlertTriangle className="w-5 h-5" /> Are you safe?
-                            </h4>
-                            <div className="flex flex-col sm:flex-row gap-3">
-                              <button 
-                                onClick={async () => {
-                                  try {
-                                    await messagesApi.submitSafety(msg.id, 'safe');
-                                    toast.success("Glad to hear you're safe!");
-                                    fetchData();
-                                  } catch (e) {
-                                    toast.error("Failed to submit status");
-                                  }
-                                }}
-                                className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-600/20"
-                              >
-                                <CheckCircle className="w-5 h-5" /> {t('iAmSafe') || 'YES, I AM SAFE'}
-                              </button>
-                              <button 
-                                onClick={async () => {
-                                  try {
-                                    await messagesApi.submitSafety(msg.id, 'assistance');
-                                    toast.error("Assistance request sent to authorities");
-                                    fetchData();
-                                  } catch (e) {
-                                    toast.error("Failed to submit SOS");
-                                  }
-                                }}
-                                className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-red-600/20"
-                              >
-                                <AlertTriangle className="w-5 h-5" /> {t('iNeedAssistance') || 'SOS: I NEED ASSISTANCE'}
-                              </button>
-                            </div>
-                          </div>
-                        )}
+              {myAlerts.length === 0 ? (
+                 <div className="glass-card p-12 text-center rounded-3xl border-dashed border-2">
+                   <CheckCircle className="w-12 h-12 mx-auto mb-4 text-green-500" />
+                   <h3 className="text-lg font-bold">{t('allClear') || 'All Clear in Your Zone'}</h3>
+                   <p className="text-sm text-theme-muted">{t('noActiveZoneAlerts') || 'There are no active emergency alerts matching your current zone.'}</p>
+                 </div>
+              ) : (
+                <div className="grid gap-6">
+                   {myAlerts.map((msg) => (
+                     <div key={msg.id} className="glass-card overflow-hidden rounded-3xl border-0 shadow-lg group hover:shadow-2xl transition-all duration-300">
+                       <div style={{ height: 4, background: msg.urgency === 'critical' ? '#ef4444' : '#f97316' }} />
+                       <div className="p-6">
+                         <div className="flex items-start justify-between gap-4 mb-4">
+                           <div className="flex items-center gap-3">
+                             <AlertBanner urgency={msg.urgency} />
+                             <h3 className="font-bold text-xl">{msg.title}</h3>
+                           </div>
+                           <span className="text-xs font-bold px-2 py-1 rounded bg-theme-hover text-theme-dim">{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                         </div>
+                         
+                         <p className="text-lg leading-relaxed text-theme-primary mb-6 whitespace-pre-wrap">{msg.master_content}</p>
 
-                        <div className="flex flex-wrap items-center gap-3 text-xs text-theme-muted border-t pt-4 border-theme-border">
-                          <span className="font-bold text-theme-secondary px-3 py-1 rounded-full bg-theme-hover">Zone: {msg.target_zone || 'All'}</span>
-                          <span className="font-bold text-theme-secondary px-3 py-1 rounded-full bg-theme-hover">Dept: {msg.sent_by}</span>
-                          <span>•</span>
-                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {new Date(msg.created_at).toLocaleString()}</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-               })}
-            </div>
-          )}
-        </section>
-
+                         {msg.urgency === 'critical' && (
+                           <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 mb-6">
+                             <h4 className="font-bold text-red-500 text-lg mb-4 flex items-center gap-2">
+                               <AlertTriangle className="w-5 h-5" /> Are you safe?
+                             </h4>
+                             <div className="flex flex-col sm:flex-row gap-3">
+                               <button 
+                                 onClick={async () => {
+                                   try {
+                                     await messagesApi.submitSafety(msg.id, 'safe');
+                                     toast.success("Glad to hear you're safe!");
+                                     fetchData();
+                                   } catch (e) { toast.error("Failed to submit"); }
+                                 }}
+                                 className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg"
+                               >
+                                 <CheckCircle className="w-5 h-5" /> {t('iAmSafe') || 'YES, I AM SAFE'}
+                               </button>
+                               <button 
+                                 onClick={async () => {
+                                   try {
+                                     await messagesApi.submitSafety(msg.id, 'assistance');
+                                     toast.error("Assistance request sent");
+                                     fetchData();
+                                   } catch (e) { toast.error("Failed to submit SOS"); }
+                                 }}
+                                 className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg"
+                               >
+                                 <AlertTriangle className="w-5 h-5" /> {t('iNeedAssistance') || 'SOS: I NEED HELP'}
+                               </button>
+                             </div>
+                           </div>
+                         )}
+                       </div>
+                     </div>
+                   ))}
+                </div>
+              )}
+            </section>
           </div>
 
           <div className="space-y-8">
-            {/* NEARBY SAFETY HUBS */}
+            {/* 4. NEARBY SAFETY HUBS */}
             <section className="glass-card p-6 rounded-3xl border-0 shadow-xl bg-accent/5">
                <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
                  <MapPin className="w-5 h-5 text-accent" /> {t('nearbySafetyHubs') || 'Nearby Safety Hubs'}
@@ -292,16 +313,16 @@ export default function DashboardPage() {
                </button>
             </section>
 
-            {/* SURVIVAL KNOWLEDGE BASE */}
+            {/* 5. SURVIVAL KNOWLEDGE BASE */}
             <section className="space-y-4">
                <h2 className="text-lg font-bold flex items-center gap-2">
                  <Shield className="w-5 h-5 text-accent" /> {t('survivalGuide') || 'Survival Guide'}
                </h2>
                <div className="grid grid-cols-1 gap-3">
                   {[
-                    { title: 'Earthquake Safety', icon: '🫨', color: 'bg-orange-500', steps: ['Drop, Cover, Hold on', 'Stay away from glass', 'Don\'t use elevators'] },
-                    { title: 'Flood Response', icon: '🌊', color: 'bg-blue-500', steps: ['Seek higher ground', 'Avoid moving water', 'Turn off electricity'] },
-                    { title: 'Fire Protocol', icon: '🔥', color: 'bg-red-500', steps: ['Stop, Drop, Roll', 'Stay low to smoke', 'Use stairs only'] },
+                    { title: 'Earthquake Safety', icon: '🫨', color: 'bg-orange-500', steps: ['Drop, Cover, Hold on', 'Stay away from glass'] },
+                    { title: 'Flood Response', icon: '🌊', color: 'bg-blue-500', steps: ['Seek higher ground', 'Avoid moving water'] },
+                    { title: 'Fire Protocol', icon: '🔥', color: 'bg-red-500', steps: ['Stop, Drop, Roll', 'Stay low to smoke'] },
                   ].map((guide, idx) => (
                     <div key={idx} className="glass-card p-4 rounded-2xl border-0 shadow-lg flex items-center gap-4 hover:translate-x-2 transition-transform cursor-pointer">
                        <div className={`w-12 h-12 ${guide.color} rounded-2xl flex items-center justify-center text-2xl shadow-inner`}>{guide.icon}</div>
@@ -355,16 +376,15 @@ export default function DashboardPage() {
           </h2>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
-              <div className="text-2xl font-black text-green-500">{safetyStats.safe}</div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-green-600/70">{t('markedSafe') || 'Marked Safe'}</div>
+               <div className="text-2xl font-black text-green-500">{safetyStats.safe}</div>
+               <div className="text-[10px] font-bold uppercase tracking-wider text-green-600/70">{t('markedSafe') || 'Marked Safe'}</div>
             </div>
             <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20">
-              <div className="text-2xl font-black text-red-500">{safetyStats.assistance}</div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-red-600/70">{t('needAssistance') || 'Need Assistance'}</div>
+               <div className="text-2xl font-black text-red-500">{safetyStats.assistance}</div>
+               <div className="text-[10px] font-bold uppercase tracking-wider text-red-600/70">{t('needAssistance') || 'Need Assistance'}</div>
             </div>
           </div>
           
-          {/* Dashboard Simulation Shortcut */}
           <div 
             onClick={() => navigate('/admin/simulation')}
             className="p-4 rounded-2xl bg-accent/5 border border-dashed border-accent/30 hover:border-accent hover:bg-accent/10 cursor-pointer transition-all group"
@@ -377,9 +397,6 @@ export default function DashboardPage() {
               </div>
               <button className="ml-auto text-xs font-bold text-accent">Launch →</button>
             </div>
-          </div>
-          <div className="text-xs text-theme-muted flex items-center gap-2">
-            <Info className="w-3 h-3" /> {t('realTimeAnalyticsDesc') || 'Aggregated response from all active critical alerts.'}
           </div>
         </div>
 
@@ -405,6 +422,7 @@ export default function DashboardPage() {
         </div>
       </div>
       )}
+
       <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
         {[
           { key: 'active',  icon: Zap,      label: `${t('activeAlerts') || 'Active'} (${activeMessages.length})`, roles: ['admin', 'user'] },
@@ -414,6 +432,7 @@ export default function DashboardPage() {
           <button key={tb.key} onClick={() => setActiveTab(tb.key)} className="px-5 py-2 rounded-lg text-sm font-medium flex items-center gap-2" style={{ background: activeTab===tb.key?'var(--accent)':'transparent', color: activeTab===tb.key?'white':'var(--text-muted)', boxShadow: activeTab===tb.key?'var(--shadow-md)':'none', border: 'none', cursor: 'pointer' }}><tb.icon className="w-3.5 h-3.5"/>{tb.label}</button>
         ))}
       </div>
+
       {activeTab==='active' && (<div className="space-y-3">
         {activeMessages.length===0 ? (<div className="glass-card p-12 text-center"><Activity className="w-12 h-12 mx-auto mb-4 text-theme-dim" /><h3 className="text-lg font-medium text-theme-secondary mb-2">{t('noActiveAlerts')}</h3><p className="text-sm text-theme-muted mb-4">{t('noActiveDesc')}</p><button onClick={()=>navigate('/compose')} className="btn-primary text-sm"><Send className="w-4 h-4" /> {t('composeMessage')}</button></div>
         ) : activeMessages.map((msg,i)=>(
@@ -438,6 +457,7 @@ export default function DashboardPage() {
           </div>
         ))}
       </div>)}
+
       {activeTab==='drafts' && (<div className="space-y-3">
         {draftMessages.length===0 ? (<div className="glass-card p-12 text-center"><PenSquare className="w-12 h-12 mx-auto mb-4 text-theme-dim" /><h3 className="text-lg font-medium text-theme-secondary mb-2">{t('noDraftsTitle') || 'No Draft Messages'}</h3><p className="text-sm text-theme-muted mb-4">{t('noDraftsDesc') || 'Saved drafts will appear here'}</p><button onClick={()=>navigate('/compose')} className="btn-primary text-sm"><Send className="w-4 h-4" /> {t('composeMessage')}</button></div>
         ) : draftMessages.map((msg,i)=>(
@@ -457,6 +477,7 @@ export default function DashboardPage() {
           </div>
         ))}
       </div>)}
+
       {activeTab==='expired' && (<div className="space-y-3">
         {expiredMessages.length===0 ? (<div className="glass-card p-12 text-center"><Clock className="w-12 h-12 mx-auto mb-4 text-theme-dim" /><h3 className="text-lg font-medium text-theme-secondary mb-2">{t('noExpiredAlerts')}</h3><p className="text-sm text-theme-muted">{t('noExpiredDesc')}</p></div>
         ) : expiredMessages.map((msg,i)=>(
@@ -576,7 +597,7 @@ export default function DashboardPage() {
               <button 
                 onClick={() => setIsEmergencyModalOpen(false)}
                 disabled={emergencyLoading}
-                className="w-full py-2 rounded-lg font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border)] hover:bg-[var(--bg-hover)] transition-colors"
+                className="w-full py-2 rounded-lg font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border(--border)] hover:bg-[var(--bg-hover)] transition-colors"
               >
                 {t('cancel') || 'Cancel'}
               </button>
@@ -585,7 +606,6 @@ export default function DashboardPage() {
                 {t('emergencyWarning') || '⚠️ This will immediately broadcast to all channels. This action cannot be undone.'}
               </p>
             </div>
-            
           </div>
         </div>
       )}
