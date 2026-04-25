@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Play, Pause, SkipForward, RotateCcw, Send, Activity, 
   Shield, AlertTriangle, CheckCircle2, Clock, Zap, Globe, 
-  MessageSquare, Twitter, Radio, Tv, AlertCircle, TrendingUp,
+  MessageSquare, Radio, Tv, AlertCircle, TrendingUp,
   Flame, Wind, Battery, HeartPulse, Construction, Info, X
 } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -31,7 +31,7 @@ const SCENARIO_DATA = {
       {
         time: "T+2:00",
         title: "Message Composition",
-        without: { action: "4 people writing 4 different messages for SMS, Twitter, Radio, TV", problem: "Inconsistent wording & urgency", status: "error" },
+        without: { action: "4 people writing 4 different messages for SMS, Globe, Radio, TV", problem: "Inconsistent wording & urgency", status: "error" },
         with: { action: "UACS auto-formats one master message for all 4 channels", result: "Single source of truth", status: "success" }
       },
       {
@@ -123,7 +123,7 @@ export default function SimulationPage() {
   };
 
   const ChannelBubble = ({ type, message, side }) => {
-    const icons = { sms: MessageSquare, twitter: Twitter, radio: Radio, tv: Tv };
+    const icons = { sms: MessageSquare, twitter: Globe, radio: Radio, tv: Tv };
     const Icon = icons[type] || MessageSquare;
     const color = side === 'with' ? 'var(--accent)' : '#ef4444';
     
