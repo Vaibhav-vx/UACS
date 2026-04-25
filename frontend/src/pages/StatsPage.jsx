@@ -72,18 +72,18 @@ export default function StatsPage() {
                </div>
             </section>
 
-            {/* 3. Alert History Bar Chart (Simulated) */}
+            {/* 3. Alert History Bar Chart (Seasonal: April Summer) */}
             <section className="glass-card p-8 rounded-3xl border-0 shadow-xl">
                <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                  <BarChart3 className="w-6 h-6 text-accent" /> Alerts History (Last 30 Days)
                </h2>
                <div className="flex items-end justify-between h-48 gap-4 mb-4 pt-8">
                   {[
-                    { label: 'Flood', val: 3, color: 'bg-blue-500' },
-                    { label: 'Fire', val: 1, color: 'bg-red-500' },
-                    { label: 'Power', val: 5, color: 'bg-orange-500' },
-                    { label: 'Road', val: 8, color: 'bg-gray-500' },
-                    { label: 'Heat', val: 2, color: 'bg-amber-500' },
+                    { label: 'Heatwave', val: 7, color: 'bg-orange-600' },
+                    { label: 'Fire', val: 3, color: 'bg-red-600' },
+                    { label: 'Water', val: 5, color: 'bg-blue-400' },
+                    { label: 'Dust', val: 2, color: 'bg-amber-600' },
+                    { label: 'Power', val: 4, color: 'bg-yellow-500' },
                   ].map((bar, idx) => (
                     <div key={idx} className="flex-1 flex flex-col items-center gap-3 h-full">
                        <div className="flex-1 w-full bg-theme-hover rounded-t-xl relative overflow-hidden flex flex-col justify-end">

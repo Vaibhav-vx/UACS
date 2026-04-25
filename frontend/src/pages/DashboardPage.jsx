@@ -200,21 +200,23 @@ export default function DashboardPage() {
                </div>
             </section>
 
-            {/* 2. WEATHER WIDGET */}
-            <section className="glass-card p-6 rounded-3xl border-0 shadow-xl flex items-center justify-between bg-blue-500/5 border border-blue-500/10">
+            {/* 2. WEATHER WIDGET (Seasonal: April Summer) */}
+            <section className="glass-card p-6 rounded-3xl border-0 shadow-xl flex items-center justify-between bg-orange-500/5 border border-orange-500/10">
                <div className="flex items-center gap-6">
-                  <div className="text-5xl animate-bounce-slow">🌧️</div>
+                  <div className="text-5xl animate-pulse">☀️</div>
                   <div>
-                     <h3 className="text-2xl font-black">Heavy Rain — Mumbai</h3>
+                     <h3 className="text-2xl font-black text-orange-700">Severe Heatwave — Mumbai</h3>
                      <div className="flex items-center gap-4 text-sm font-bold text-theme-muted mt-1">
-                        <span>Humidity: 89%</span>
+                        <span>Temp: 41°C</span>
                         <span>•</span>
-                        <span>Wind: 23 km/h</span>
+                        <span>Humidity: 45% (Dry)</span>
+                        <span>•</span>
+                        <span>UV Index: 11 (Extreme)</span>
                      </div>
                   </div>
                </div>
-               <div className="hidden md:block px-4 py-2 rounded-2xl bg-orange-500/10 border border-orange-500/30 text-orange-600 font-bold text-xs">
-                 ⚠️ Conditions may cause flooding
+               <div className="hidden md:block px-4 py-2 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-600 font-bold text-xs">
+                 ⚠️ High risk of dehydration
                </div>
             </section>
 

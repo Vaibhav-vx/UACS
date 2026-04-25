@@ -102,23 +102,23 @@ export default function EvacuationPage() {
             </div>
           </section>
 
-          {/* 2. Zone Specific Instructions */}
+          {/* 2. Zone Specific Instructions (Seasonal: Summer) */}
           <section className="glass-card p-6 rounded-3xl border-0 shadow-xl bg-orange-500/5 border-orange-500/20">
              <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-orange-600">
-                <AlertTriangle className="w-6 h-6" /> Current Zone Instructions
+                <AlertTriangle className="w-6 h-6" /> Summer Safety Instructions
              </h2>
              <div className="space-y-4">
                 <div className="p-4 rounded-2xl bg-orange-500/10 border border-orange-500/20">
-                   <h4 className="font-bold text-orange-700 mb-2">IF FLOOD ALERT (Active in nearby zones):</h4>
+                   <h4 className="font-bold text-orange-700 mb-2">IF HEATWAVE ALERT (Active in Zone 4):</h4>
                    <ul className="space-y-2 text-sm text-orange-800/80">
-                      <li className="flex items-start gap-2"><ArrowRight className="w-4 h-4 mt-0.5 shrink-0" /> Move to higher ground immediately if water enters building.</li>
-                      <li className="flex items-start gap-2"><ArrowRight className="w-4 h-4 mt-0.5 shrink-0" /> Do not attempt to cross flooded roads or bridges.</li>
-                      <li className="flex items-start gap-2"><ArrowRight className="w-4 h-4 mt-0.5 shrink-0" /> Turn off main electrical switches before evacuating.</li>
+                      <li className="flex items-start gap-2"><ArrowRight className="w-4 h-4 mt-0.5 shrink-0" /> Stay hydrated. Drink at least 4-5 liters of water daily.</li>
+                      <li className="flex items-start gap-2"><ArrowRight className="w-4 h-4 mt-0.5 shrink-0" /> Avoid outdoors between 12:00 PM and 4:00 PM.</li>
+                      <li className="flex items-start gap-2"><ArrowRight className="w-4 h-4 mt-0.5 shrink-0" /> Wear light-colored, loose cotton clothes.</li>
                    </ul>
                 </div>
-                <div className="p-4 rounded-2xl bg-theme-surface border border-theme-border">
-                   <h4 className="font-bold text-theme-primary mb-2">GENERAL SAFETY:</h4>
-                   <p className="text-sm text-theme-muted">Keep your mobile charged. Stay away from windows. Listen to local radio alerts on 93.5 FM.</p>
+                <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20">
+                   <h4 className="font-bold text-red-700 mb-2">FIRE SAFETY (Pre-Monsoon Dry Season):</h4>
+                   <p className="text-sm text-red-800/80">Dry vegetation increases forest fire risk. Report any smoke immediately. Keep your balcony clear of flammable items.</p>
                 </div>
              </div>
           </section>
