@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, LayersControl } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Maximize2, Minimize2, Map as MapIcon, Shield, Layers } from 'lucide-react';
+import { Maximize2, Minimize2, Map as MapIcon, Shield, Layers, MapPin } from 'lucide-react';
 import { messagesApi } from '../api';
+
+const { BaseLayer } = LayersControl;
 
 // Fix Leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -90,10 +92,35 @@ export default function SituationMapCard() {
       </div>
 
       <MapContainer center={[19.07, 72.87]} zoom={11} style={{ height: '100%', width: '100%' }}>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        <LayersControl position="topright">
+          <BaseLayer checked name="World Labels (Professional)">
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+            />
+          </BaseLayer>
+          
+          <BaseLayer name="Standard Map (Street Detail)">
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+          </BaseLayer>
+
+          <BaseLayer name="Satellite Imagery (Live Look)">
+            <TileLayer
+              attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            />
+          </BaseLayer>
+
+          <BaseLayer name="Detailed Terrain (Geographic)">
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+            />
+          </BaseLayer>
+        </LayersControl>
         
         {alerts.map(alert => {
           const pos = ZONE_COORDS[alert.target_zone] || ZONE_COORDS['General'];

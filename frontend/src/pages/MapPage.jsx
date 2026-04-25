@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, LayersControl, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapPin, Shield, AlertTriangle, Info, Users, Navigation } from 'lucide-react';
 import { messagesApi, recipientsApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
+
+const { BaseLayer } = LayersControl;
 
 // Fix Leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -106,10 +108,35 @@ export default function MapPage() {
 
       <div className="flex-1 rounded-2xl md:rounded-3xl overflow-hidden border border-theme-border shadow-2xl relative">
         <MapContainer center={[19.07, 72.87]} zoom={11} style={{ height: '100%', width: '100%' }}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          <LayersControl position="topright">
+            <BaseLayer checked name="World Labels (Professional)">
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+              />
+            </BaseLayer>
+            
+            <BaseLayer name="Standard Map (Street Detail)">
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+            </BaseLayer>
+
+            <BaseLayer name="Satellite Imagery (Live Look)">
+              <TileLayer
+                attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
+                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              />
+            </BaseLayer>
+
+            <BaseLayer name="Detailed Terrain (Geographic)">
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+              />
+            </BaseLayer>
+          </LayersControl>
           
           <SetViewOnClick coords={selectedZone ? ZONE_COORDS[selectedZone] : null} />
 
