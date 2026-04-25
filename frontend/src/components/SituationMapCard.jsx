@@ -4,6 +4,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Maximize2, Minimize2, Map as MapIcon, Shield, Layers, MapPin } from 'lucide-react';
 import { messagesApi, nasaApi } from '../api';
+import { ZONE_COORDS } from '../constants';
 
 const { BaseLayer } = LayersControl;
 
@@ -15,14 +16,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
-const ZONE_COORDS = {
-  'North District': [19.21, 72.85],
-  'South District': [18.93, 72.83],
-  'East District':  [19.08, 72.92],
-  'West District':  [19.12, 72.82],
-  'Central Zone':   [19.03, 72.85],
-  'General':        [19.07, 72.87],
-};
 
 export default function SituationMapCard() {
   const [alerts, setAlerts] = useState([]);

@@ -11,6 +11,7 @@ import ExpiryTimer from '../components/ExpiryTimer';
 import ChannelBadge from '../components/ChannelBadge';
 import AlertBanner from '../components/AlertBanner';
 import SituationMapCard from '../components/SituationMapCard';
+import { EAPS, ZONE_COORDS } from '../constants';
 
 export default function DashboardPage() {
   const [activeMessages, setActiveMessages]   = useState([]);
@@ -146,8 +147,28 @@ export default function DashboardPage() {
                  <span className="font-semibold text-theme-secondary">Language: {localStorage.getItem('uacs_pref_lang')?.toUpperCase() || 'EN'}</span>
                </div>
              </div>
+            </div>
+            <div className="relative z-10 flex flex-col items-end gap-2">
+               <button 
+                 onClick={async () => {
+                    const ok = window.confirm("🚨 This will send an SOS signal with your current location to all emergency responders. Are you sure?");
+                    if (ok) {
+                      try {
+                        await messagesApi.submitSafety('SOS-GENERAL', 'assistance');
+                        toast.error("SOS Signal Transmitted Successfully", { duration: 5000, position: 'top-center', icon: '🚨' });
+                      } catch (e) { toast.error("SOS Transmission Failed"); }
+                    }
+                 }}
+                 className="px-6 py-3 bg-red-600 text-white rounded-2xl font-black text-xl shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-3 border-4 border-red-500/50 emergency-btn-pulse"
+               >
+                 <Zap className="w-6 h-6 fill-white" /> SOS
+               </button>
+               <span className="text-[10px] font-bold text-red-500/70 uppercase tracking-widest">Global Panic Button</span>
+            </div>
            </div>
-        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
 
         {/* YOUR ACTIVE ALERTS */}
         <section>
@@ -244,31 +265,56 @@ export default function DashboardPage() {
           )}
         </section>
 
-        {/* NEARBY ZONES */}
-        {nearbyAlerts.length > 0 && (
-          <section>
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-3 text-theme-muted">
-              <RotateCcw className="w-6 h-6" />
-              {t('nearbyZonesAlerts') || 'NEARBY ZONES'} ({nearbyAlerts.length})
-            </h2>
-            <div className="grid gap-4 opacity-80 hover:opacity-100 transition-opacity">
-               {nearbyAlerts.map((msg, i) => (
-                  <div key={msg.id} className="glass-card p-4 rounded-xl border border-theme-border flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-10 rounded-full" style={{ background: msg.urgency === 'critical' ? '#ef4444' : msg.urgency === 'high' ? '#f97316' : 'var(--accent)' }} />
-                      <div>
-                        <h4 className="font-bold text-sm">{msg.title}</h4>
-                        <p className="text-xs text-theme-muted">Zone: {msg.target_zone} • {msg.urgency.toUpperCase()}</p>
-                      </div>
+          </div>
+
+          <div className="space-y-8">
+            {/* NEARBY SAFETY HUBS */}
+            <section className="glass-card p-6 rounded-3xl border-0 shadow-xl bg-accent/5">
+               <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                 <MapPin className="w-5 h-5 text-accent" /> {t('nearbySafetyHubs') || 'Nearby Safety Hubs'}
+               </h2>
+               <div className="space-y-3">
+                  {EAPS.slice(0, 3).map((eap, idx) => (
+                    <div key={idx} className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-accent/50 transition-all cursor-pointer group">
+                       <div className="flex items-center justify-between mb-1">
+                          <h4 className="font-bold text-sm group-hover:text-accent transition-colors">{eap.name}</h4>
+                          <span className="text-[10px] font-bold text-accent px-2 py-0.5 rounded-full bg-accent/10">Active</span>
+                       </div>
+                       <p className="text-[10px] text-theme-muted mb-3">{eap.type} • Capacity: {eap.capacity}</p>
+                       <button className="w-full py-2 bg-theme-hover rounded-xl text-[10px] font-bold flex items-center justify-center gap-2 hover:bg-accent hover:text-white transition-all">
+                         <Navigation className="w-3 h-3" /> {t('getDirections') || 'GET DIRECTIONS'}
+                       </button>
                     </div>
-                    <button onClick={() => toast(msg.master_content)} className="p-2 rounded-lg bg-theme-hover text-theme-secondary hover:text-accent">
-                      <Eye className="w-5 h-5" />
-                    </button>
-                  </div>
-               ))}
-            </div>
-          </section>
-        )}
+                  ))}
+               </div>
+               <button onClick={() => navigate('/map')} className="w-full mt-4 text-xs font-bold text-theme-dim hover:text-accent flex items-center justify-center gap-2">
+                 {t('viewAllOnMap') || 'View all on map'} →
+               </button>
+            </section>
+
+            {/* SURVIVAL KNOWLEDGE BASE */}
+            <section className="space-y-4">
+               <h2 className="text-lg font-bold flex items-center gap-2">
+                 <Shield className="w-5 h-5 text-accent" /> {t('survivalGuide') || 'Survival Guide'}
+               </h2>
+               <div className="grid grid-cols-1 gap-3">
+                  {[
+                    { title: 'Earthquake Safety', icon: '🫨', color: 'bg-orange-500', steps: ['Drop, Cover, Hold on', 'Stay away from glass', 'Don\'t use elevators'] },
+                    { title: 'Flood Response', icon: '🌊', color: 'bg-blue-500', steps: ['Seek higher ground', 'Avoid moving water', 'Turn off electricity'] },
+                    { title: 'Fire Protocol', icon: '🔥', color: 'bg-red-500', steps: ['Stop, Drop, Roll', 'Stay low to smoke', 'Use stairs only'] },
+                  ].map((guide, idx) => (
+                    <div key={idx} className="glass-card p-4 rounded-2xl border-0 shadow-lg flex items-center gap-4 hover:translate-x-2 transition-transform cursor-pointer">
+                       <div className={`w-12 h-12 ${guide.color} rounded-2xl flex items-center justify-center text-2xl shadow-inner`}>{guide.icon}</div>
+                       <div>
+                          <h4 className="font-bold text-sm">{guide.title}</h4>
+                          <p className="text-[10px] text-theme-muted line-clamp-1">{guide.steps.join(' • ')}</p>
+                       </div>
+                    </div>
+                  ))}
+               </div>
+            </section>
+          </div>
+        </div>
       </div>
     );
   }
