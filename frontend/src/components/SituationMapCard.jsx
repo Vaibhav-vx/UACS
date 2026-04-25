@@ -59,34 +59,37 @@ export default function SituationMapCard() {
 
   return (
     <div className={`glass-card overflow-hidden transition-all duration-500 map-card-resizable ${sizeClasses[mapSize]} relative shadow-2xl border-0`}>
-      {/* Header Overlay */}
-      <div className="absolute top-4 left-4 right-4 z-[1000] flex items-center justify-between pointer-events-none">
+      {/* Header Overlay (Left side only) */}
+      <div className="absolute top-4 left-4 z-[1000] pointer-events-none">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-theme-surface/80 backdrop-blur-md border border-theme-border shadow-lg pointer-events-auto">
           <Shield className="w-4 h-4 text-accent" />
           <span className="text-xs font-bold uppercase tracking-wider">{loading ? 'Loading Map...' : 'Live Situation Overview'}</span>
         </div>
-        
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-theme-surface/80 backdrop-blur-md border border-theme-border shadow-lg pointer-events-auto">
+      </div>
+
+      {/* Map Size Controls (Bottom Right) */}
+      <div className="absolute bottom-6 right-6 z-[1000] pointer-events-none">
+        <div className="flex items-center gap-1 p-1.5 rounded-2xl bg-theme-surface/90 backdrop-blur-xl border-2 border-theme-border shadow-2xl pointer-events-auto hover:border-accent/50 transition-colors">
           <button 
             onClick={() => setMapSize('small')}
-            className={`p-1.5 rounded-lg transition-colors ${mapSize === 'small' ? 'bg-accent text-white' : 'hover:bg-theme-hover text-theme-muted'}`}
+            className={`p-2 rounded-xl transition-all ${mapSize === 'small' ? 'bg-accent text-white shadow-lg scale-110' : 'hover:bg-theme-hover text-theme-muted'}`}
             title="Small View"
           >
-            <Minimize2 className="w-4 h-4" />
+            <Minimize2 className="w-5 h-5" />
           </button>
           <button 
             onClick={() => setMapSize('medium')}
-            className={`p-1.5 rounded-lg transition-colors ${mapSize === 'medium' ? 'bg-accent text-white' : 'hover:bg-theme-hover text-theme-muted'}`}
+            className={`p-2 rounded-xl transition-all ${mapSize === 'medium' ? 'bg-accent text-white shadow-lg scale-110' : 'hover:bg-theme-hover text-theme-muted'}`}
             title="Medium View"
           >
-            <Layers className="w-4 h-4" />
+            <Layers className="w-5 h-5" />
           </button>
           <button 
             onClick={() => setMapSize('large')}
-            className={`p-1.5 rounded-lg transition-colors ${mapSize === 'large' ? 'bg-accent text-white' : 'hover:bg-theme-hover text-theme-muted'}`}
+            className={`p-2 rounded-xl transition-all ${mapSize === 'large' ? 'bg-accent text-white shadow-lg scale-110' : 'hover:bg-theme-hover text-theme-muted'}`}
             title="Large View"
           >
-            <Maximize2 className="w-4 h-4" />
+            <Maximize2 className="w-5 h-5" />
           </button>
         </div>
       </div>
