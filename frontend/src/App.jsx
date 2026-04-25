@@ -20,13 +20,13 @@ import SimulationPage  from './pages/SimulationPage';
 
 const NAV_ITEMS = [
   { path: '/dashboard',  labelKey: 'dashboard',  icon: LayoutDashboard, roles: ['admin', 'user'] },
+  { path: '/admin/simulation', labelKey: 'simulation', icon: Play,        roles: ['admin'] },
   { path: '/templates',  labelKey: 'templates',   icon: BookTemplate,    roles: ['admin'] },
   { path: '/compose',    labelKey: 'compose',     icon: PenSquare,       roles: ['admin'] },
   { path: '/approval',   labelKey: 'approval',    icon: CheckCircle2,    roles: ['admin'] },
   { path: '/recipients', labelKey: 'recipients',  icon: Users,           roles: ['admin'] },
   { path: '/audit',      labelKey: 'auditLog',    icon: ScrollText,      roles: ['admin'] },
   { path: '/map',        labelKey: 'map',         icon: Map,             roles: ['admin', 'user'] },
-  { path: '/admin/simulation', labelKey: 'simulation', icon: Play,        roles: ['admin'] },
 ];
 
 /* ── Language Switcher ─────────────────────────────── */
@@ -233,8 +233,8 @@ function AppLayout() {
 
           {/* Nav links */}
           <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto' }}>
-            {console.log('Rendering Sidebar for role:', user?.role, 'Items:', NAV_ITEMS.filter(item => item.roles.includes(user?.role || 'admin')))}
-            {NAV_ITEMS.filter(item => item.roles.includes(user?.role || 'admin')).map(item => (
+            {console.log('Rendering Sidebar for role:', user?.role, 'Items:', NAV_ITEMS.filter(item => item.roles.includes(user?.role?.toLowerCase() || 'admin')))}
+            {NAV_ITEMS.filter(item => item.roles.includes(user?.role?.toLowerCase() || 'admin')).map(item => (
               <NavLink
                 key={item.path}
                 to={item.path}
@@ -323,13 +323,13 @@ function AppLayout() {
           <div style={{ padding: '24px 20px', maxWidth: '1280px', margin: '0 auto' }}>
             <Routes>
               <Route path="/dashboard"    element={<DashboardPage />} />
-              <Route path="/templates"    element={user?.role === 'admin' ? <TemplatesPage /> : <Navigate to="/dashboard" replace />} />
-              <Route path="/compose"      element={user?.role === 'admin' ? <ComposerPage /> : <Navigate to="/dashboard" replace />} />
-              <Route path="/approval"     element={user?.role === 'admin' ? <ApprovalPage /> : <Navigate to="/dashboard" replace />} />
-              <Route path="/approval/:id" element={user?.role === 'admin' ? <ApprovalPage /> : <Navigate to="/dashboard" replace />} />
-              <Route path="/recipients"   element={user?.role === 'admin' ? <RecipientsPage /> : <Navigate to="/dashboard" replace />} />
-              <Route path="/audit"        element={user?.role === 'admin' ? <AuditLogPage /> : <Navigate to="/dashboard" replace />} />
-              <Route path="/admin/simulation" element={user?.role === 'admin' ? <SimulationPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/templates"    element={user?.role?.toLowerCase() === 'admin' ? <TemplatesPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/compose"      element={user?.role?.toLowerCase() === 'admin' ? <ComposerPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/approval"     element={user?.role?.toLowerCase() === 'admin' ? <ApprovalPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/approval/:id" element={user?.role?.toLowerCase() === 'admin' ? <ApprovalPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/recipients"   element={user?.role?.toLowerCase() === 'admin' ? <RecipientsPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/audit"        element={user?.role?.toLowerCase() === 'admin' ? <AuditLogPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/admin/simulation" element={user?.role?.toLowerCase() === 'admin' ? <SimulationPage /> : <Navigate to="/dashboard" replace />} />
               <Route path="/profile"      element={<ProfilePage />} />
               <Route path="/map"          element={<MapPage />} />
               <Route path="*"             element={<Navigate to="/dashboard" replace />} />

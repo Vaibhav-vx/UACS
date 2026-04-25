@@ -30,7 +30,7 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('uacs_user') || '{}'));
-  const isAdmin = user.role === 'admin';
+  const isAdmin = user.role?.toLowerCase() === 'admin';
 
   const fetchData = useCallback(async () => {
     try {
@@ -279,7 +279,18 @@ export default function DashboardPage() {
       
       <div className="flex items-center justify-between">
         <div><h1 className="text-2xl font-bold flex items-center gap-3"><TrendingUp className="w-6 h-6" style={{ color: 'var(--accent)' }} />{t('dashboardTitle')}</h1><p className="text-sm mt-1 text-theme-muted">{t('dashboardSubtitle')}</p></div>
-        <button onClick={fetchData} className="btn-secondary text-sm"><RefreshCw className="w-4 h-4" /> {t('refresh')}</button>
+        <div className="flex items-center gap-3">
+          {isAdmin && (
+            <button 
+              onClick={() => navigate('/admin/simulation')}
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-bold text-sm shadow-lg hover:scale-105 transition-transform flex items-center gap-2"
+            >
+              <Zap className="w-4 h-4 fill-white" />
+              Live Simulation
+            </button>
+          )}
+          <button onClick={fetchData} className="btn-secondary text-sm"><RefreshCw className="w-4 h-4" /> {t('refresh')}</button>
+        </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Stat icon={Zap} label={t('activeAlerts')} value={stats.active} color="#ef4444" trend="+2 since yesterday" />
