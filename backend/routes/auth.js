@@ -294,6 +294,7 @@ router.put('/preferences', async (req, res) => {
     // 1. Update users table
     await dbUpdate('users', decoded.id, { 
       zone: zone || 'General',
+      language: language || 'english',
       lat: lat || null,
       lng: lng || null
     });

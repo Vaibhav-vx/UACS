@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS users (
   role             TEXT NOT NULL DEFAULT 'admin',
   department       TEXT,
   zone             TEXT DEFAULT 'General',
+  language         TEXT DEFAULT 'english',
   lat              DECIMAL(10, 8),
   lng              DECIMAL(11, 8),
   last_login       TIMESTAMPTZ,
@@ -78,6 +79,9 @@ BEGIN
   -- Users table columns
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='zone') THEN
     ALTER TABLE users ADD COLUMN zone TEXT DEFAULT 'General';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='language') THEN
+    ALTER TABLE users ADD COLUMN language TEXT DEFAULT 'english';
   END IF;
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='lat') THEN
     ALTER TABLE users ADD COLUMN lat DECIMAL(10, 8);

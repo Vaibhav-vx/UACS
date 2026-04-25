@@ -4,7 +4,8 @@
 // ═══════════════════════════════════════
 
 import { Router } from 'express';
-import { dbSelect, dbGetById, dbInsert, dbUpdate, dbDelete } from '../database/db.js';
+import bcrypt from 'bcryptjs';
+import { dbSelect, dbGetById, dbGetOne, dbInsert, dbUpdate, dbDelete } from '../database/db.js';
 import { sendSMS } from '../integrations/smsGateway.js';
 
 const router = Router();
@@ -39,6 +40,24 @@ router.post('/', async (req, res) => {
       language: language || 'en',
     });
 
+    // AUTO-SYNC TO USERS: Create a portal account for this recipient
+    // Format: Password = name-sx (e.g. Krish-sx)
+    const existingUser = await dbGetOne('users', { email: normalizedPhone });
+    if (!existingUser) {
+      const password = `${name.trim().split(' ')[0]}-sx`;
+      const hash = bcrypt.hashSync(password, 10);
+      await dbInsert('users', {
+        name:       name.trim(),
+        email:      normalizedPhone, // phone stored in email column
+        password:   hash,
+        role:       'user',
+        department: zone || 'General',
+        zone:       zone || 'General',
+        language:   language || 'english'
+      });
+      console.log(`[UACS RECIPIENTS] Auto-created User account for ${name} (PWD: ${password})`);
+    }
+
     res.status(201).json(newRecipient);
   } catch (err) {
     console.error('[UACS RECIPIENTS] POST error:', err.message);
@@ -61,6 +80,28 @@ router.put('/:id', async (req, res) => {
     if (language) updates.language = language;
 
     const updated = await dbUpdate('recipients', id, updates);
+
+    // Sync to Users table
+    const user = await dbGetOne('users', { email: existing.phone });
+    if (user) {
+      const userUpdates = {};
+      if (name) userUpdates.name = name.trim();
+      if (updates.phone) userUpdates.email = updates.phone;
+      if (zone) {
+        userUpdates.department = zone;
+        userUpdates.zone = zone;
+      }
+      if (language) userUpdates.language = language;
+      
+      // If name changed, update password to match the new name-sx format (per user request)
+      if (name && name !== existing.name) {
+        const newPassword = `${name.trim().split(' ')[0]}-sx`;
+        userUpdates.password = bcrypt.hashSync(newPassword, 10);
+      }
+
+      await dbUpdate('users', user.id, userUpdates);
+    }
+
     res.json(updated);
   } catch (err) {
     console.error('[UACS RECIPIENTS] PUT error:', err.message);
