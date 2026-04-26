@@ -24,6 +24,7 @@ import FamilyPage     from './pages/FamilyPage';
 import StatsPage      from './pages/StatsPage';
 import SettingsPage   from './pages/SettingsPage';
 import SurvivalGuidePage from './pages/SurvivalGuidePage';
+import SOSResponsePage from './pages/SOSResponsePage';
 
 const NAV_ITEMS = [
   { path: '/dashboard',  labelKey: 'dashboard',  icon: LayoutDashboard, roles: ['admin', 'user'] },
@@ -42,6 +43,7 @@ const NAV_ITEMS = [
   { path: '/approval',   labelKey: 'approval',    icon: CheckCircle2,    roles: ['admin'] },
   { path: '/recipients', labelKey: 'recipients',  icon: Users,           roles: ['admin'] },
   { path: '/audit',      labelKey: 'auditLog',    icon: ScrollText,      roles: ['admin'] },
+  { path: '/sos-center', labelKey: 'sosCenter',   icon: Shield,          roles: ['admin'] },
 ];
 
 /* ── Language Switcher ─────────────────────────────── */
@@ -363,6 +365,7 @@ function AppLayout() {
               <Route path="/recipients"   element={user?.role?.toLowerCase() === 'admin' ? <RecipientsPage /> : <Navigate to="/dashboard" replace />} />
               <Route path="/audit"        element={user?.role?.toLowerCase() === 'admin' ? <AuditLogPage /> : <Navigate to="/dashboard" replace />} />
               <Route path="/admin/simulation" element={user?.role?.toLowerCase() === 'admin' ? <SimulationPage /> : <Navigate to="/dashboard" replace />} />
+              <Route path="/sos-center" element={user?.role?.toLowerCase() === 'admin' ? <SOSResponsePage /> : <Navigate to="/dashboard" replace />} />
               <Route path="/profile"      element={<ProfilePage />} />
               <Route path="/map"          element={<MapPage />} />
               <Route path="*"             element={<Navigate to="/dashboard" replace />} />

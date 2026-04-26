@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS messages (
   expires_at       TIMESTAMPTZ,
   expiry_action    TEXT DEFAULT 'flag' CHECK(expiry_action IN ('delete', 'replace', 'flag')),
   expiry_message   TEXT,
+  expiry_reason    TEXT, -- "Why was this alert expired?"
   created_at       TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -70,6 +71,10 @@ CREATE TABLE IF NOT EXISTS safety_reports (
   user_name        TEXT,
   zone             TEXT,
   status           TEXT NOT NULL CHECK(status IN ('safe', 'assistance')),
+  lat              DECIMAL(10, 8),
+  lng              DECIMAL(11, 8),
+  emergency_contact_notified BOOLEAN DEFAULT FALSE,
+  assisted         BOOLEAN DEFAULT FALSE,
   created_at       TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -107,6 +112,25 @@ BEGIN
   END IF;
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='audit_log' AND column_name='notes') THEN
     ALTER TABLE audit_log ADD COLUMN notes TEXT;
+  END IF;
+
+  -- Safety Reports table additions
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='safety_reports' AND column_name='lat') THEN
+    ALTER TABLE safety_reports ADD COLUMN lat DECIMAL(10, 8);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='safety_reports' AND column_name='lng') THEN
+    ALTER TABLE safety_reports ADD COLUMN lng DECIMAL(11, 8);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='safety_reports' AND column_name='emergency_contact_notified') THEN
+    ALTER TABLE safety_reports ADD COLUMN emergency_contact_notified BOOLEAN DEFAULT FALSE;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='safety_reports' AND column_name='assisted') THEN
+    ALTER TABLE safety_reports ADD COLUMN assisted BOOLEAN DEFAULT FALSE;
+  END IF;
+
+  -- Messages table additions
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='messages' AND column_name='expiry_reason') THEN
+    ALTER TABLE messages ADD COLUMN expiry_reason TEXT;
   END IF;
 END $$;
 

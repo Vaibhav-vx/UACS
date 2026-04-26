@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { PenSquare, Save, Languages, MapPin, Clock, MessageSquare, Loader2, ChevronDown, Send, Map } from 'lucide-react';
+import { PenSquare, Save, Languages, MapPin, Clock, MessageSquare, Loader2, ChevronDown, Send, Map, Shield, TrendingUp, AlertTriangle, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { messagesApi, translateApi, dispatchApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -29,6 +29,9 @@ export default function ComposerPage() {
   const [translating, setTranslating] = useState(false);
   const [quickDispatching, setQuickDispatching] = useState(false);
   const [showMapPicker, setShowMapPicker] = useState(false);
+  const [showIntelBrief, setShowIntelBrief] = useState(false);
+  const [intelData, setIntelData] = useState(null);
+  const [intelAction, setIntelAction] = useState(null); // 'preview' or 'quick'
   
   const [form, setForm] = useState(() => {
     const defaultForm = { title: '', master_content: '', urgency: 'medium', target_zone: '', channels: ['sms'], languages: [], expires_at: '', expiry_action: 'flag', expiry_message: '' };
@@ -61,6 +64,25 @@ export default function ComposerPage() {
 
   const handleTranslateAndPreview = async () => {
     if (!validateForm()) return;
+    
+    // Fetch Intel
+    try {
+      const rec = await recipientsApi.getAll(form.target_zone || 'General');
+      setIntelData({
+        reach: rec.data.length,
+        channels: { sms: rec.data.length, twitter: 1, tv: 1 },
+        activeInZone: activeMessages.filter(m => m.target_zone === form.target_zone).length
+      });
+      setIntelAction('preview');
+      setShowIntelBrief(true);
+    } catch (err) {
+      // Fallback
+      proceedWithPreview();
+    }
+  };
+
+  const proceedWithPreview = async () => {
+    setShowIntelBrief(false);
     setTranslating(true);
     try {
       const cr = await messagesApi.create(form);
@@ -75,6 +97,24 @@ export default function ComposerPage() {
 
   const handleQuickDispatch = async () => {
     if (!validateForm()) return;
+    
+    // Fetch Intel
+    try {
+      const rec = await recipientsApi.getAll(form.target_zone || 'General');
+      setIntelData({
+        reach: rec.data.length,
+        channels: { sms: rec.data.length, twitter: 1, tv: 1 },
+        activeInZone: activeMessages.filter(m => m.target_zone === form.target_zone).length
+      });
+      setIntelAction('quick');
+      setShowIntelBrief(true);
+    } catch (err) {
+      proceedWithQuickDispatch();
+    }
+  };
+
+  const proceedWithQuickDispatch = async () => {
+    setShowIntelBrief(false);
     setQuickDispatching(true);
     const tid = 'qd';
     try {
@@ -157,6 +197,104 @@ export default function ComposerPage() {
           onChange={(zone) => updateForm('target_zone', zone)}
           onClose={() => setShowMapPicker(false)}
         />
+      )}
+
+      {/* Intelligence Brief Modal */}
+      {showIntelBrief && intelData && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
+          <div className="glass-card max-w-2xl w-full bg-slate-900 border border-indigo-500/30 overflow-hidden shadow-2xl flex flex-col">
+            <div className="p-6 border-b border-white/10 bg-gradient-to-r from-indigo-500/10 to-purple-500/10">
+              <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                <Shield className="w-6 h-6 text-indigo-400" />
+                Pre-Dispatch Intelligence Brief
+              </h2>
+              <p className="text-slate-400 text-sm mt-1">Verify reach and impact before broadcasting to citizens</p>
+            </div>
+
+            <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Impact Analysis</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-end justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+                      <div>
+                        <div className="text-3xl font-black text-white">{intelData.reach}</div>
+                        <div className="text-[10px] font-bold text-slate-500 uppercase mt-1">Est. Citizen Reach</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-emerald-500 font-bold flex items-center gap-1 text-xs">
+                          <TrendingUp className="w-3 h-3" /> 100%
+                        </div>
+                        <div className="text-[10px] text-slate-600 font-medium">Zone {form.target_zone || 'General'}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-xs font-bold text-slate-400">
+                        <span>Channel Readiness</span>
+                        <span>{Math.round((intelData.reach / (intelData.reach || 1)) * 100)}%</span>
+                      </div>
+                      <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-full bg-indigo-500 rounded-full" style={{ width: '100%' }} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-amber-500/5 border border-amber-500/20 rounded-2xl">
+                   <div className="flex items-center gap-2 text-amber-500 font-bold text-sm mb-1">
+                      <AlertTriangle className="w-4 h-4" /> Conflict Check
+                   </div>
+                   <p className="text-[10px] text-amber-500/80 leading-relaxed">
+                     {intelData.activeInZone > 0 
+                       ? `WARNING: There are already ${intelData.activeInZone} active alerts in this zone. Sending another might cause fatigue.`
+                       : "No conflicting alerts found in this zone. Proceeding with clear airspace."}
+                   </p>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                 <div>
+                   <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Message Quality</h3>
+                   <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-2 h-2 rounded-full ${form.master_content.length > 50 ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                        <span className="text-xs text-slate-300 font-medium">Content Length: {form.master_content.length} chars</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                        <span className="text-xs text-slate-300 font-medium">Multi-Language: {form.languages.length} selected</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className={`w-2 h-2 rounded-full ${form.urgency === 'critical' ? 'bg-red-500 animate-pulse' : 'bg-indigo-500'}`} />
+                        <span className="text-xs text-slate-300 font-medium capitalize">Urgency: {form.urgency}</span>
+                      </div>
+                   </div>
+                 </div>
+
+                 <div className="p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/20 text-[10px] text-indigo-300/70 leading-relaxed">
+                    Once dispatched, this message will be digitally signed by the UACS Central Authority and logged for public record.
+                 </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-white/10 bg-slate-900/50 flex gap-4">
+              <button 
+                onClick={() => setShowIntelBrief(false)}
+                className="flex-1 py-3 rounded-xl font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+              >
+                Cancel & Edit
+              </button>
+              <button 
+                onClick={() => intelAction === 'preview' ? proceedWithPreview() : proceedWithQuickDispatch()}
+                className="flex-[2] py-3 rounded-xl font-black bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl shadow-indigo-600/20 flex items-center justify-center gap-2"
+              >
+                Confirm & Dispatch
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

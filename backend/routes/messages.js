@@ -80,6 +80,7 @@ router.post('/', async (req, res) => {
       title, master_content, urgency, target_zone,
       channels, languages, translations,
       expires_at, expiry_action, expiry_message,
+      lat, lng,
     } = req.body;
 
     if (!title || !master_content || !urgency)
@@ -98,6 +99,8 @@ router.post('/', async (req, res) => {
       expires_at:   expires_at || null,
       expiry_action: expiry_action || 'flag',
       expiry_message: expiry_message || null,
+      lat:          lat || null,
+      lng:          lng || null,
     });
 
     await dbInsert('audit_log', {
@@ -124,6 +127,7 @@ router.put('/:id', async (req, res) => {
       title, master_content, urgency, target_zone,
       channels, languages, translations, status,
       expires_at, expiry_action, expiry_message,
+      lat, lng,
     } = req.body;
 
     const updates = {};
@@ -138,6 +142,8 @@ router.put('/:id', async (req, res) => {
     if (expires_at !== undefined)      updates.expires_at     = expires_at;
     if (expiry_action !== undefined)   updates.expiry_action  = expiry_action;
     if (expiry_message !== undefined)  updates.expiry_message = expiry_message;
+    if (lat !== undefined)             updates.lat            = lat;
+    if (lng !== undefined)             updates.lng            = lng;
 
     const updated = await dbUpdate('messages', req.params.id, updates);
     await dbInsert('audit_log', {
@@ -204,15 +210,20 @@ router.put('/:id/reject', async (req, res) => {
 // ─── PUT /api/messages/:id/expire ──────────────────────
 router.put('/:id/expire', async (req, res) => {
   try {
+    const { reason } = req.body;
     const msg = await dbGetById('messages', req.params.id);
     if (!msg) return res.status(404).json({ error: 'Message not found' });
 
-    await dbUpdate('messages', req.params.id, { status: 'expired' });
+    await dbUpdate('messages', req.params.id, { 
+      status: 'expired',
+      expiry_reason: reason || 'Situation resolved'
+    });
+    
     await dbInsert('audit_log', {
       message_id: req.params.id,
       action: 'expired',
       performed_by: req.user?.name || 'Unknown',
-      notes: 'Message manually expired',
+      notes: `Manual expiry. Reason: ${reason || 'N/A'}`,
     });
 
     res.json({ success: true, message: `Message ${req.params.id} expired` });
@@ -369,7 +380,7 @@ router.delete('/:id', async (req, res) => {
 // ─── POST /api/messages/:id/safety ─────────────────────
 router.post('/:id/safety', async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, lat, lng, contact_notified } = req.body;
     const messageId = req.params.id;
     const userId = req.user?.id;
     const userName = req.user?.name || 'Anonymous';
@@ -385,6 +396,10 @@ router.post('/:id/safety', async (req, res) => {
       user_name: userName,
       zone: zone,
       status: status,
+      lat: lat || null,
+      lng: lng || null,
+      emergency_contact_notified: contact_notified || false,
+      assisted: false,
     });
 
     res.json(report);
@@ -409,13 +424,67 @@ router.get('/safety/stats', async (req, res) => {
   }
 });
 
-// ─── GET /api/messages/safety/recent ───────────────────
-router.get('/safety/recent', async (req, res) => {
+// ─── PUT /api/messages/safety/:id/assist ───────────────
+router.put('/safety/:id/assist', async (req, res) => {
   try {
-    const reports = await dbSelect('safety_reports', {}, { orderBy: 'created_at', ascending: false, limit: 10 });
-    res.json(reports);
+    const report = await dbGetById('safety_reports', req.params.id);
+    if (!report) return res.status(404).json({ error: 'Safety report not found' });
+
+    await dbUpdate('safety_reports', req.params.id, { assisted: true });
+
+    // Send SMS notification to the citizen that help is coming
+    const user = await dbGetById('users', report.user_id);
+    if (user && user.email) {
+      try {
+        const twilioPhone = '+91' + user.email.replace(/\D/g, '');
+        const twilioClient = (await import('twilio')).default(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+        await twilioClient.messages.create({
+          body: `UACS: A rescue team has been dispatched to assist you. Stay where you are. Help is coming. - Government Authority`,
+          from: process.env.TWILIO_PHONE_NUMBER,
+          to: twilioPhone,
+        });
+        console.log(`[UACS SOS] Assistance confirmation sent to ${user.email}`);
+      } catch (smsErr) {
+        console.error('[UACS SOS] SMS error:', smsErr.message);
+      }
+    }
+
+    res.json({ success: true, message: 'Citizen marked as assisted and notified' });
   } catch (err) {
-    console.error('[UACS SAFETY] Recent error:', err.message);
+    console.error('[UACS SAFETY] Assist error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── GET /api/messages/:id/performance ──────────────────
+router.get('/:id/performance', async (req, res) => {
+  try {
+    const messageId = req.params.id;
+    const msg = await dbGetById('messages', messageId);
+    if (!msg) return res.status(404).json({ error: 'Message not found' });
+
+    const reports = await dbSelect('safety_reports', { message_id: messageId });
+    const audit = await dbSelect('audit_log', { message_id: messageId });
+    
+    const dispatched = audit.find(a => a.action === 'dispatched');
+    const expired = audit.find(a => a.action === 'expired');
+
+    const stats = {
+      title: msg.title,
+      dispatched_at: dispatched?.timestamp,
+      expired_at: expired?.timestamp,
+      expiry_reason: msg.expiry_reason,
+      total_responses: reports.length,
+      safe_count: reports.filter(r => r.status === 'safe').length,
+      sos_count: reports.filter(r => r.status === 'assistance').length,
+      assisted_count: reports.filter(r => r.assisted).length,
+      channels: JSON.parse(msg.channels || '[]'),
+      languages: JSON.parse(msg.languages || '[]'),
+    };
+
+    res.json(stats);
+  } catch (err) {
+    console.error('[UACS PERFORMANCE] GET error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

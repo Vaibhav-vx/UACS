@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle, LayersControl } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, LayersControl, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Maximize2, Minimize2, Map as MapIcon, Shield, Layers, MapPin } from 'lucide-react';
+import { Maximize2, Minimize2, Map as MapIcon, Shield, Layers, MapPin, X, Send, AlertTriangle, RefreshCw } from 'lucide-react';
 import { messagesApi, nasaApi } from '../api';
+import toast from 'react-hot-toast';
 import { ZONE_COORDS } from '../constants';
 
 const { BaseLayer } = LayersControl;
@@ -22,6 +23,20 @@ export default function SituationMapCard() {
   const [loading, setLoading] = useState(true);
   const [mapSize, setMapSize] = useState('medium'); // small, medium, large
   const [nasaEvents, setNasaEvents] = useState([]);
+  const [clickPos, setClickPos] = useState(null);
+  const [pinTitle, setPinTitle] = useState('');
+  const [pinDesc, setPinDesc] = useState('');
+  const [pinUrgency, setPinUrgency] = useState('critical');
+  const [submitting, setSubmitting] = useState(false);
+
+  function MapEvents() {
+    useMapEvents({
+      click(e) {
+        setClickPos(e.latlng);
+      },
+    });
+    return null;
+  }
 
   useEffect(() => {
     const fetchAlerts = async () => {
@@ -68,6 +83,35 @@ export default function SituationMapCard() {
       className: 'custom-div-icon',
       iconSize: [22, 22],
     });
+  };
+
+  const handlePinSubmit = async () => {
+    if (!pinTitle || !pinDesc) return toast.error('Please fill all fields');
+    setSubmitting(true);
+    try {
+      await messagesApi.create({
+        title: `[PIN] ${pinTitle}`,
+        master_content: pinDesc,
+        urgency: pinUrgency,
+        target_zone: 'General',
+        channels: ['website', 'sms'],
+        languages: ['en'],
+        lat: clickPos.lat,
+        lng: clickPos.lng,
+        status: 'active'
+      });
+      toast.success('Location alert pinned & broadcasted!');
+      setClickPos(null);
+      setPinTitle('');
+      setPinDesc('');
+      // Refresh
+      const msgRes = await messagesApi.getAll('active');
+      setAlerts(msgRes.data);
+    } catch (err) {
+      toast.error('Failed to pin alert');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -132,8 +176,65 @@ export default function SituationMapCard() {
           </BaseLayer>
         </LayersControl>
         
+        <MapEvents />
+
+        {clickPos && (
+          <Marker position={clickPos} icon={L.divIcon({ html: '📍', className: 'text-2xl' })}>
+            <Popup minWidth={250}>
+              <div className="p-3 space-y-3">
+                <div className="flex items-center gap-2 text-red-500 font-bold text-xs uppercase tracking-tighter">
+                  <AlertTriangle className="w-4 h-4" /> Rapid Alert Pin
+                </div>
+                <input 
+                  autoFocus
+                  placeholder="Alert Title (e.g. Building Collapse)" 
+                  className="w-full bg-theme-hover p-2 rounded-lg text-xs font-bold border border-theme-border"
+                  value={pinTitle}
+                  onChange={e => setPinTitle(e.target.value)}
+                />
+                <textarea 
+                  placeholder="Short description / Instructions..." 
+                  className="w-full bg-theme-hover p-2 rounded-lg text-xs h-20 border border-theme-border"
+                  value={pinDesc}
+                  onChange={e => setPinDesc(e.target.value)}
+                />
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => setPinUrgency('critical')}
+                    className={`flex-1 py-1 rounded-md text-[10px] font-bold ${pinUrgency === 'critical' ? 'bg-red-600 text-white' : 'bg-theme-hover text-theme-muted'}`}
+                  >
+                    CRITICAL
+                  </button>
+                  <button 
+                    onClick={() => setPinUrgency('high')}
+                    className={`flex-1 py-1 rounded-md text-[10px] font-bold ${pinUrgency === 'high' ? 'bg-orange-600 text-white' : 'bg-theme-hover text-theme-muted'}`}
+                  >
+                    HIGH
+                  </button>
+                </div>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => setClickPos(null)}
+                    className="flex-1 py-2 bg-theme-hover rounded-xl text-[10px] font-bold"
+                  >
+                    CANCEL
+                  </button>
+                  <button 
+                    onClick={handlePinSubmit}
+                    disabled={submitting}
+                    className="flex-1 py-2 bg-accent text-white rounded-xl text-[10px] font-bold flex items-center justify-center gap-2"
+                  >
+                    {submitting ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                    DISPATCH
+                  </button>
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        )}
+        
         {alerts.map(alert => {
-          const pos = ZONE_COORDS[alert.target_zone] || ZONE_COORDS['General'];
+          const pos = alert.lat && alert.lng ? [alert.lat, alert.lng] : (ZONE_COORDS[alert.target_zone] || ZONE_COORDS['General']);
           const color = alert.urgency === 'critical' ? '#ef4444' : '#f97316';
           return (
             <div key={alert.id}>

@@ -30,6 +30,10 @@ export default function DashboardPage() {
   const [emergencyError, setEmergencyError] = useState('');
   const [emergencyLoading, setEmergencyLoading] = useState(false);
   const [citizenStats, setCitizenStats] = useState({ count: 0, safeToday: 0 });
+  const [sosConfirming, setSosConfirming] = useState(false);
+  const [sosProgress, setSosProgress] = useState(0);
+  const [expiryReason, setExpiryReason] = useState('');
+  const [showMap, setShowMap] = useState(false);
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('uacs_user') || '{}'));
@@ -80,9 +84,15 @@ export default function DashboardPage() {
 
   useEffect(() => { fetchData(); const iv = setInterval(fetchData, 30000); return () => clearInterval(iv); }, [fetchData]);
 
-  const handleExpireNow = async (id) => {
+  const handleExpireNow = async (id, reason = '') => {
     setActionLoading(p => ({ ...p, [`e-${id}`]: true }));
-    try { await messagesApi.expire(id); toast.success(t('messageExpired') || 'Message expired'); fetchData(); }
+    try { 
+      await messagesApi.expire(id, reason); 
+      toast.success(t('messageExpired') || 'Message expired'); 
+      setShowExpiryModal(null);
+      setExpiryReason('');
+      fetchData(); 
+    }
     catch { toast.error(t('failedExpire') || 'Failed to expire'); } finally { setActionLoading(p => ({ ...p, [`e-${id}`]: false })); }
   };
   const handleExtend = async (id) => {
@@ -172,21 +182,45 @@ export default function DashboardPage() {
               </div>
 
               <div className="flex flex-col items-end gap-2">
-                 <button 
-                   onClick={async () => {
-                      const ok = window.confirm("🚨 This will send an SOS signal with your current location to all emergency responders. Are you sure?");
-                      if (ok) {
-                        try {
-                          await messagesApi.submitSafety('SOS-GENERAL', 'assistance');
-                          toast.error("SOS Signal Transmitted Successfully", { duration: 5000, position: 'top-center', icon: '🚨' });
-                        } catch (e) { toast.error("SOS Transmission Failed"); }
-                      }
-                   }}
-                   className="px-8 py-4 bg-red-600 text-white rounded-3xl font-black text-2xl shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-3 border-4 border-red-500/50 emergency-btn-pulse"
-                 >
-                   <Zap className="w-7 h-7 fill-white" /> SOS
-                 </button>
-                 <span className="text-[10px] font-black text-red-500/70 uppercase tracking-widest mr-2">Personal Panic Button</span>
+                 <div className="relative group">
+                   <button 
+                     onMouseDown={() => {
+                        setSosConfirming(true);
+                        const start = Date.now();
+                        const timer = setInterval(() => {
+                           const p = Math.min(((Date.now() - start) / 3000) * 100, 100);
+                           setSosProgress(p);
+                           if (p >= 100) {
+                              clearInterval(timer);
+                              setSosConfirming(false);
+                              setSosProgress(0);
+                              handleSOS();
+                           }
+                        }, 50);
+                        const endHandler = () => {
+                          clearInterval(timer);
+                          setSosConfirming(false);
+                          setSosProgress(0);
+                          window.removeEventListener('mouseup', endHandler);
+                        };
+                        window.addEventListener('mouseup', endHandler);
+                     }}
+                     className={`relative w-20 h-20 md:w-24 md:h-24 rounded-full font-black text-2xl shadow-2xl transition-all flex items-center justify-center border-4 border-red-500/50 overflow-hidden ${sosConfirming ? 'scale-110' : 'hover:scale-105 active:scale-95'}`}
+                     style={{ background: '#ef4444', color: 'white' }}
+                   >
+                     <div 
+                        className="absolute bottom-0 left-0 w-full bg-red-800 transition-all duration-75" 
+                        style={{ height: `${sosProgress}%`, opacity: 0.5 }} 
+                     />
+                     <Zap className={`relative z-10 w-8 h-8 md:w-10 md:h-10 fill-white ${sosConfirming ? 'animate-pulse' : ''}`} />
+                   </button>
+                   {sosConfirming && (
+                     <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-bold px-3 py-1 rounded-full whitespace-nowrap animate-bounce">
+                        HOLD FOR 3S TO SOS
+                     </div>
+                   )}
+                 </div>
+                 <span className="text-[10px] font-black text-red-500/70 uppercase tracking-widest mr-2">Hold to confirm SOS</span>
               </div>
            </div>
         </div>
@@ -302,6 +336,46 @@ export default function DashboardPage() {
                 </div>
               )}
             </section>
+
+            {/* 4. PREPAREDNESS SCORE (Gamification) */}
+            <section className="glass-card p-6 rounded-3xl border-0 shadow-xl bg-gradient-to-br from-theme-surface to-accent/10 relative overflow-hidden">
+               <div className="relative z-10 flex flex-col md:flex-row gap-6 items-center">
+                  <div className="relative w-24 h-24 flex items-center justify-center">
+                    <svg className="w-full h-full -rotate-90">
+                      <circle cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-white/10" />
+                      <circle cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-accent" strokeDasharray={2 * Math.PI * 40} strokeDashoffset={2 * Math.PI * 40 * (1 - 0.78)} strokeLinecap="round" />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-2xl font-black text-white">78</span>
+                      <span className="text-[8px] font-bold text-accent uppercase tracking-widest">Score</span>
+                    </div>
+                  </div>
+                  <div className="flex-1 space-y-3">
+                    <div>
+                      <h3 className="text-lg font-black text-white uppercase tracking-tight flex items-center gap-2">
+                        My Preparedness Score <span className="px-2 py-0.5 rounded bg-accent/20 text-accent text-[10px] border border-accent/30">🏆 Well Prepared</span>
+                      </h3>
+                      <p className="text-xs text-theme-muted">You are in the top 15% of Zone 4 citizens. Complete tasks to improve.</p>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {[
+                        { label: 'Emergency Contact', done: true },
+                        { label: 'Zone Verified', done: true },
+                        { label: 'Go-Bag Checklist', done: false, pts: '+10' },
+                        { label: 'EAP Identified', done: true },
+                      ].map((task, i) => (
+                        <div key={i} className={`flex items-center justify-between p-2 rounded-xl text-[10px] font-bold border ${task.done ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-white/5 border-white/10 text-theme-muted'}`}>
+                          <span className="flex items-center gap-2">
+                            {task.done ? <CheckCircle className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
+                            {task.label}
+                          </span>
+                          {!task.done && <span className="text-accent">{task.pts}</span>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+               </div>
+            </section>
           </div>
 
           <div className="space-y-8">
@@ -361,7 +435,34 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {isAdmin && <SituationMapCard />}
+      {isAdmin && (
+        <div className="animate-slide-up">
+          {showMap ? (
+            <div className="relative">
+              <SituationMapCard />
+              <button 
+                onClick={() => setShowMap(false)}
+                className="absolute top-4 right-4 z-[1000] p-2 bg-red-600 text-white rounded-xl shadow-xl hover:bg-red-700 transition-all flex items-center gap-2 font-bold text-xs"
+              >
+                <X className="w-4 h-4" /> Close Map
+              </button>
+            </div>
+          ) : (
+            <div 
+              onClick={() => setShowMap(true)}
+              className="glass-card p-8 rounded-3xl border-2 border-dashed border-accent/30 hover:border-accent hover:bg-accent/5 cursor-pointer transition-all group flex flex-col items-center justify-center gap-4 min-h-[200px]"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Globe className="w-8 h-8 text-accent" />
+              </div>
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-white uppercase tracking-tight">Open Situation Room Map</h3>
+                <p className="text-sm text-theme-muted">Click to visualize live alerts and citizen locations</p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
       
       <div className="flex items-center justify-between">
         <div><h1 className="text-2xl font-bold flex items-center gap-3"><TrendingUp className="w-6 h-6" style={{ color: 'var(--accent)' }} />{t('dashboardTitle')}</h1><p className="text-sm mt-1 text-theme-muted">{t('dashboardSubtitle')}</p></div>
@@ -467,7 +568,7 @@ export default function DashboardPage() {
                 {isAdmin && (
                 <div className="flex items-center gap-2">
                   <button onClick={()=>handleExtend(msg?.id)} disabled={actionLoading[`x-${msg?.id}`]} className="btn-secondary text-xs py-1.5 px-3">{actionLoading[`x-${msg?.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<Timer className="w-3 h-3"/>} {t('extend')}</button>
-                  <button onClick={()=>handleExpireNow(msg?.id)} disabled={actionLoading[`e-${msg?.id}`]} className="btn-danger text-xs py-1.5 px-3">{actionLoading[`e-${msg?.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<AlertTriangle className="w-3 h-3"/>} {t('expireNow')}</button>
+                  <button onClick={()=>setShowExpiryModal(msg?.id)} className="btn-danger text-xs py-1.5 px-3"><AlertTriangle className="w-3 h-3"/> {t('expireNow')}</button>
                   <button onClick={()=>handleDelete(msg?.id)} disabled={actionLoading[`d-${msg?.id}`]} className="btn-secondary text-xs py-1.5 px-3" style={{color:'#ef4444',borderColor:'rgba(239,68,68,0.3)'}}>{actionLoading[`d-${msg?.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<X className="w-3 h-3"/>}</button>
                 </div>
                 )}
@@ -624,6 +725,46 @@ export default function DashboardPage() {
               <p className="text-xs text-center text-red-500 font-medium">
                 {t('emergencyWarning') || '⚠️ This will immediately broadcast to all channels. This action cannot be undone.'}
               </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Expiry Reason Modal */}
+      {showExpiryModal && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="glass-card max-w-md w-full bg-[var(--bg-base)] border border-red-500/30 overflow-hidden shadow-2xl">
+            <div className="p-6">
+              <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                <AlertTriangle className="text-red-500" /> Expire This Alert
+              </h2>
+              <p className="text-sm text-theme-muted mb-4">
+                Please provide a reason for expiration. This will be logged for accountability and visible to citizens.
+              </p>
+              
+              <label className="block text-xs font-bold text-theme-muted uppercase mb-1">Reason for expiry (Required)</label>
+              <textarea 
+                className="textarea-field w-full h-24 mb-4"
+                placeholder="e.g. Flood waters receded. Zone declared safe by municipal officer."
+                value={expiryReason}
+                onChange={(e) => setExpiryReason(e.target.value)}
+              />
+
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setShowExpiryModal(null)}
+                  className="flex-1 py-2 rounded-xl bg-theme-hover text-white font-bold"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => handleExpireNow(showExpiryModal, expiryReason)}
+                  disabled={!expiryReason.trim() || actionLoading[`e-${showExpiryModal}`]}
+                  className="flex-1 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold shadow-lg shadow-red-500/20"
+                >
+                  {actionLoading[`e-${showExpiryModal}`] ? <RefreshCw className="animate-spin w-5 h-5 mx-auto" /> : 'Confirm Expiry'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

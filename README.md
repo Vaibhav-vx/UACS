@@ -10,134 +10,97 @@ The **Unified Authority Communication System (UACS)** is a state-of-the-art, mis
 
 ---
 
-## 🚀 Vision & Purpose
-UACS is built to ensure that **no citizen is left behind** during a crisis. By unifying SMS, Social Media, Radio, and TV alerts into a single dashboard, authorities can broadcast life-saving information in seconds, across multiple languages, with guaranteed delivery tracking and real-time citizen feedback loops.
+## 🚀 Vision: "Closing the Response Loop"
+UACS is not just a messaging tool; it is a **complete lifecycle management platform**. It moves beyond broadcasting by tracking reach, collecting safety check-ins, coordinating rescue (SOS), and maintaining full accountability for every command decision.
 
 ---
 
-## 🌟 Core Features & Modules
+## 🏛️ Administrative Command Suite (Portal 1)
 
-### 1. Unified Dispatch Command Center (Admin)
-*   **Omni-Channel Broadcast**: Send alerts simultaneously via **SMS (Twilio)**, **Twitter/X**, **Emergency Radio**, **TV Tickers**, and **Website Banners**.
-*   **Multilingual Core**: Built-in support for **English, Hindi, Marathi, Tamil, and Telugu**. Automated translation pipeline ensures consistent messaging across diverse populations.
-*   **Smart Composition**: Create alerts with master content and specialized instructions for different channels (e.g., short 160-char SMS vs. detailed web reports).
+### 📊 1. Central Nerve Center (Dashboard)
+*   **Safety Analytics**: Real-time KPI tracking of "Safe" vs. "Need Help" reports.
+*   **Performance Monitoring**: Tracking active vs. expired alerts and system-wide reach.
+*   **Accountability Audit**: Displays the human reason provided for alert termination, closing the loop with citizens.
 
-### 2. My Safety Dashboard (Citizen Portal)
-*   **Personal Emergency Command Center**: A personalized landing page for every citizen showing their current safety status, active zone alerts, and nearby evacuation points.
-*   **Live Weather Intelligence**: Real-time integration with weather APIs to provide seasonal context (e.g., Summer Heatwave warnings in Mumbai) and survival recommendations.
-*   **One-Tap Safety Check-in**: During Critical alerts, users can mark themselves as "Safe" or "Need Help" with a single tap. This data is instantly beamed to the Admin Analytics dashboard for rescue prioritization.
-*   **SOS Panic Button**: A dedicated emergency button that transmits a distress signal with precise coordinates to all nearby responders.
+### 🚨 2. SOS Response Center (Crisis Queue)
+*   **Priority Rescue Queue**: Sorts incoming distress signals by wait time and urgency.
+*   **Assistance Tracking**: Admins can mark citizens as "Assisted," triggering an automatic "Help is coming" notification to the victim.
+*   **Live Polling**: 10-second refreshes ensure authorities never miss a cry for help.
 
-### 3. National Survival Guide & Knowledge Base
-*   **Disaster-Specific Protocols**: A comprehensive handbook for **Earthquakes, Floods, Cyclones, Fires, and Heatwaves**.
-*   **Interactive Learning**: Links to official **NDMA (National Disaster Management Authority)** training videos and downloadable emergency PDF guides.
-*   **Survival Checklists**: Step-by-step instructions on what to do before, during, and after specific disaster scenarios.
+### ✍️ 3. Precision Composer & Intel Brief
+*   **Multilingual Pipeline**: Instant translation into **Hindi, Marathi, Tamil, Telugu, and English**.
+*   **Omni-Channel Dispatch**: Simultaneous broadcast to **SMS, Social Media (Twitter/X), Radio, and TV**.
+*   **Pre-Dispatch Intel**: Mandatory check showing estimated reach and conflict detection (warning if alerts overlap in the same zone).
 
-### 4. Community Safety Network & Real-Time Stats
-*   **Family Safety Network**: Citizens can monitor the safety status of their family and neighbors in the same zone.
-*   **Transparency Analytics**: A public-facing stats page showing the number of registered citizens, safety check-in rates, and a 30-day alert history for the zone.
-*   **Safety Score**: A dynamic "Community Safety Score" that measures a zone's resilience and responsiveness.
-
-### 5. Interactive Situation Map & EAP Navigation
-*   **Dynamic Heatmaps**: Admins visualize active alert zones and recipient density on a Leaflet-powered map.
-*   **Direct Navigation**: Citizens can get one-click Google Maps directions to the nearest **Emergency Assembly Points (EAPs)**, shelters, and medical centers.
-*   **Resizable Command View**: Admins can toggle between compact and full-screen map views for high-pressure situation monitoring.
+### ⚖️ 4. Approval Queue & Audit Log
+*   **Dual-Step Verification**: Every message must be reviewed and approved before live dispatch.
+*   **Traceability**: Full audit logs for every action taken, providing legal and operational accountability.
 
 ---
 
-## 🏗 Administrative Command Modules
+## 👥 Citizen Safety Portal (Portal 2)
 
-The UACS Admin Portal is divided into specialized modules designed for high-stakes emergency management:
+### 🛡️ 1. Personal Emergency Command Center
+*   **Dynamic Status Card**: Instant visual feedback: 🟢 "YOU ARE SAFE" or 🔴 "CRITICAL ALERT IN YOUR ZONE."
+*   **Preparedness Score**: A gamified resilience gauge rewarding citizens for safety actions (Emergency Contact, Go-Bag verification, etc.).
+*   **SOS Panic Button 2.0**: A hold-to-confirm emergency trigger with real-time GPS capture.
 
-### 📊 Admin Dashboard (The Nerve Center)
-*   **Functions**: Real-time KPI tracking, **Safety Analytics** (SOS/Safe reports), and the **Resizable Situation Map**.
-*   **Purpose**: Provides an instantaneous "360-degree view" of the disaster's progress and the effectiveness of the communication response.
+### 📖 2. National Survival Guide
+*   **Disaster Handbook**: Comprehensive knowledge base for Earthquakes, Floods, Cyclones, and Fires.
+*   **Survival Protocols**: Step-by-step instructions on what to do before, during, and after disasters.
 
-### ✍️ Message Composer (Precision Drafting)
-*   **Functions**: Multi-channel drafting, automated translation, and urgency level assignment (Critical/High/Normal).
-*   **Purpose**: Streamlines crafting accurate, localized information for diverse platforms in seconds.
+### 📡 3. Interactive Situation Map
+*   **GIS Integration**: Visualizes active alert zones and recipient density.
+*   **EAP Navigation**: One-click Google Maps directions to the nearest **Emergency Assembly Points** and Shelters.
 
-### ⚖️ Approval Queue (The Final Safeguard)
-*   **Functions**: Reviewing draft messages, final content verification, and manual "Dispatch" triggers.
-*   **Purpose**: Prevents the accidental broadcast of incorrect or unauthorized information.
+### 👥 4. Family & Community Network
+*   **Safety Watch**: Monitor the safety status of family members registered in the same zone.
+*   **Zone Transparency**: Public stats on zone-wide safety check-in rates.
 
-### 📜 Audit Log (Accountability & History)
-*   **Functions**: Grouped lifecycle tracking of every message, including detailed timestamps and operator IDs.
-*   **Purpose**: Essential for post-disaster analysis and legal accountability.
+---
 
-### 👥 Recipients & Zone Management
-*   **Functions**: Managing the citizen database and assigning users to specific safety zones.
-*   **Purpose**: Ensures emergency communications are **targeted**, reaching only those in danger.
-
-### 🎮 Live Simulation (The "Why UACS" Tool)
-*   **Functions**: Interactive side-by-side comparison of manual disaster response vs. automated UACS response.
-*   **Purpose**: Visualizes the time saved and confusion reduced by using UACS automation.
+## 🎮 Demo & Simulation
+*   **Side-by-Side Simulation**: A dedicated tool that compares manual disaster response (slow, fragmented) with UACS automation (fast, unified). 
+*   **Two-Way SMS Integration**: Judges can reply "SAFE" or "HELP" to an SMS alert and see the dashboard update in real-time.
 
 ---
 
 ## 🛠 Technical Architecture
 
-### Frontend
-*   **React 18 + Vite**: Lightning-fast performance and optimized builds.
-*   **Tailwind CSS**: Utility-first styling with a custom **Premium Glassmorphism** design system.
-*   **React-Leaflet**: Integrated GIS mapping for interactive situational awareness.
-*   **Lucide Icons**: Professional, consistent iconography across all modules.
+### Frontend (Modern & Premium)
+*   **React 18 + Vite**: Optimized performance and lightning-fast state management.
+*   **Vanilla CSS Design System**: Custom **Glassmorphism** aesthetics for a premium, high-stakes look.
+*   **React-Leaflet**: Integrated GIS mapping for situational awareness.
 
-### Backend
-*   **Node.js & Express**: High-performance API layer.
-*   **Supabase (PostgreSQL)**: Secure, scalable database with real-time data synchronization.
-*   **Twilio API**: Enterprise-grade SMS gateway for mass citizen outreach.
-*   **JWT Authentication**: Secure session management for all user roles.
+### Backend (Production-Ready)
+*   **Node.js & Express**: High-concurrency API layer.
+*   **Supabase (PostgreSQL)**: Scalable database with real-time listeners for live SOS updates.
+*   **Twilio API**: Enterprise-grade SMS gateway with inbound webhook processing.
+*   **JWT RBAC**: Strict Role-Based Access Control for all administrative functions.
 
 ---
 
-## ⚙️ Setup & Installation
+## ⚙️ Quick Start
 
-### 1. Prerequisites
-*   **Node.js** (v18.0+)
-*   **Supabase Project** (Database & Auth)
-*   **Twilio Account** (SID, Token, and Phone Number)
-
-### 2. Environment Configuration
-Create a `.env` file in the root directory:
+### 1. Environment
 ```env
-PORT=5000
-SUPABASE_URL=your_supabase_url
-SUPABASE_KEY=your_supabase_service_role_key
-JWT_SECRET=your_secure_random_secret
-
-# SMS Gateway (Twilio)
-TWILIO_ACCOUNT_SID=your_sid
-TWILIO_AUTH_TOKEN=your_token
-TWILIO_PHONE_NUMBER=your_number
+SUPABASE_URL=...
+SUPABASE_KEY=...
+JWT_SECRET=...
+TWILIO_ACCOUNT_SID=...
+TWILIO_AUTH_TOKEN=...
+TWILIO_PHONE_NUMBER=...
 ```
 
-### 3. Installation
+### 2. Launch
 ```bash
-# Install Backend Dependencies
-cd backend && npm install
-
-# Install Frontend Dependencies
-cd ../frontend && npm install
-```
-
-### 4. Running the Project
-```bash
-# Start Backend (Port 5000)
-cd backend && npm run dev
-
-# Start Frontend (Vite)
-cd ../frontend && npm run dev
+npm install --prefix backend && npm run dev --prefix backend
+npm install --prefix frontend && npm run dev --prefix frontend
 ```
 
 ---
 
-## 🛡 Security & Compliance
-*   **Role-Based Access Control (RBAC)**: Strict permissions for `admin` and `user` roles.
-*   **Secure API Layers**: All management endpoints require valid JWT authentication.
-*   **Data Integrity**: Every alert is digitally logged and auditable, ensuring total accountability.
+## 📜 Professional Accountability
+UACS is built on the philosophy that **transparency saves lives**. By unifying communication, automating translation, and providing real-time feedback, UACS ensures that in the face of disaster, no citizen is left behind.
 
----
-
-## 📜 License & Ownership
 *Unified Authority Communication System (UACS) - Secure Government Portal. Developed for internal administrative and emergency response deployment.*

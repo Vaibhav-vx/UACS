@@ -66,13 +66,15 @@ export const messagesApi = {
   update:   (id, data) => api.put(`/messages/${id}`, data),
   approve:  (id)     => api.put(`/messages/${id}/approve`),
   reject:   (id, reason) => api.put(`/messages/${id}/reject`, { reason }),
-  expire:   (id)     => api.put(`/messages/${id}/expire`),
+  expire:   (id, reason) => api.put(`/messages/${id}/expire`, { reason }),
   extend:   (id, expires_at) => api.put(`/messages/${id}/extend`, { expires_at }),
   delete:   (id)     => api.delete(`/messages/${id}`),
   emergency: (data)  => api.post('/messages/emergency', data),
-  submitSafety: (id, status) => api.post(`/messages/${id}/safety`, { status }),
+  submitSafety: (id, status, extra = {}) => api.post(`/messages/${id}/safety`, { status, ...extra }),
   getSafetyStats: () => api.get('/messages/safety/stats'),
   getRecentSafety: () => api.get('/messages/safety/recent'),
+  assistCitizen: (reportId) => api.put(`/messages/safety/${reportId}/assist`),
+  getPerformanceReport: (msgId) => api.get(`/messages/${msgId}/performance`),
 };
 
 // ─── Translation API ───

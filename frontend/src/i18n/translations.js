@@ -390,7 +390,17 @@ const translations = {
     "emergencyContactDesc": "Register a trusted person (e.g., Mom, Spouse). They will be automatically notified via SMS whenever a CRITICAL alert is issued in your zone.",
     "contactName": "Contact Name",
     "saveEmergencyContact": "Add Emergency Contact",
-    "demoLoginSuccess": "Welcome to Demo Portal"
+    "demoLoginSuccess": "Welcome to Demo Portal",
+    "sosCenter": "SOS Response Center",
+    "preparednessScore": "Preparedness Score",
+    "assisted": "Assisted",
+    "expiryReason": "Expiry Reason",
+    "survivalGuide": "Survival Guide",
+    "history": "Alert History",
+    "evacuation": "Evacuation Assembly Points",
+    "family": "Family & Friends",
+    "statistics": "Statistics",
+    "unifiedComms": "Unified Communications"
   },
   "hi": {
     "dashboard": "डैशबोर्ड",
@@ -760,7 +770,17 @@ const translations = {
     "reEnterPassword": "अपना पासवर्ड फिर से दर्ज करें",
     "passwordsDontMatch": "⚠ पासवर्ड मेल नहीं खाते",
     "passwordsMatch": "✓ पासवर्ड मेल खाते हैं",
-    "creatingAccount": "खाता बनाया जा रहा है..."
+    "creatingAccount": "खाता बनाया जा रहा है...",
+    "sosCenter": "एसओएस रिस्पॉन्स सेंटर",
+    "preparednessScore": "तैयारी स्कोर",
+    "assisted": "सहायता प्रदान की गई",
+    "expiryReason": "समाप्ति का कारण",
+    "survivalGuide": "सर्वाइवल गाइड",
+    "history": "अलर्ट इतिहास",
+    "evacuation": "निकासी सभा बिंदु",
+    "family": "परिवार और मित्र",
+    "statistics": "सांख्यिकी",
+    "unifiedComms": "एकीकृत संचार"
   },
   "mr": {
     "dashboard": "डॅशबोर्ड",

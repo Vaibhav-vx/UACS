@@ -21,6 +21,7 @@ import translateRouter  from './routes/translate.js';
 import dispatchRouter   from './routes/dispatch.js';
 import auditRouter      from './routes/audit.js';
 import recipientsRouter from './routes/recipients.js';
+import webhooksRouter   from './routes/webhooks.js';
 
 // Middleware
 import { authenticate } from './middleware/auth.js';
@@ -53,6 +54,9 @@ app.use('/api/auth', authRouter);
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', service: 'UACS Backend', db: 'supabase', timestamp: new Date().toISOString() });
 });
+
+// Twilio Webhook (Must be public)
+app.use('/api/webhooks', webhooksRouter);
 
 // ─── Protected routes ────────────────────────────────────
 app.use('/api/messages',   authenticate, messagesRouter);
