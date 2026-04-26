@@ -492,16 +492,16 @@ export default function DashboardPage() {
         <div className="glass-card p-6 rounded-2xl border-0 shadow-lg relative overflow-hidden">
           <div style={{ position: 'absolute', top: 0, right: 0, width: '100px', height: '100px', background: 'radial-gradient(circle, var(--accent-bg) 0%, transparent 70%)', opacity: 0.3 }} />
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <Shield className="w-5 h-5 text-accent" /> {t('safetyResponseAnalytics') || 'Safety Response Analytics'}
+            <Shield className="w-5 h-5 text-accent" /> {t('safety Response Analytics') || 'Safety Response Analytics'}
           </h2>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
                <div className="text-2xl font-black text-green-500">{safetyStats.safe}</div>
-               <div className="text-[10px] font-bold uppercase tracking-wider text-green-600/70">{t('markedSafe') || 'Marked Safe'}</div>
+               <div className="text-[10px] font-bold uppercase tracking-wider text-green-600/70">{t('Marked Safe') || 'Marked Safe'}</div>
             </div>
             <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20">
                <div className="text-2xl font-black text-red-500">{safetyStats.assistance}</div>
-               <div className="text-[10px] font-bold uppercase tracking-wider text-red-600/70">{t('needAssistance') || 'Need Assistance'}</div>
+               <div className="text-[10px] font-bold uppercase tracking-wider text-red-600/70">{t('Need Assistance') || 'Need Assistance'}</div>
             </div>
           </div>
           
@@ -522,7 +522,7 @@ export default function DashboardPage() {
 
         <div className="glass-card p-6 rounded-2xl border-0 shadow-lg">
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <SafetyIcon className="w-5 h-5 text-accent" /> {t('recentSafetyReports') || 'Recent Safety Reports'}
+            <SafetyIcon className="w-5 h-5 text-accent" /> {t('Recent Safety Reports') || 'Recent Safety Reports'}
           </h2>
           <div className="space-y-3">
              {recentReports.length === 0 ? (
