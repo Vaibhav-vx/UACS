@@ -11,6 +11,9 @@ export default function FamilyPage() {
   const [family, setFamily] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user] = useState(() => JSON.parse(localStorage.getItem('uacs_user') || '{}'));
+  const [isAdding, setIsAdding] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newPhone, setNewPhone] = useState('');
 
   useEffect(() => {
     fetchNetwork();

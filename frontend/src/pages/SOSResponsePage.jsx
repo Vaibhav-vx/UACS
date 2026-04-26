@@ -5,7 +5,6 @@ import {
   MapPin, 
   CheckCircle, 
   Clock, 
-  AlertCircle,
   ExternalLink,
   MessageSquare,
   ChevronRight,

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Activity, Clock, AlertTriangle, CheckCircle, Send, Timer, RefreshCw, Eye, RotateCcw, 
-  Zap, TrendingUp, X, PenSquare, MapPin, Globe, Info, Activity as SafetyIcon,
+  Zap, TrendingUp, X, PenSquare, MapPin, Globe, Info, 
   Navigation, Heart, History, BarChart3, CloudRain
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -106,6 +106,22 @@ export default function DashboardPage() {
     setActionLoading(p => ({ ...p, [`d-${id}`]: true }));
     try { await messagesApi.delete(id); toast.success('Message deleted'); fetchData(); }
     catch { toast.error('Failed to delete message'); } finally { setActionLoading(p => ({ ...p, [`d-${id}`]: false })); }
+  };
+
+  const handleSOS = async () => {
+    setEmergencyLoading(true);
+    try {
+      await messagesApi.submitSafety('SOS-DIRECT', 'assistance');
+      toast.error("EMERGENCY SIGNAL SENT. Help is being dispatched to your location.", {
+        duration: 10000,
+        style: { background: '#ef4444', color: '#fff', fontWeight: 'bold' }
+      });
+      fetchData();
+    } catch (err) {
+      toast.error("Failed to send SOS signal");
+    } finally {
+      setEmergencyLoading(false);
+    }
   };
 
   const handleEmergencySubmit = async () => {
@@ -523,7 +539,7 @@ export default function DashboardPage() {
 
         <div className="glass-card p-6 rounded-2xl border-0 shadow-lg">
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <SafetyIcon className="w-5 h-5 text-accent" /> {t('Recent Safety Reports') || 'Recent Safety Reports'}
+            <Activity className="w-5 h-5 text-accent" /> {t('Recent Safety Reports') || 'Recent Safety Reports'}
           </h2>
           <div className="space-y-3">
              {recentReports.length === 0 ? (
