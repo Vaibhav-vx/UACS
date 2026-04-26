@@ -71,6 +71,7 @@ export const messagesApi = {
   delete:   (id)     => api.delete(`/messages/${id}`),
   emergency: (data)  => api.post('/messages/emergency', data),
   submitSafety: (id, status, extra = {}) => api.post(`/messages/${id}/safety`, { status, ...extra }),
+  submitDirectSafety: (data = {}) => api.post('/messages/safety/direct', data),
   getSafetyStats: () => api.get('/messages/safety/stats'),
   getRecentSafety: () => api.get('/messages/safety/recent'),
   assistCitizen: (reportId) => api.put(`/messages/safety/${reportId}/assist`),

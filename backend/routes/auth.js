@@ -37,7 +37,7 @@ router.post('/login', async (req, res) => {
     await dbUpdate('users', user.id, { last_login: new Date().toISOString() });
 
     const token = jwt.sign(
-      { id: user.id, phone: user.phone, role: user.role },
+      { id: user.id, phone: user.email, role: user.role },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES_IN }
     );

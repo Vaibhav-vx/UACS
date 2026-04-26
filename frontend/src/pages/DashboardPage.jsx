@@ -111,7 +111,7 @@ export default function DashboardPage() {
   const handleSOS = async () => {
     setEmergencyLoading(true);
     try {
-      await messagesApi.submitSafety('SOS-DIRECT', 'assistance');
+      await messagesApi.submitDirectSafety();
       toast.error("EMERGENCY SIGNAL SENT. Help is being dispatched to your location.", {
         duration: 10000,
         style: { background: '#ef4444', color: '#fff', fontWeight: 'bold' }
@@ -470,7 +470,7 @@ export default function DashboardPage() {
               className="glass-card p-8 rounded-3xl border-2 border-dashed border-accent/30 hover:border-accent hover:bg-accent/5 cursor-pointer transition-all group flex flex-col items-center justify-center gap-4 min-h-[200px]"
             >
               <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Globe className="w-8 h-8 text-accent" />
+                <MapIcon className="w-8 h-8 text-accent" />
               </div>
               <div className="text-center">
                 <h3 className="text-xl font-bold text-white uppercase tracking-tight">Open Situation Room Map</h3>

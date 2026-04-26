@@ -4,12 +4,14 @@
 // ═══════════════════════════════════════
 
 import { Router } from 'express';
-import { dbSelect, dbGetById, dbInsert, dbUpdate, dbDelete, dbCount } from '../database/db.js';
+import { dbSelect, dbGetById, dbGetOne, dbInsert, dbUpdate, dbDelete, dbCount } from '../database/db.js';
 import { translateToMultiple } from '../integrations/translateApi.js';
 import { sendBulkSMS } from '../integrations/smsGateway.js';
 import { postTweet } from '../integrations/twitterApi.js';
+import twilio from 'twilio';
 
 const router = Router();
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 function parseMsg(msg) {
   if (!msg) return null;
@@ -54,7 +56,7 @@ router.get('/stats', async (req, res) => {
       m.status === 'active' && m.expires_at && m.expires_at <= nowPlus1h
     ).length;
 
-    res.json({ totalToday, active, expiringSoon, expired, draft, pending });
+    res.json({ totalToday, active, expiringSoon, expired, draft, pending, history: all });
   } catch (err) {
     console.error('[UACS MESSAGES] Stats error:', err.message);
     res.status(500).json({ error: err.message });
@@ -377,6 +379,33 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// ─── POST /api/messages/safety/direct ──────────────────
+router.post('/safety/direct', async (req, res) => {
+  try {
+    const { lat, lng } = req.body;
+    const userId = req.user?.id;
+    const userName = req.user?.name || 'Anonymous';
+    const zone = req.user?.zone || 'Unknown';
+
+    const report = await dbInsert('safety_reports', {
+      message_id: null, // Direct SOS has no parent message
+      user_id: userId,
+      user_name: userName,
+      zone: zone,
+      status: 'assistance',
+      lat: lat || null,
+      lng: lng || null,
+      emergency_contact_notified: false,
+      assisted: false,
+    });
+
+    res.json(report);
+  } catch (err) {
+    console.error('[UACS SAFETY] Direct SOS error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ─── POST /api/messages/:id/safety ─────────────────────
 router.post('/:id/safety', async (req, res) => {
   try {
@@ -409,6 +438,17 @@ router.post('/:id/safety', async (req, res) => {
   }
 });
 
+// ─── GET /api/messages/safety/recent ───────────────────
+router.get('/safety/recent', async (req, res) => {
+  try {
+    const reports = await dbSelect('safety_reports', {}, { orderBy: 'created_at', ascending: false, limit: 10 });
+    res.json(reports);
+  } catch (err) {
+    console.error('[UACS SAFETY] Recent error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ─── GET /api/messages/safety/stats ────────────────────
 router.get('/safety/stats', async (req, res) => {
   try {
@@ -437,7 +477,6 @@ router.put('/safety/:id/assist', async (req, res) => {
     if (user && user.email) {
       try {
         const twilioPhone = '+91' + user.email.replace(/\D/g, '');
-        const twilioClient = (await import('twilio')).default(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
         await twilioClient.messages.create({
           body: `UACS: A rescue team has been dispatched to assist you. Stay where you are. Help is coming. - Government Authority`,
           from: process.env.TWILIO_PHONE_NUMBER,

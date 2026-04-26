@@ -26,16 +26,29 @@ export default function StatsPage() {
         messagesApi.getStats()
       ]);
 
+      const history = msgStats.data.history || [];
+      const categoryMap = {};
+      history.forEach(m => {
+        const cat = m.title.split(' ')[0] || 'Alert';
+        categoryMap[cat] = (categoryMap[cat] || 0) + 1;
+      });
+
+      const derivedHistory = Object.entries(categoryMap).map(([label, val]) => ({
+        label,
+        val,
+        color: label.toLowerCase().includes('fire') ? 'bg-red-600' : 
+               label.toLowerCase().includes('heat') ? 'bg-orange-600' :
+               label.toLowerCase().includes('flood') ? 'bg-blue-600' : 'bg-accent'
+      })).slice(0, 5);
+
       setStats({
         citizenCount: recs.data.length,
         safetyRate: saf.data.safety_percentage || 0,
         activeAlerts: msgStats.data.active || 0,
-        alertHistory: [
-          { label: 'Heatwave', val: msgStats.data.active > 0 ? 7 : 2, color: 'bg-orange-600' },
-          { label: 'Fire', val: 3, color: 'bg-red-600' },
-          { label: 'Water', val: 5, color: 'bg-blue-400' },
-          { label: 'Dust', val: 2, color: 'bg-amber-600' },
-          { label: 'Power', val: 4, color: 'bg-yellow-500' },
+        alertHistory: derivedHistory.length > 0 ? derivedHistory : [
+          { label: 'Heatwave', val: 0, color: 'bg-orange-600' },
+          { label: 'Fire', val: 0, color: 'bg-red-600' },
+          { label: 'Water', val: 0, color: 'bg-blue-400' },
         ]
       });
     } catch (err) {

@@ -20,6 +20,8 @@ CREATE TABLE IF NOT EXISTS messages (
   expiry_action    TEXT DEFAULT 'flag' CHECK(expiry_action IN ('delete', 'replace', 'flag')),
   expiry_message   TEXT,
   expiry_reason    TEXT, -- "Why was this alert expired?"
+  lat              DECIMAL(10, 8),
+  lng              DECIMAL(11, 8),
   created_at       TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -132,6 +134,13 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='messages' AND column_name='expiry_reason') THEN
     ALTER TABLE messages ADD COLUMN expiry_reason TEXT;
   END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='messages' AND column_name='lat') THEN
+    ALTER TABLE messages ADD COLUMN lat DECIMAL(10, 8);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='messages' AND column_name='lng') THEN
+    ALTER TABLE messages ADD COLUMN lng DECIMAL(11, 8);
+  END IF;
+
 END $$;
 
 -- ── Indexes ──────────────────────────────────────────────
