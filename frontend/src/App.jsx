@@ -3,7 +3,8 @@ import { Toaster } from 'react-hot-toast';
 import { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard, PenSquare, CheckCircle2, ScrollText, LogOut,
-  Shield, Menu, X, Sun, Moon, Globe, ChevronDown, Users, BookTemplate, Map, Play,
+  Menu, X, Sun, Moon, Globe, ChevronDown, Users, BookTemplate, Map, Play,
+  Zap,
   BookOpen
 } from 'lucide-react';
 import { ThemeProvider, useTheme } from './ThemeContext';
@@ -30,7 +31,7 @@ const NAV_ITEMS = [
   { path: '/dashboard',  labelKey: 'dashboard',  icon: LayoutDashboard, roles: ['admin', 'user'] },
   { path: '/survival',   labelKey: 'survivalGuide', icon: BookOpen,        roles: ['user'] },
   { path: '/history',    labelKey: 'history',    icon: ScrollText,      roles: ['user'] },
-  { path: '/evacuation', labelKey: 'evacuation', icon: Shield,          roles: ['user'] },
+  { path: '/evacuation', labelKey: 'evacuation', icon: Map,            roles: ['user'] },
   { path: '/map',        labelKey: 'map',         icon: Map,             roles: ['admin', 'user'] },
   { path: '/family',     labelKey: 'family',     icon: Users,           roles: ['user'] },
   { path: '/stats',      labelKey: 'statistics', icon: BookTemplate,    roles: ['user'] },
@@ -43,7 +44,7 @@ const NAV_ITEMS = [
   { path: '/approval',   labelKey: 'approval',    icon: CheckCircle2,    roles: ['admin'] },
   { path: '/recipients', labelKey: 'recipients',  icon: Users,           roles: ['admin'] },
   { path: '/audit',      labelKey: 'auditLog',    icon: ScrollText,      roles: ['admin'] },
-  { path: '/sos-center', labelKey: 'sosCenter',   icon: Shield,          roles: ['admin'] },
+  { path: '/sos-center', labelKey: 'sosCenter',   icon: Zap,           roles: ['admin'] },
 ];
 
 /* ── Language Switcher ─────────────────────────────── */
@@ -161,7 +162,7 @@ function AppLayout() {
       >
         {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
-          <Shield style={{ width: '22px', height: '22px', color: 'var(--accent)', flexShrink: 0 }} />
+          <Zap style={{ width: '22px', height: '22px', color: 'var(--accent)', flexShrink: 0 }} />
           <span style={{ fontWeight: 700, fontSize: '16px', letterSpacing: '-0.02em' }}>UACS</span>
         </div>
 
@@ -232,7 +233,7 @@ function AppLayout() {
                   flexShrink: 0,
                 }}
               >
-                <Shield style={{ width: '18px', height: '18px', color: 'white' }} />
+                <Zap style={{ width: '18px', height: '18px', color: 'white' }} />
               </div>
               <div style={{ minWidth: 0, overflow: 'hidden' }}>
                 <div style={{ fontWeight: 700, fontSize: '16px', letterSpacing: '-0.02em', lineHeight: 1.2, whiteSpace: 'nowrap' }}>UACS</div>

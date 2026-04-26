@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, LayersControl, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { MapPin, Shield, AlertTriangle, Info, Users, Navigation } from 'lucide-react';
+import { MapPin, Navigation, AlertTriangle, Info, Users } from 'lucide-react';
 import { messagesApi, recipientsApi, nasaApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
 import { ZONE_COORDS, EAPS } from '../constants';
@@ -103,7 +103,7 @@ export default function MapPage() {
       <div className="flex items-center justify-between flex-wrap gap-2 px-1">
         <div>
           <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2 md:gap-3">
-            <Shield className="w-5 h-5 md:w-6 md:h-6 text-accent" />
+            <Navigation className="w-5 h-5 md:w-6 md:h-6 text-accent" />
             {t('interactiveMap') || 'Interactive Situation Map'}
           </h1>
           <p className="text-[10px] md:text-sm text-theme-muted">{t('mapSubtitle') || 'Visualizing active alerts and evacuation points.'}</p>

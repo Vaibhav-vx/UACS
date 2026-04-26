@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { 
   BookOpen, Search, Flame, Wind, Droplets, Zap, 
-  Activity, ShieldAlert, Heart, Info, ChevronRight,
-  FileText, Download, ExternalLink, PlayCircle
+  Activity, AlertTriangle, Heart, Info, ChevronRight,
+  FileText, Download, ExternalLink, PlayCircle, CheckCircle
 } from 'lucide-react';
 
 const DISASTERS = [
@@ -244,7 +244,7 @@ export default function SurvivalGuidePage() {
                  {/* BEFORE */}
                  <div className="space-y-4">
                     <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-theme-hover w-fit">
-                       <ShieldAlert className="w-4 h-4 text-blue-500" />
+                       <AlertTriangle className="w-4 h-4 text-blue-500" />
                        <span className="text-[10px] font-black uppercase tracking-widest text-blue-600">Phase 1: Before</span>
                     </div>
                     <ul className="space-y-3">
@@ -310,7 +310,3 @@ export default function SurvivalGuidePage() {
   );
 }
 
-// Icons
-const CheckCircle = ({ className }) => (
-  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-);

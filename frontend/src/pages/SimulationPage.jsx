@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Play, Pause, SkipForward, RotateCcw, 
-  Shield, AlertTriangle, CheckCircle2, Clock, Zap, Globe, 
+  Globe, AlertTriangle, CheckCircle2, Clock, Zap, 
   MessageSquare, Radio, Tv, X, ChevronRight, Activity
 } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -230,7 +230,7 @@ export default function SimulationPage() {
                 <div className="h-full bg-accent animate-shimmer" style={{ width: '45%' }} />
              </div>
              <div className="flex items-center gap-3 mb-6 border-b border-white/10 pb-4">
-                <Shield className="w-6 h-6 text-accent" />
+                <Globe className="w-6 h-6 text-accent" />
                 <span className="text-xs font-bold tracking-widest text-white/40 uppercase">UACS Unified Dashboard</span>
              </div>
              <div className="space-y-4">

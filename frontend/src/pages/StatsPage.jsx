@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
   BarChart3, TrendingUp, Users, AlertTriangle, Calendar as CalendarIcon,
-  Shield, Star, Zap, Award, Info, ChevronRight, Activity
+  Activity, Star, Zap, Award, Info, ChevronRight
 } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { messagesApi, recipientsApi } from '../api';
@@ -53,7 +53,7 @@ export default function StatsPage() {
       <div className="glass-card p-8 rounded-3xl relative overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-theme-surface to-accent/5">
          <div className="absolute top-0 right-0 p-8">
             <div className="w-24 h-24 bg-accent/10 rounded-full flex items-center justify-center border border-accent/20">
-               <Shield className="w-10 h-10 text-accent" />
+               <Activity className="w-10 h-10 text-accent" />
             </div>
          </div>
          <div className="relative z-10">

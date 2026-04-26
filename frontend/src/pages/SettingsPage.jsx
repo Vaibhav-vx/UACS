@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { 
-  Settings, User, Globe, Bell, Shield, Eye, Lock, 
+  Settings, User, Globe, Bell, Eye, Lock, 
   Download, Trash2, Smartphone, Mail, Moon, Sun,
   CheckCircle, ChevronRight, AlertCircle, Save
 } from 'lucide-react';
@@ -52,7 +52,7 @@ export default function SettingsPage() {
              { label: 'Profile', icon: User, active: true },
              { label: 'Language', icon: Globe },
              { label: 'Notifications', icon: Bell },
-             { label: 'Privacy', icon: Shield },
+             { label: 'Privacy', icon: Lock },
              { label: 'Security', icon: Lock },
            ].map((item, idx) => (
              <button key={idx} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${item.active ? 'bg-accent text-white shadow-lg' : 'hover:bg-theme-hover text-theme-muted'}`}>
@@ -162,7 +162,7 @@ export default function SettingsPage() {
            {/* 4. EMERGENCY CONTACT (The most important setting) */}
            <section className="glass-card p-6 rounded-3xl border-2 border-red-500/30 shadow-2xl space-y-6 bg-red-500/5">
               <h2 className="text-lg font-bold flex items-center gap-2 text-red-600">
-                 <Shield className="w-5 h-5" /> SOS Emergency Contact
+                 <Bell className="w-5 h-5" /> SOS Emergency Contact
               </h2>
               <div className="p-5 rounded-2xl bg-white/50 dark:bg-black/20 border border-red-200 dark:border-red-900/30 flex items-center justify-between">
                  <div>

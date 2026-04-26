@@ -396,11 +396,17 @@ const translations = {
     "assisted": "Assisted",
     "expiryReason": "Expiry Reason",
     "survivalGuide": "Survival Guide",
-    "history": "Alert History",
-    "evacuation": "Evacuation Assembly Points",
     "family": "Family & Friends",
     "statistics": "Statistics",
-    "unifiedComms": "Unified Communications"
+    "unifiedComms": "Unified Communications",
+    "safetyResponseAnalytics": "Safety Response Analytics",
+    "safety Response Analytics": "Safety Response Analytics",
+    "markedSafe": "Marked Safe",
+    "Marked Safe": "Marked Safe",
+    "needAssistance": "Need Assistance",
+    "Need Assistance": "Need Assistance",
+    "recentSafetyReports": "Recent Safety Reports",
+    "Recent Safety Reports": "Recent Safety Reports"
   },
   "hi": {
     "dashboard": "डैशबोर्ड",
@@ -776,11 +782,17 @@ const translations = {
     "assisted": "सहायता प्रदान की गई",
     "expiryReason": "समाप्ति का कारण",
     "survivalGuide": "सर्वाइवल गाइड",
-    "history": "अलर्ट इतिहास",
-    "evacuation": "निकासी सभा बिंदु",
     "family": "परिवार और मित्र",
     "statistics": "सांख्यिकी",
-    "unifiedComms": "एकीकृत संचार"
+    "unifiedComms": "एकीकृत संचार",
+    "safetyResponseAnalytics": "सुरक्षा प्रतिक्रिया विश्लेषण",
+    "safety Response Analytics": "सुरक्षा प्रतिक्रिया विश्लेषण",
+    "markedSafe": "सुरक्षित चिह्नित",
+    "Marked Safe": "सुरक्षित चिह्नित",
+    "needAssistance": "सहायता की आवश्यकता",
+    "Need Assistance": "सहायता की आवश्यकता",
+    "recentSafetyReports": "हालिया सुरक्षा रिपोर्ट",
+    "Recent Safety Reports": "हालिया सुरक्षा रिपोर्ट"
   },
   "mr": {
     "dashboard": "डॅशबोर्ड",

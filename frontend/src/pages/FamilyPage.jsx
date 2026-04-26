@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { 
-  Users, UserPlus, Heart, Shield, MapPin, Clock, 
+  Users, UserPlus, Heart, MapPin, Clock, Activity,
   Send, AlertTriangle, CheckCircle, Search, RefreshCw,
   MoreVertical, Phone, MessageCircle
 } from 'lucide-react';
@@ -72,7 +72,7 @@ export default function FamilyPage() {
       case 'unknown':
         return <span className="flex items-center gap-1.5 text-[10px] font-bold text-orange-500 uppercase tracking-wider bg-orange-500/10 px-2 py-0.5 rounded-full"><Clock className="w-3 h-3" /> Not Yet Responded</span>;
       case 'no_alerts':
-        return <span className="flex items-center gap-1.5 text-[10px] font-bold text-blue-500 uppercase tracking-wider bg-blue-500/10 px-2 py-0.5 rounded-full"><Shield className="w-3 h-3" /> No Active Alerts</span>;
+        return <span className="flex items-center gap-1.5 text-[10px] font-bold text-blue-500 uppercase tracking-wider bg-blue-500/10 px-2 py-0.5 rounded-full"><Activity className="w-3 h-3" /> No Active Alerts</span>;
       default:
         return null;
     }
@@ -152,7 +152,7 @@ export default function FamilyPage() {
                    <div>
                       <h3 className="font-bold text-lg flex items-center gap-2">
                         {member.name}
-                        {member.emergencyContact && <Shield className="w-4 h-4 text-red-500" title="Emergency Contact" />}
+                        {member.emergencyContact && <Activity className="w-4 h-4 text-red-500" title="Emergency Contact" />}
                       </h3>
                       <div className="flex items-center gap-2 text-xs text-theme-muted">
                         <MapPin className="w-3.5 h-3.5" /> {member.zone}
@@ -202,7 +202,7 @@ export default function FamilyPage() {
         {/* Info Card */}
         <div className="glass-card p-6 rounded-3xl border border-dashed border-theme-border flex flex-col items-center justify-center text-center space-y-4 bg-theme-hover/20">
            <div className="w-16 h-16 rounded-full bg-theme-hover flex items-center justify-center text-theme-muted">
-              <Shield className="w-8 h-8" />
+              <Heart className="w-8 h-8" />
            </div>
            <div>
               <h4 className="font-bold">Privacy & Safety</h4>

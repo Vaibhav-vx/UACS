@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { 
   ScrollText, Download, Filter, RefreshCw, Search, ChevronDown, ChevronRight,
-  X, Calendar, Trash2, MessageSquare, User, Clock, Shield
+  X, Calendar, Trash2, MessageSquare, User, Clock, Activity
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { auditApi } from '../api';
@@ -231,7 +231,7 @@ export default function AuditLogPage() {
               >
                 <div className="flex items-center gap-4 flex-1 min-w-0">
                   <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-theme-hover min-w-[50px]">
-                    {group.id === 'system' ? <Shield className="w-5 h-5 text-theme-dim" /> : <MessageSquare className="w-5 h-5 text-accent" />}
+                    {group.id === 'system' ? <Activity className="w-5 h-5 text-theme-dim" /> : <MessageSquare className="w-5 h-5 text-accent" />}
                     <span className="text-[10px] font-bold text-theme-dim mt-1">{group.logs.length}x</span>
                   </div>
                   <div className="min-w-0">

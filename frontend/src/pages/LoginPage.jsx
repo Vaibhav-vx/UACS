@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  Shield, Mail, Lock, Eye, EyeOff, Loader2, AlertCircle,
+  Lock, Mail, Eye, EyeOff, Loader2, AlertCircle,
   Sun, Moon, Globe, ChevronDown, User, Building2, UserPlus,
   LogIn, CheckCircle2, ArrowRight, Smartphone, ScrollText,
   KeyRound
@@ -303,7 +303,7 @@ export default function LoginPage() {
             background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
             boxShadow: '0 8px 32px rgba(59,130,246,0.35)',
           }}>
-            <Shield style={{ width: 30, height: 30, color: 'white' }} />
+            <Lock style={{ width: 30, height: 30, color: 'white' }} />
           </div>
           <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.5px', margin: 0 }}>
             UACS Portal

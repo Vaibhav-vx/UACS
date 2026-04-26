@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, LayersControl, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Maximize2, Minimize2, Map as MapIcon, Shield, Layers, MapPin, X, Send, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Maximize2, Minimize2, Map as MapIcon, Layers, MapPin, X, Send, AlertTriangle, RefreshCw } from 'lucide-react';
 import { messagesApi, nasaApi } from '../api';
 import toast from 'react-hot-toast';
 import { ZONE_COORDS } from '../constants';

@@ -15,12 +15,12 @@
 
 /* Dark theme (default) */
 :root, .dark {
-  --bg-base: #0f172a;
-  --bg-surface: #1e293b;
-  --bg-card: rgba(255, 255, 255, 0.05);
-  --bg-card-solid: #1e293b;
-  --bg-hover: rgba(255, 255, 255, 0.08);
-  --bg-input: #1e293b;
+  --bg-base: #000000;
+  --bg-surface: #0a0a0a;
+  --bg-card: rgba(255, 255, 255, 0.03);
+  --bg-card-solid: #0a0a0a;
+  --bg-hover: rgba(255, 255, 255, 0.06);
+  --bg-input: #0a0a0a;
   --bg-selected: rgba(59, 130, 246, 0.15);
 
   --text-primary: #f1f5f9;
@@ -46,9 +46,9 @@
   --card-blur: blur(12px);
   --card-shadow: none;
 
-  --scrollbar-track: #1e293b;
-  --scrollbar-thumb: #475569;
-  --scrollbar-thumb-hover: #64748b;
+  --scrollbar-track: #000000;
+  --scrollbar-thumb: #333333;
+  --scrollbar-thumb-hover: #444444;
 }
 
 /* Light theme */

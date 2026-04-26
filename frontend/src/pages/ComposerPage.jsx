@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { PenSquare, Save, Languages, MapPin, Clock, MessageSquare, Loader2, ChevronDown, Send, Map, Shield, TrendingUp, AlertTriangle, ChevronRight } from 'lucide-react';
+import { PenSquare, Save, Languages, MapPin, Clock, MessageSquare, Loader2, ChevronDown, Send, Map, TrendingUp, AlertTriangle, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { messagesApi, translateApi, dispatchApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -205,7 +205,7 @@ export default function ComposerPage() {
           <div className="glass-card max-w-2xl w-full bg-slate-900 border border-indigo-500/30 overflow-hidden shadow-2xl flex flex-col">
             <div className="p-6 border-b border-white/10 bg-gradient-to-r from-indigo-500/10 to-purple-500/10">
               <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-                <Shield className="w-6 h-6 text-indigo-400" />
+                <PenSquare className="w-6 h-6 text-indigo-400" />
                 Pre-Dispatch Intelligence Brief
               </h2>
               <p className="text-slate-400 text-sm mt-1">Verify reach and impact before broadcasting to citizens</p>

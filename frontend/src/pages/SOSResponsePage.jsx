@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Shield, 
+  AlertCircle, 
   Phone, 
   MapPin, 
   CheckCircle, 
@@ -64,7 +64,7 @@ const SOSResponsePage = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-            <Shield className="w-8 h-8 text-red-500" />
+            <AlertCircle className="w-8 h-8 text-red-500" />
             SOS Response Center
           </h1>
           <p className="text-slate-400 mt-1">

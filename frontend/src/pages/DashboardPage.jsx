@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Activity, Clock, AlertTriangle, CheckCircle, Send, Timer, RefreshCw, Eye, RotateCcw, 
-  Zap, TrendingUp, X, PenSquare, MapPin, Globe, Shield, Info, Activity as SafetyIcon,
+  Zap, TrendingUp, X, PenSquare, MapPin, Globe, Info, Activity as SafetyIcon,
   Navigation, Heart, History, BarChart3, CloudRain
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -32,6 +32,7 @@ export default function DashboardPage() {
   const [citizenStats, setCitizenStats] = useState({ count: 0, safeToday: 0 });
   const [sosConfirming, setSosConfirming] = useState(false);
   const [sosProgress, setSosProgress] = useState(0);
+  const [showExpiryModal, setShowExpiryModal] = useState(null);
   const [expiryReason, setExpiryReason] = useState('');
   const [showMap, setShowMap] = useState(false);
   const navigate = useNavigate();
@@ -409,7 +410,7 @@ export default function DashboardPage() {
             {/* 5. SURVIVAL KNOWLEDGE BASE */}
             <section className="space-y-4">
                <h2 className="text-lg font-bold flex items-center gap-2">
-                 <Shield className="w-5 h-5 text-accent" /> {t('survivalGuide') || 'Survival Guide'}
+                 <Activity className="w-5 h-5 text-accent" /> {t('survivalGuide') || 'Survival Guide'}
                </h2>
                <div className="grid grid-cols-1 gap-3">
                   {[
@@ -492,7 +493,7 @@ export default function DashboardPage() {
         <div className="glass-card p-6 rounded-2xl border-0 shadow-lg relative overflow-hidden">
           <div style={{ position: 'absolute', top: 0, right: 0, width: '100px', height: '100px', background: 'radial-gradient(circle, var(--accent-bg) 0%, transparent 70%)', opacity: 0.3 }} />
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <Shield className="w-5 h-5 text-accent" /> {t('safety Response Analytics') || 'Safety Response Analytics'}
+            <Activity className="w-5 h-5 text-accent" /> {t('safety Response Analytics') || 'Safety Response Analytics'}
           </h2>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20">

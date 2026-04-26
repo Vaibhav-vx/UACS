@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   User, Lock, Building2, Smartphone, Save, Loader2,
-  AlertCircle, CheckCircle2, Shield, KeyRound,
+  AlertCircle, CheckCircle2, KeyRound, Activity,
   Eye, EyeOff, LogOut, Globe, MapPin, Bell, Phone, Map
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -254,7 +254,7 @@ export default function ProfilePage() {
           ))}
           {pwdMsg.text && <InlineAlert type={pwdMsg.type} msg={pwdMsg.text} />}
           <button onClick={changePassword} disabled={pwdSaving} className="btn-primary" style={{ width: 'fit-content', gap: 8 }}>
-            {pwdSaving ? <><Loader2 style={{ width: 15, height: 15 }} className="animate-spin" /> {t('changing') || 'Changing...'}</> : <><Shield style={{ width: 15, height: 15 }} /> {t('changePassword') || 'Change Password'}</>}
+            {pwdSaving ? <><Loader2 style={{ width: 15, height: 15 }} className="animate-spin" /> {t('changing') || 'Changing...'}</> : <><KeyRound style={{ width: 15, height: 15 }} /> {t('changePassword') || 'Change Password'}</>}
           </button>
         </div>
       </Section>
@@ -334,7 +334,7 @@ export default function ProfilePage() {
           marginBottom: 16
         }}>
           <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent)', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Shield style={{ width: 14, height: 14 }} /> {t('highPriorityFeature') || 'Critical Safety Feature'}
+            <Activity style={{ width: 14, height: 14 }} /> {t('highPriorityFeature') || 'Critical Safety Feature'}
           </p>
           <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
             {t('emergencyContactDesc') || 'Register a trusted person (e.g., Mom, Spouse). They will be automatically notified via SMS whenever a CRITICAL alert is issued in your zone.'}

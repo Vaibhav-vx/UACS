@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { 
-  Shield, MapPin, Phone, CheckCircle, Navigation, Info, 
+  MapPin, Phone, CheckCircle, Navigation, Info, 
   Map as MapIcon, ChevronRight, ArrowRight, ExternalLink 
 } from 'lucide-react';
 import { EAPS } from '../constants';
@@ -59,7 +59,7 @@ export default function EvacuationPage() {
       {/* Header */}
       <div className="glass-card p-8 rounded-3xl bg-gradient-to-br from-blue-600/10 to-indigo-600/10 border-blue-500/20">
         <h1 className="text-3xl font-black mb-2 flex items-center gap-3">
-          <Shield className="w-8 h-8 text-blue-500" />
+          <MapPin className="w-8 h-8 text-blue-500" />
           Evacuation & Safety Guide
         </h1>
         <p className="text-theme-muted">Real-time survival instructions and nearest safety hubs for your zone.</p>
