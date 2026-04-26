@@ -11,7 +11,7 @@ import {
   Search,
   Filter
 } from 'lucide-react';
-import { messagesApi } from '../api';
+import { messagesApi, translateApi, dispatchApi, recipientsApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
 import { toast } from 'react-hot-toast';
 
@@ -24,11 +24,9 @@ const SOSResponsePage = () => {
   const fetchReports = async () => {
     try {
       setLoading(true);
-      // We fetch all safety reports and filter for 'assistance' status
-      const data = await messagesApi.getRecentSafety();
-      // For a real production app, we'd have a specific SOS queue endpoint
-      // Here we filter the recent reports
-      setReports(data.filter(r => r.status === 'assistance'));
+      const res = await messagesApi.getRecentSafety();
+      // res.data is the array
+      setReports((res.data || []).filter(r => r.status === 'assistance'));
     } catch (err) {
       toast.error('Failed to load SOS requests');
     } finally {

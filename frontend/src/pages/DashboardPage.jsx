@@ -32,9 +32,10 @@ export default function DashboardPage() {
   const [citizenStats, setCitizenStats] = useState({ count: 0, safeToday: 0 });
   const [sosConfirming, setSosConfirming] = useState(false);
   const [sosProgress, setSosProgress] = useState(0);
-  const [showExpiryModal, setShowExpiryModal] = useState(null);
-  const [expiryReason, setExpiryReason] = useState('');
+  const [expiryAlertId, setExpiryAlertId] = useState(null);
+  const [manualExpiryReason, setManualExpiryReason] = useState('');
   const [showMap, setShowMap] = useState(false);
+  
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('uacs_user') || '{}'));
@@ -60,10 +61,7 @@ export default function DashboardPage() {
         ]);
         setSafetyStats(safStats.data);
         setRecentReports(safRecent.data);
-      }
-
-      // Fetch Citizen Stats for User View
-      if (!isAdmin) {
+      } else {
         const userZone = localStorage.getItem('uacs_pref_zone') || 'General';
         const [rec, saf] = await Promise.all([
           recipientsApi.getAll(userZone),
@@ -71,41 +69,62 @@ export default function DashboardPage() {
         ]);
         setCitizenStats({
           count: rec.data.length,
-          safeToday: saf.data.total_safe || 0
+          safeToday: saf.data.safe || 0
         });
       }
     } catch (err) {
       console.error('[DASHBOARD] Fetch error:', err);
-      const msg = err.response?.data?.error || err.message || 'Connection failed';
-      toast.error(`${t('failedFetch') || 'Failed to load data'}: ${msg}`);
     } finally {
       setLoading(false);
     }
-  }, [t, isAdmin]);
+  }, [isAdmin]);
 
-  useEffect(() => { fetchData(); const iv = setInterval(fetchData, 30000); return () => clearInterval(iv); }, [fetchData]);
+  useEffect(() => { 
+    fetchData(); 
+    const iv = setInterval(fetchData, 30000); 
+    return () => clearInterval(iv); 
+  }, [fetchData]);
 
   const handleExpireNow = async (id, reason = '') => {
     setActionLoading(p => ({ ...p, [`e-${id}`]: true }));
     try { 
       await messagesApi.expire(id, reason); 
       toast.success(t('messageExpired') || 'Message expired'); 
-      setShowExpiryModal(null);
-      setExpiryReason('');
+      setExpiryAlertId(null);
+      setManualExpiryReason('');
       fetchData(); 
+    } catch (err) { 
+      toast.error(t('failedExpire') || 'Failed to expire'); 
+    } finally { 
+      setActionLoading(p => ({ ...p, [`e-${id}`]: false })); 
     }
-    catch { toast.error(t('failedExpire') || 'Failed to expire'); } finally { setActionLoading(p => ({ ...p, [`e-${id}`]: false })); }
   };
+
   const handleExtend = async (id) => {
     setActionLoading(p => ({ ...p, [`x-${id}`]: true }));
-    try { await messagesApi.extend(id, new Date(Date.now() + 86400000).toISOString()); toast.success(t('extendedBy24') || 'Extended by 24h'); fetchData(); }
-    catch { toast.error(t('failedExtend') || 'Failed to extend'); } finally { setActionLoading(p => ({ ...p, [`x-${id}`]: false })); }
+    try { 
+      await messagesApi.extend(id, new Date(Date.now() + 86400000).toISOString()); 
+      toast.success(t('extendedBy24') || 'Extended by 24h'); 
+      fetchData(); 
+    } catch { 
+      toast.error(t('failedExtend') || 'Failed to extend'); 
+    } finally { 
+      setActionLoading(p => ({ ...p, [`x-${id}`]: false })); 
+    }
   };
+
   const handleDelete = async (id) => {
     if (!window.confirm('Permanently delete this message? This cannot be undone.')) return;
     setActionLoading(p => ({ ...p, [`d-${id}`]: true }));
-    try { await messagesApi.delete(id); toast.success('Message deleted'); fetchData(); }
-    catch { toast.error('Failed to delete message'); } finally { setActionLoading(p => ({ ...p, [`d-${id}`]: false })); }
+    try { 
+      await messagesApi.delete(id); 
+      toast.success('Message deleted'); 
+      fetchData(); 
+    } catch { 
+      toast.error('Failed to delete message'); 
+    } finally { 
+      setActionLoading(p => ({ ...p, [`d-${id}`]: false })); 
+    }
   };
 
   const handleSOS = async () => {
@@ -136,10 +155,7 @@ export default function DashboardPage() {
       setIsEmergencyModalOpen(false);
       setEmergencyText('');
       setEmergencyZone('');
-      toast.success(t('emergencySent') || '🚨 Emergency broadcast sent to all channels', {
-        style: { background: '#ef4444', color: '#fff' },
-        iconTheme: { primary: '#fff', secondary: '#ef4444' }
-      });
+      toast.success(t('emergencySent') || '🚨 Emergency broadcast sent to all channels');
       fetchData();
     } catch (err) {
       setEmergencyError(err.response?.data?.error || err.message);
@@ -585,7 +601,7 @@ export default function DashboardPage() {
                 {isAdmin && (
                 <div className="flex items-center gap-2">
                   <button onClick={()=>handleExtend(msg?.id)} disabled={actionLoading[`x-${msg?.id}`]} className="btn-secondary text-xs py-1.5 px-3">{actionLoading[`x-${msg?.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<Timer className="w-3 h-3"/>} {t('extend')}</button>
-                  <button onClick={()=>setShowExpiryModal(msg?.id)} className="btn-danger text-xs py-1.5 px-3"><AlertTriangle className="w-3 h-3"/> {t('expireNow')}</button>
+                  <button onClick={()=>setExpiryAlertId(msg?.id)} className="btn-danger text-xs py-1.5 px-3"><AlertTriangle className="w-3 h-3"/> {t('expireNow')}</button>
                   <button onClick={()=>handleDelete(msg?.id)} disabled={actionLoading[`d-${msg?.id}`]} className="btn-secondary text-xs py-1.5 px-3" style={{color:'#ef4444',borderColor:'rgba(239,68,68,0.3)'}}>{actionLoading[`d-${msg?.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<X className="w-3 h-3"/>}</button>
                 </div>
                 )}
@@ -748,7 +764,7 @@ export default function DashboardPage() {
       )}
 
       {/* Expiry Reason Modal */}
-      {showExpiryModal && (
+      {isAdmin && expiryAlertId && (
         <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
           <div className="glass-card max-w-md w-full bg-[var(--bg-base)] border border-red-500/30 overflow-hidden shadow-2xl">
             <div className="p-6">
@@ -763,23 +779,23 @@ export default function DashboardPage() {
               <textarea 
                 className="textarea-field w-full h-24 mb-4"
                 placeholder="e.g. Flood waters receded. Zone declared safe by municipal officer."
-                value={expiryReason}
-                onChange={(e) => setExpiryReason(e.target.value)}
+                value={manualExpiryReason}
+                onChange={(e) => setManualExpiryReason(e.target.value)}
               />
 
               <div className="flex gap-3">
                 <button 
-                  onClick={() => setShowExpiryModal(null)}
+                  onClick={() => setExpiryAlertId(null)}
                   className="flex-1 py-2 rounded-xl bg-theme-hover text-white font-bold"
                 >
                   Cancel
                 </button>
                 <button 
-                  onClick={() => handleExpireNow(showExpiryModal, expiryReason)}
-                  disabled={!expiryReason.trim() || actionLoading[`e-${showExpiryModal}`]}
+                  onClick={() => handleExpireNow(expiryAlertId, manualExpiryReason)}
+                  disabled={!manualExpiryReason.trim() || actionLoading[`e-${expiryAlertId}`]}
                   className="flex-1 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold shadow-lg shadow-red-500/20"
                 >
-                  {actionLoading[`e-${showExpiryModal}`] ? <RefreshCw className="animate-spin w-5 h-5 mx-auto" /> : 'Confirm Expiry'}
+                  {actionLoading[`e-${expiryAlertId}`] ? <RefreshCw className="animate-spin w-5 h-5 mx-auto" /> : 'Confirm Expiry'}
                 </button>
               </div>
             </div>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { PenSquare, Save, Languages, MapPin, Clock, MessageSquare, Loader2, ChevronDown, Send, Map, TrendingUp, AlertTriangle, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { messagesApi, translateApi, dispatchApi } from '../api';
+import { messagesApi, translateApi, dispatchApi, recipientsApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
 import MapZonePicker from '../components/MapZonePicker';
 
@@ -71,7 +71,7 @@ export default function ComposerPage() {
       setIntelData({
         reach: rec.data.length,
         channels: { sms: rec.data.length, twitter: 1, tv: 1 },
-        activeInZone: activeMessages.filter(m => m.target_zone === form.target_zone).length
+        activeInZone: (location.state?.activeMessages || []).filter(m => m.target_zone === form.target_zone).length
       });
       setIntelAction('preview');
       setShowIntelBrief(true);
