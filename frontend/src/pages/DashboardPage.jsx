@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Activity, Clock, AlertTriangle, CheckCircle, Send, Timer, RefreshCw, Eye, RotateCcw, 
-  Zap, TrendingUp, X, PenSquare, MapPin, Globe, Info, 
+  Zap, TrendingUp, X, PenSquare, MapPin, Globe, Info, Map,
   Navigation, Heart, History, BarChart3, CloudRain
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -486,7 +486,7 @@ export default function DashboardPage() {
               className="glass-card p-8 rounded-3xl border-2 border-dashed border-accent/30 hover:border-accent hover:bg-accent/5 cursor-pointer transition-all group flex flex-col items-center justify-center gap-4 min-h-[200px]"
             >
               <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <MapIcon className="w-8 h-8 text-accent" />
+                <Map className="w-8 h-8 text-accent" />
               </div>
               <div className="text-center">
                 <h3 className="text-xl font-bold text-white uppercase tracking-tight">Open Situation Room Map</h3>
