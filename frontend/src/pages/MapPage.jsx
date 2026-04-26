@@ -172,7 +172,7 @@ export default function MapPage() {
                       </div>
                       <p className="text-xs text-theme-secondary mb-2">{alert.master_content.substring(0, 100)}...</p>
                       <div className="text-[10px] text-theme-muted flex items-center justify-between">
-                        <span>Zone: {alert.target_zone || 'All'}</span>
+                        <span>{t('zoneCol') || 'Location / Zone'}: {alert.target_zone || t('all') || 'All'}</span>
                         <span>{new Date(alert.created_at).toLocaleTimeString()}</span>
                       </div>
                     </div>
@@ -236,7 +236,7 @@ export default function MapPage() {
                   <div className="p-1 text-xs">
                     <div className="font-bold text-accent">{rec.name}</div>
                     <div className="text-theme-muted">{rec.phone}</div>
-                    <div className="mt-1 font-medium">Zone: {rec.zone}</div>
+                    <div className="mt-1 font-medium">{t('zoneCol') || 'Location / Zone'}: {rec.zone}</div>
                   </div>
                 </Popup>
               </Marker>
@@ -253,7 +253,7 @@ export default function MapPage() {
                    iconSize: [20, 20]
                  })}>
                    <Popup>
-                     <div className="text-xs font-bold">{name}: {zoneStats[name]} Recipients</div>
+                     <div className="text-xs font-bold">{name}: {zoneStats[name]} {t('recipients') || 'Recipients'}</div>
                    </Popup>
                  </Marker>
               )}

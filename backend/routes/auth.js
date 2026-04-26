@@ -6,14 +6,13 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { dbGetOne, dbUpdate, dbInsert } from '../database/db.js';
+import { sendSMS } from '../integrations/smsGateway.js';
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'uacs_super_secret_2026';
 const JWT_EXPIRES_IN = '24h';
 
-// Twilio Client
-import twilio from 'twilio';
-const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+// Twilio Client removed - using smsGateway
 
 // OTP Cache (In-Memory for single-server stability)
 const OTP_STORE = new Map();
@@ -110,15 +109,9 @@ router.post('/otp/send', async (req, res) => {
     // Save to cache
     OTP_STORE.set(phone, { code, expiry });
 
-    // Format phone for Twilio (+91 followed by digits only)
-    const twilioPhone = '+91' + phone.replace(/\D/g, '');
-
-    // Send via Twilio
-    await twilioClient.messages.create({
-      body: `Your UACS registration code is: ${code}. Valid for 5 minutes.`,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: twilioPhone,
-    });
+    // Send via centralized gateway
+    const smsResult = await sendSMS(phone, `Your UACS registration code is: ${code}. Valid for 5 minutes.`);
+    if (!smsResult.success) throw new Error(smsResult.error);
 
     console.log(`[UACS OTP] Code ${code} sent to ${phone}`);
     res.json({ success: true, message: 'Verification code sent' });

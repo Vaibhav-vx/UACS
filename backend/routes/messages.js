@@ -156,14 +156,11 @@ router.put('/safety/:id/assist', async (req, res) => {
     await dbUpdate('safety_reports', req.params.id, { assisted: true });
     const user = await dbGetById('users', report.user_id);
     if (user && user.email) {
-      try {
-        const twilioPhone = '+91' + user.email.replace(/\D/g, '');
-        await twilioClient.messages.create({
-          body: `UACS: A rescue team has been dispatched to assist you. Help is coming.`,
-          from: process.env.TWILIO_PHONE_NUMBER,
-          to: twilioPhone,
-        });
-      } catch (smsErr) { console.error('[UACS SOS] SMS error:', smsErr.message); }
+      const formattedMessage = `🚨 UACS SOS: A rescue team has been dispatched to assist you. Help is coming. Stay where you are.`;
+      const smsResult = await sendSMS(user.email, formattedMessage);
+      if (!smsResult.success) {
+        console.error('[UACS SOS] SMS error:', smsResult.error);
+      }
     }
     res.json({ success: true, message: 'Citizen marked as assisted' });
   } catch (err) {
