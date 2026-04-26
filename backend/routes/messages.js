@@ -185,38 +185,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ─── GET /api/messages/:id ─────────────────────────────
-router.get('/:id', async (req, res) => {
-  try {
-    const msg = await dbGetById('messages', req.params.id);
-    if (!msg) return res.status(404).json({ error: 'Message not found' });
-    res.json(parseMsg(msg));
-  } catch (err) {
-    console.error('[UACS MESSAGES] GET/:id error:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ─── GET /api/messages/:id/performance ──────────────────
-router.get('/:id/performance', async (req, res) => {
-  try {
-    const msg = await dbGetById('messages', req.params.id);
-    if (!msg) return res.status(404).json({ error: 'Message not found' });
-    const reports = await dbSelect('safety_reports', { message_id: req.params.id });
-    const audit = await dbSelect('audit_log', { message_id: req.params.id });
-    res.json({
-      title: msg.title,
-      dispatched_at: audit.find(a => a.action === 'dispatched')?.timestamp,
-      total_responses: reports.length,
-      safe_count: reports.filter(r => r.status === 'safe').length,
-      sos_count: reports.filter(r => r.status === 'assistance').length,
-      assisted_count: reports.filter(r => r.assisted).length,
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // ─── POST /api/messages ────────────────────────────────
 router.post('/', async (req, res) => {
   try {
@@ -236,11 +204,18 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ─── PUT /api/messages/:id ─────────────────────────────
-router.put('/:id', async (req, res) => {
+// ─── POST /api/messages/:id/safety ─────────────────────
+router.post('/:id/safety', async (req, res) => {
   try {
-    const updated = await dbUpdate('messages', req.params.id, req.body);
-    res.json(parseMsg(updated));
+    const { status, lat, lng } = req.body;
+    const report = await dbInsert('safety_reports', {
+      message_id: req.params.id,
+      user_id: req.user?.id,
+      user_name: req.user?.name || 'Anonymous',
+      zone: req.user?.zone || 'Unknown',
+      status, lat, lng, assisted: false
+    });
+    res.json(report);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -270,6 +245,59 @@ router.put('/:id/expire', async (req, res) => {
   }
 });
 
+// ─── PUT /api/messages/:id/extend ──────────────────────
+router.put('/:id/extend', async (req, res) => {
+  try {
+    const { expires_at } = req.body;
+    const updated = await dbUpdate('messages', req.params.id, { expires_at });
+    res.json(parseMsg(updated));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── GET /api/messages/:id/performance ──────────────────
+router.get('/:id/performance', async (req, res) => {
+  try {
+    const msg = await dbGetById('messages', req.params.id);
+    if (!msg) return res.status(404).json({ error: 'Message not found' });
+    const reports = await dbSelect('safety_reports', { message_id: req.params.id });
+    const audit = await dbSelect('audit_log', { message_id: req.params.id });
+    res.json({
+      title: msg.title,
+      dispatched_at: audit.find(a => a.action === 'dispatched')?.timestamp,
+      total_responses: reports.length,
+      safe_count: reports.filter(r => r.status === 'safe').length,
+      sos_count: reports.filter(r => r.status === 'assistance').length,
+      assisted_count: reports.filter(r => r.assisted).length,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── GET /api/messages/:id ─────────────────────────────
+router.get('/:id', async (req, res) => {
+  try {
+    const msg = await dbGetById('messages', req.params.id);
+    if (!msg) return res.status(404).json({ error: 'Message not found' });
+    res.json(parseMsg(msg));
+  } catch (err) {
+    console.error('[UACS MESSAGES] GET/:id error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── PUT /api/messages/:id ─────────────────────────────
+router.put('/:id', async (req, res) => {
+  try {
+    const updated = await dbUpdate('messages', req.params.id, req.body);
+    res.json(parseMsg(updated));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ─── DELETE /api/messages/:id ──────────────────────────
 router.delete('/:id', async (req, res) => {
   try {
@@ -280,21 +308,5 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// ─── POST /api/messages/:id/safety ─────────────────────
-router.post('/:id/safety', async (req, res) => {
-  try {
-    const { status, lat, lng } = req.body;
-    const report = await dbInsert('safety_reports', {
-      message_id: req.params.id,
-      user_id: req.user?.id,
-      user_name: req.user?.name || 'Anonymous',
-      zone: req.user?.zone || 'Unknown',
-      status, lat, lng, assisted: false
-    });
-    res.json(report);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 export default router;
