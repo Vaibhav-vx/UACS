@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import translations from './translations';
 
 const LanguageContext = createContext();
@@ -12,16 +13,25 @@ const LANGUAGES = [
 ];
 
 export function LanguageProvider({ children }) {
+  const { i18n, t: i18nt } = useTranslation();
   const [language, setLang] = useState(() => localStorage.getItem('uacs_lang') || 'en');
+
+  // Sync state with i18next if they differ
+  useEffect(() => {
+    if (i18n.language !== language) {
+      i18n.changeLanguage(language);
+    }
+  }, [language, i18n]);
 
   const setLanguage = useCallback((code) => {
     setLang(code);
+    i18n.changeLanguage(code);
     localStorage.setItem('uacs_lang', code);
-  }, []);
+  }, [i18n]);
 
-  const t = useCallback((key) => {
-    return translations[language]?.[key] || translations.en?.[key] || key;
-  }, [language]);
+  const t = useCallback((key, options) => {
+    return i18nt(key, options);
+  }, [i18nt]);
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t, LANGUAGES }}>
