@@ -218,7 +218,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Profile Info */}
-      <Section title={t('personalInfo') || 'Personal Information'} subtitle={t('updateNameDept') || 'Update your name and department'} icon={User}>
+      <Section title={t('personalInfo') || 'Personal Information'} subtitle={t('updateNameZone') || 'Update your name and location'} icon={User}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <Field label={t('fullName') || 'Full Name'} icon={User}>
             <input className="input-field" value={name} onChange={e => setName(e.target.value)} placeholder={t('fullName') || 'Your full name'} />
@@ -227,8 +227,8 @@ export default function ProfilePage() {
             <input className="input-field" value={phone} disabled style={{ opacity: 0.6, cursor: 'not-allowed' }} />
             <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>{t('mobileNoChange') || 'Mobile number cannot be changed'}</p>
           </Field>
-          <Field label={t('department') || 'Department'} icon={Building2}>
-            <input className="input-field" value={dept} onChange={e => setDept(e.target.value)} placeholder="e.g. Central Command" />
+          <Field label={t('locationZone') || 'Location / Zone'} icon={MapPin}>
+            <input className="input-field" value={dept} onChange={e => setDept(e.target.value)} placeholder="e.g. Mumbai, Zone 4" />
           </Field>
           {profMsg.text && <InlineAlert type={profMsg.type} msg={profMsg.text} />}
           <button onClick={saveProfile} disabled={profSaving} className="btn-primary" style={{ width: 'fit-content', gap: 8 }}>

@@ -462,12 +462,12 @@ export default function LoginPage() {
                   />
                   <Field
                     id="reg-dept"
-                    label={<>{t('department') || 'Department'} <span style={{ fontSize: 11, color: 'var(--text-dim)', fontWeight: 400 }}>({t('optional') || 'optional'})</span></>}
-                    icon={Building2}
+                    label={<>{t('locationZone') || 'Location / Zone'} <span style={{ fontSize: 11, color: 'var(--text-dim)', fontWeight: 400 }}>({t('recommended') || 'recommended'})</span></>}
+                    icon={MapPin}
                     value={regDept}
                     onChange={e => setRegDept(e.target.value)}
-                    placeholder={t('deptPlaceholder') || "e.g. Central Command"}
-                    autoComplete="organization"
+                    placeholder={t('zonePlaceholder') || "e.g. Mumbai, Zone 4"}
+                    autoComplete="address-level2"
                   />
                   <div>
                     <Field

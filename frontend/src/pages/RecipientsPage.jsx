@@ -103,7 +103,7 @@ function RecipientModal({ initial, onSave, onClose, saving }) {
           <div>
             <label className="block text-sm font-medium mb-1.5 text-theme-secondary">
               <MapPin style={{ width: 13, height: 13, display: 'inline', marginRight: 4 }} />
-              {t('zone') || 'Zone'}
+              {t('locationZone') || 'Location / Zone'}
             </label>
             <div className="flex gap-2 mb-2">
               <input 
@@ -389,7 +389,7 @@ export default function RecipientsPage() {
                 <tr style={{ background: 'var(--bg-hover)', borderBottom: '1px solid var(--border)' }}>
                   <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t('recipientCol') || "Recipient"}</th>
                   <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t('phoneCol') || "Phone"}</th>
-                  <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t('zoneCol') || "Zone"}</th>
+                  <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t('zoneCol') || "Location / Zone"}</th>
                   <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t('langCol') || "Language"}</th>
                   <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t('statusCol') || "Status"}</th>
                   <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t('actionsCol') || "Actions"}</th>
