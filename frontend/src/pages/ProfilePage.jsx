@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   User, Lock, Building2, Smartphone, Save, Loader2,
   AlertCircle, CheckCircle2, KeyRound, Activity,
-  Eye, EyeOff, LogOut, Globe, Map, Bell, Phone, Map
+  Eye, EyeOff, LogOut, Globe, Map, Bell, Phone
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { authApi } from '../api';

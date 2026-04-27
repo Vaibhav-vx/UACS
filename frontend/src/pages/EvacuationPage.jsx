@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { 
-  Map, Phone, CheckCircle, Navigation, Info, 
+  Phone, CheckCircle, Navigation, Info, 
   Map as MapIcon, ChevronRight, ArrowRight, ExternalLink 
 } from 'lucide-react';
 import { EAPS } from '../constants';
