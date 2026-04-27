@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, LayersControl, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { MapPin, Navigation, AlertTriangle, Info, Users } from 'lucide-react';
+import { Map, Navigation, AlertTriangle, Info, Users } from 'lucide-react';
 import { messagesApi, recipientsApi, nasaApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
 import { ZONE_COORDS, EAPS } from '../constants';
@@ -135,7 +135,7 @@ export default function MapPage() {
 
             <BaseLayer name="Satellite Imagery (Live Look)">
               <TileLayer
-                attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
+                attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, GetMapg, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
                 url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
               />
             </BaseLayer>

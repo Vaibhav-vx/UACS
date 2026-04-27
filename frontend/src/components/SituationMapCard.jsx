@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, LayersControl, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Maximize2, Minimize2, Map as MapIcon, Layers, MapPin, X, Send, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Maximize2, Minimize2, Map as MapIcon, Layers, Map, X, Send, AlertTriangle, RefreshCw } from 'lucide-react';
 import { messagesApi, nasaApi } from '../api';
 import toast from 'react-hot-toast';
 import { ZONE_COORDS } from '../constants';
@@ -163,7 +163,7 @@ export default function SituationMapCard() {
 
           <BaseLayer name="Satellite Imagery (Live Look)">
             <TileLayer
-              attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
+              attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, GetMapg, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
               url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
             />
           </BaseLayer>

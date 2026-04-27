@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Activity, Clock, AlertTriangle, CheckCircle, Send, Timer, RefreshCw, Eye, RotateCcw, 
-  Zap, TrendingUp, X, PenSquare, MapPin, Globe, Info, Map,
+  Zap, TrendingUp, X, PenSquare, Map, Globe, Info,
   Navigation, Heart, History, BarChart3, CloudRain
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -205,7 +205,7 @@ export default function DashboardPage() {
                  </h1>
                  <div className="flex flex-wrap items-center gap-4 text-sm font-bold opacity-80">
                     <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-accent" /> {userZone}
+                      <Map className="w-4 h-4 text-accent" /> {userZone}
                     </div>
                     <span className="opacity-30">|</span>
                     <div className="flex items-center gap-2">
@@ -415,7 +415,7 @@ export default function DashboardPage() {
             {/* 4. NEARBY SAFETY HUBS */}
             <section className="glass-card p-6 rounded-3xl border-0 shadow-xl bg-accent/5">
                <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                 <MapPin className="w-5 h-5 text-accent" /> {t('nearbySafetyHubs') || 'Nearby Safety Hubs'}
+                 <Map className="w-5 h-5 text-accent" /> {t('nearbySafetyHubs') || 'Nearby Safety Hubs'}
                </h2>
                <div className="space-y-3">
                   {EAPS.slice(0, 3).map((eap, idx) => (

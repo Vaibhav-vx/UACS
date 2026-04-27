@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Lock, Mail, Eye, EyeOff, Loader2, AlertCircle, Sun, Moon, Globe, ChevronDown, 
-  User, MapPin, UserPlus, LogIn, CheckCircle2, ArrowRight, Smartphone, ScrollText, 
-  KeyRound, Map
+  User, Map, UserPlus, LogIn, CheckCircle2, ArrowRight, Smartphone, ScrollText, 
+  KeyRound
 } from 'lucide-react';
 import { authApi } from '../api';
 import { useTheme } from '../ThemeContext';
@@ -469,7 +469,7 @@ export default function LoginPage() {
                   <Field
                     id="reg-dept"
                     label={<>{t('locationZone') || 'Location / Zone'} <span style={{ fontSize: 11, color: 'var(--text-dim)', fontWeight: 400 }}>({t('recommended') || 'recommended'})</span></>}
-                    icon={MapPin}
+                    icon={Map}
                     value={regDept}
                     onChange={e => { setRegDept(e.target.value); setRegError(''); }}
                     placeholder={t('zonePlaceholder') || "e.g. Mumbai, Zone 4"}

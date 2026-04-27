@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { MapPin, X, Search, Check } from 'lucide-react';
+import { Map, X, Search, Check } from 'lucide-react';
 
 // Leaflet CSS must be imported here (once, globally in index.css is also fine)
 import 'leaflet/dist/leaflet.css';
@@ -144,7 +144,7 @@ export default function MapZonePicker({ value, onChange, onClose }) {
         {/* Header */}
         <div className="p-4 border-b border-[var(--border)] flex items-center justify-between shrink-0">
           <h2 className="text-lg font-bold flex items-center gap-2">
-            <MapPin className="w-5 h-5" style={{ color: 'var(--accent)' }} />
+            <Map className="w-5 h-5" style={{ color: 'var(--accent)' }} />
             Select Target Zone on Map
           </h2>
           <button onClick={onClose} className="text-theme-muted hover:text-theme-primary transition-colors">

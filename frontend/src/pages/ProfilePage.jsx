@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   User, Lock, Building2, Smartphone, Save, Loader2,
   AlertCircle, CheckCircle2, KeyRound, Activity,
-  Eye, EyeOff, LogOut, Globe, MapPin, Bell, Phone, Map
+  Eye, EyeOff, LogOut, Globe, Map, Bell, Phone, Map
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { authApi } from '../api';
@@ -227,7 +227,7 @@ export default function ProfilePage() {
             <input className="input-field" value={phone} disabled style={{ opacity: 0.6, cursor: 'not-allowed' }} />
             <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>{t('mobileNoChange') || 'Mobile number cannot be changed'}</p>
           </Field>
-          <Field label={t('locationZone') || 'Location / Zone'} icon={MapPin}>
+          <Field label={t('locationZone') || 'Location / Zone'} icon={Map}>
             <input className="input-field" value={dept} onChange={e => setDept(e.target.value)} placeholder="e.g. Mumbai, Zone 4" />
           </Field>
           {profMsg.text && <InlineAlert type={profMsg.type} msg={profMsg.text} />}
@@ -271,7 +271,7 @@ export default function ProfilePage() {
               <option value="telugu">Telugu</option>
             </select>
           </Field>
-          <Field label={t('alertZone') || 'Alert Zone'} icon={MapPin}>
+          <Field label={t('alertZone') || 'Alert Zone'} icon={Map}>
             <div className="flex gap-2">
               <input 
                 type="text" 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { PenSquare, Save, Languages, MapPin, Clock, MessageSquare, Loader2, ChevronDown, Send, Map, TrendingUp, AlertTriangle, ChevronRight } from 'lucide-react';
+import { PenSquare, Save, Languages, Clock, MessageSquare, Loader2, ChevronDown, Send, Map, TrendingUp, AlertTriangle, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { messagesApi, translateApi, dispatchApi, recipientsApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -158,7 +158,7 @@ export default function ComposerPage() {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="glass-card p-5 space-y-3"><label className="block text-sm font-medium text-theme-secondary">{t('urgencyLevel')}</label><div className="grid grid-cols-2 gap-2">{URGENCY_LEVELS.map(u=>(<button key={u.value} onClick={()=>updateForm('urgency',u.value)} className="px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-2" style={{ background: form.urgency===u.value?`${u.dot}20`:'var(--bg-input)', color: form.urgency===u.value?u.dot:'var(--text-secondary)', border:`1px solid ${form.urgency===u.value?`${u.dot}40`:'var(--border)'}`, cursor:'pointer' }}><span className="w-2.5 h-2.5 rounded-full" style={{background:u.dot}}/>{t(u.key)}</button>))}</div></div>
-          <div className="glass-card p-5 space-y-3"><label className="block text-sm font-medium text-theme-secondary"><MapPin className="w-4 h-4 inline mr-2"/>{t('targetZone')}</label><div className="flex gap-2"><input type="text" value={form.target_zone} onChange={e=>updateForm('target_zone',e.target.value)} placeholder={t('zonePlaceholder')} className="input-field flex-1" id="target-zone"/><button type="button" onClick={() => setShowMapPicker(true)} title="Pick zone on map" className="btn-secondary px-3 shrink-0"><Map className="w-4 h-4" /></button></div><p className="text-xs text-theme-dim">{t('zoneDesc')}</p></div>
+          <div className="glass-card p-5 space-y-3"><label className="block text-sm font-medium text-theme-secondary"><Map className="w-4 h-4 inline mr-2"/>{t('targetZone')}</label><div className="flex gap-2"><input type="text" value={form.target_zone} onChange={e=>updateForm('target_zone',e.target.value)} placeholder={t('zonePlaceholder')} className="input-field flex-1" id="target-zone"/><button type="button" onClick={() => setShowMapPicker(true)} title="Pick zone on map" className="btn-secondary px-3 shrink-0"><Map className="w-4 h-4" /></button></div><p className="text-xs text-theme-dim">{t('zoneDesc')}</p></div>
         </div>
         <div className="glass-card p-5" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--accent-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

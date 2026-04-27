@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { 
-  MapPin, Phone, CheckCircle, Navigation, Info, 
+  Map, Phone, CheckCircle, Navigation, Info, 
   Map as MapIcon, ChevronRight, ArrowRight, ExternalLink 
 } from 'lucide-react';
 import { EAPS } from '../constants';
@@ -59,7 +59,7 @@ export default function EvacuationPage() {
       {/* Header */}
       <div className="glass-card p-8 rounded-3xl bg-gradient-to-br from-blue-600/10 to-indigo-600/10 border-blue-500/20">
         <h1 className="text-3xl font-black mb-2 flex items-center gap-3">
-          <MapPin className="w-8 h-8 text-blue-500" />
+          <Map className="w-8 h-8 text-blue-500" />
           Evacuation & Safety Guide
         </h1>
         <p className="text-theme-muted">Real-time survival instructions and nearest safety hubs for your zone.</p>
@@ -82,7 +82,7 @@ export default function EvacuationPage() {
                {EAPS.slice(0, 3).map((eap, idx) => (
                  <div key={idx} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-5 rounded-2xl bg-theme-hover border border-theme-border hover:border-accent/50 transition-all group">
                     <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent shrink-0 group-hover:scale-110 transition-transform">
-                       <MapPin className="w-6 h-6" />
+                       <Map className="w-6 h-6" />
                     </div>
                     <div className="flex-1 min-w-0">
                        <h3 className="font-bold text-lg mb-1">{eap.name}</h3>
@@ -137,7 +137,7 @@ export default function EvacuationPage() {
             ) : (
               <>
                 <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                  <MapPin className="w-6 h-6" />
+                  <Map className="w-6 h-6" />
                 </div>
                 SHARE MY LOCATION WITH AUTHORITIES
               </>
