@@ -198,7 +198,7 @@ export default function LoginPage() {
     if (!regName.trim())  { setRegError('Full name is required'); return; }
     if (!regPhone.trim()) { setRegError('Mobile number is required'); return; }
     if (!isPasswordStrong) { setRegError('Please meet all password requirements'); return; }
-    if (regPassword !== regConfirm) { setRegError('Passwords do not match'); return; }
+    if (!regPassword)     { setRegError('Password is required'); return; }
 
     setRegLoading(true);
     try {
@@ -445,53 +445,65 @@ export default function LoginPage() {
                   </div>
                 )}
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                  <Field
-                    id="reg-name"
-                    label={t('fullName') || 'Full Name'}
-                    icon={User}
-                    value={regName}
-                    onChange={e => { setRegName(e.target.value); setRegError(''); }}
-                    placeholder="e.g. Vaibhav Dubey"
-                    autoFocus
-                    autoComplete="name"
-                  />
-                  <Field
-                    id="reg-phone"
-                    label={t('mobileNumber') || 'Mobile Number'}
-                    icon={Smartphone}
-                    type="tel"
-                    value={regPhone}
-                    onChange={e => { setRegPhone(formatPhoneNumber(e.target.value)); setRegError(''); }}
-                    placeholder="Your Number"
-                    autoComplete="tel"
-                  />
-                  <Field
-                    id="reg-dept"
-                    label={<>{t('locationZone') || 'Location / Zone'} <span style={{ fontSize: 11, color: 'var(--text-dim)', fontWeight: 400 }}>({t('recommended') || 'recommended'})</span></>}
-                    icon={Map}
-                    value={regDept}
-                    onChange={e => { setRegDept(e.target.value); setRegError(''); }}
-                    placeholder={t('zonePlaceholder') || "e.g. Mumbai, Zone 4"}
-                    autoComplete="address-level2"
-                    rightEl={
-                      <button
-                        type="button"
-                        onClick={() => setShowMapPicker(true)}
-                        style={{
-                          position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
-                          background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)',
-                          padding: 4, display: 'flex', transition: 'transform 0.2s'
-                        }}
-                        title="Pick from map"
-                        onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'}
-                        onMouseLeave={e => e.currentTarget.style.transform = 'translateY(-50%) scale(1)'}
-                      >
-                        <Map style={{ width: 16, height: 16 }} />
-                      </button>
-                    }
-                    hint={regLat ? `📍 ${regLat.toFixed(4)}, ${regLng.toFixed(4)}` : ''}
-                  />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  {/* Name & Phone Row */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <Field
+                      id="reg-name"
+                      label={t('fullName') || 'Full Name'}
+                      icon={User}
+                      value={regName}
+                      onChange={e => { setRegName(e.target.value); setRegError(''); }}
+                      placeholder="e.g. Vaibhav Dubey"
+                    />
+                    <Field
+                      id="reg-phone"
+                      label={t('mobileNumber') || 'Mobile'}
+                      icon={Smartphone}
+                      type="tel"
+                      value={regPhone}
+                      onChange={e => { setRegPhone(formatPhoneNumber(e.target.value)); setRegError(''); }}
+                      placeholder="Your Number"
+                    />
+                  </div>
+
+                  {/* Location / Zone Field — The star of the show */}
+                  <div style={{ position: 'relative' }}>
+                    <Field
+                      id="reg-dept"
+                      label={t('locationZone') || 'Location / Area'}
+                      icon={Map}
+                      value={regDept}
+                      onChange={e => { setRegDept(e.target.value); setRegError(''); }}
+                      placeholder="e.g. Mumbai, Zone 4"
+                      hint={regLat ? `📌 Pinned: ${regLat.toFixed(4)}, ${regLng.toFixed(4)}` : t('mapHint') || 'Enter area name or use map icon'}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowMapPicker(true)}
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        bottom: '10px',
+                        height: '32px',
+                        padding: '0 10px',
+                        background: 'var(--accent)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '10px',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        zIndex: 10
+                      }}
+                    >
+                      <Map size={14} />
+                      MAP
+                    </button>
+                  </div>
 
                   {showMapPicker && (
                     <MapZonePicker
@@ -506,7 +518,8 @@ export default function LoginPage() {
                       onClose={() => setShowMapPicker(false)}
                     />
                   )}
-                  <div>
+
+                  <div style={{ position: 'relative' }}>
                     <Field
                       id="reg-password"
                       label={t('passwordLabel') || 'Password'}
@@ -518,40 +531,10 @@ export default function LoginPage() {
                       autoComplete="new-password"
                       rightEl={<EyeBtn show={showRegPwd} toggle={() => setShowRegPwd(v => !v)} />}
                     />
-                    
-                    {/* Strength Checklist */}
-                    {regPassword && (
-                      <div style={{ marginTop: 10, padding: '10px 12px', borderRadius: 8, background: 'var(--bg-hover)', border: '1px solid var(--border)' }}>
-                        <p style={{ fontSize: 11, fontWeight: 700, marginBottom: 6, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('securityRequirements') || 'Security Requirements'}</p>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 12px' }}>
-                          {[
-                            { label: t('eightPlusChars') || '8+ Characters', met: criteria.length },
-                            { label: t('uppercase') || 'Uppercase', met: criteria.upper },
-                            { label: t('number') || 'Number', met: criteria.number },
-                            { label: t('specialSymbol') || 'Special Symbol', met: criteria.special },
-                          ].map(c => (
-                            <div key={c.label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: c.met ? 'var(--accent)' : 'var(--text-dim)' }}>
-                              <div style={{ width: 12, height: 12, borderRadius: '50%', background: c.met ? 'var(--accent)' : 'transparent', border: `1px solid ${c.met ? 'var(--accent)' : 'var(--border)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                {c.met && <CheckCircle2 style={{ width: 8, height: 8, color: 'white' }} />}
-                              </div>
-                              {c.label}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
-                  <Field
-                    id="reg-confirm"
-                    label={t('confirmPassword') || 'Confirm Password'}
-                    icon={Lock}
-                    type={showRegPwd ? 'text' : 'password'}
-                    value={regConfirm}
-                    onChange={e => { setRegConfirm(e.target.value); setRegError(''); }}
-                    placeholder={t('reEnterPassword') || "Re-enter your password"}
-                    autoComplete="new-password"
-                    hint={regConfirm && regPassword !== regConfirm ? (t('passwordsDontMatch') || '⚠ Passwords do not match') : regConfirm && regPassword === regConfirm ? (t('passwordsMatch') || '✓ Passwords match') : ''}
-                  />
+                  
+                  <PasswordStrength password={regPassword} />
+                </div>
 
                   <div style={{ marginTop: 8 }}>
                     <button
@@ -577,7 +560,6 @@ export default function LoginPage() {
                       <UserPlus style={{ width: 20, height: 20 }} /> {t('demoLogin') || 'Try Demo Profile'}
                     </button>
                   </div>
-                </div>
 
                 <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-muted)', marginTop: 16 }}>
                   {t('alreadyHaveAccount') || 'Already have an account?'}{' '}
