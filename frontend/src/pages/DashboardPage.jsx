@@ -264,7 +264,7 @@ export default function DashboardPage() {
             {/* 1. MY ZONE SUMMARY (REAL DATA) */}
             <section className="glass-card p-6 rounded-3xl border-0 shadow-xl grid grid-cols-2 md:grid-cols-4 gap-4 bg-accent/5">
                <div className="space-y-1">
-                  <div className="text-xs font-bold text-theme-muted uppercase tracking-wider">{t('yourLocation') || 'Your Location'}</div>
+                  <div className="text-xs font-bold text-theme-muted uppercase tracking-wider">Your Location</div>
                   <div className="text-lg font-black text-theme-primary">{userZone}</div>
                </div>
                <div className="space-y-1">

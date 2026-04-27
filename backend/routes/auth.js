@@ -6,13 +6,14 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { dbGetOne, dbUpdate, dbInsert } from '../database/db.js';
-import { sendSMS } from '../integrations/smsGateway.js';
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'uacs_super_secret_2026';
 const JWT_EXPIRES_IN = '24h';
 
-// Twilio Client removed - using smsGateway
+// Twilio Client
+import twilio from 'twilio';
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 // OTP Cache (In-Memory for single-server stability)
 const OTP_STORE = new Map();
@@ -109,9 +110,15 @@ router.post('/otp/send', async (req, res) => {
     // Save to cache
     OTP_STORE.set(phone, { code, expiry });
 
-    // Send via centralized gateway
-    const smsResult = await sendSMS(phone, `Your UACS registration code is: ${code}. Valid for 5 minutes.`);
-    if (!smsResult.success) throw new Error(smsResult.error);
+    // Format phone for Twilio (+91 followed by digits only)
+    const twilioPhone = '+91' + phone.replace(/\D/g, '');
+
+    // Send via Twilio
+    await twilioClient.messages.create({
+      body: `Your UACS registration code is: ${code}. Valid for 5 minutes.`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: twilioPhone,
+    });
 
     console.log(`[UACS OTP] Code ${code} sent to ${phone}`);
     res.json({ success: true, message: 'Verification code sent' });
@@ -124,7 +131,7 @@ router.post('/otp/send', async (req, res) => {
 // ─── POST /api/auth/register ────────────────────────────
 router.post('/register', async (req, res) => {
   try {
-    const { name, phone, password, department } = req.body;
+    const { name, phone, password, department, latitude, longitude } = req.body;
 
     if (!name?.trim() || !phone?.trim() || !password)
       return res.status(400).json({ error: 'All fields are required' });
@@ -151,6 +158,8 @@ router.post('/register', async (req, res) => {
       password:   hash,
       role:       'user', // FORCE USER ROLE - NO EXCEPTIONS
       department: department?.trim() || null,
+      lat:        latitude || null,
+      lng:        longitude || null,
     });
 
     // AUTO-SYNC TO RECIPIENTS (Deduplicated)
@@ -161,9 +170,20 @@ router.post('/register', async (req, res) => {
         phone:      normalizedPhone,
         zone:       department?.trim() || 'General',
         language:   'english',
-        active:     true
+        active:     true,
+        lat:        latitude || null,
+        lng:        longitude || null
       });
-      console.log(`[UACS AUTH] Auto-added ${normalizedPhone} to Recipients list`);
+      console.log(`[UACS AUTH] Auto-added ${normalizedPhone} to Recipients list with coordinates`);
+    } else {
+      // Update existing recipient if coordinates are provided
+      if (latitude && longitude) {
+        await dbUpdate('recipients', { 
+          lat: latitude, 
+          lng: longitude, 
+          zone: department?.trim() || existingRecipient.zone 
+        }, { id: existingRecipient.id });
+      }
     }
 
     // Sign JWT — same shape as login

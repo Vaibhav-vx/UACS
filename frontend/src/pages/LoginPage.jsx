@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  Lock, Mail, Eye, EyeOff, Loader2, AlertCircle,
-  Sun, Moon, Globe, ChevronDown, User, Building2, UserPlus,
-  LogIn, CheckCircle2, ArrowRight, Smartphone, ScrollText,
-  KeyRound
+  Lock, Mail, Eye, EyeOff, Loader2, AlertCircle, Sun, Moon, Globe, ChevronDown, 
+  User, MapPin, UserPlus, LogIn, CheckCircle2, ArrowRight, Smartphone, ScrollText, 
+  KeyRound, Map
 } from 'lucide-react';
 import { authApi } from '../api';
 import { useTheme } from '../ThemeContext';
 import { useLanguage } from '../i18n/LanguageContext';
+import MapZonePicker from '../components/MapZonePicker';
 import toast from 'react-hot-toast';
 
 // ── Animated background orbs ─────────────────────────────
@@ -124,6 +124,9 @@ export default function LoginPage() {
   const [regLoading, setRegLoading]       = useState(false);
   const [regError, setRegError]           = useState('');
   const [regSuccess, setRegSuccess]       = useState(false);
+  const [regLat, setRegLat]               = useState(null);
+  const [regLng, setRegLng]               = useState(null);
+  const [showMapPicker, setShowMapPicker] = useState(false);
 
   // Password Strength Check
   const getPasswordCriteria = (pwd) => ({
@@ -203,9 +206,12 @@ export default function LoginPage() {
         name: regName.trim(), 
         phone: regPhone.trim(), 
         password: regPassword, 
-        department: regDept.trim() 
+        department: regDept.trim(),
+        latitude: regLat,
+        longitude: regLng
       });
       toast.success(t('regSuccess') || 'Registration successful!');
+      localStorage.setItem('uacs_token', res.data.token);
       localStorage.setItem('uacs_user', JSON.stringify(res.data.user));
       setRegSuccess(true);
       setTimeout(() => navigate('/dashboard'), 1500);
@@ -465,10 +471,41 @@ export default function LoginPage() {
                     label={<>{t('locationZone') || 'Location / Zone'} <span style={{ fontSize: 11, color: 'var(--text-dim)', fontWeight: 400 }}>({t('recommended') || 'recommended'})</span></>}
                     icon={MapPin}
                     value={regDept}
-                    onChange={e => setRegDept(e.target.value)}
+                    onChange={e => { setRegDept(e.target.value); setRegError(''); }}
                     placeholder={t('zonePlaceholder') || "e.g. Mumbai, Zone 4"}
                     autoComplete="address-level2"
+                    rightEl={
+                      <button
+                        type="button"
+                        onClick={() => setShowMapPicker(true)}
+                        style={{
+                          position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+                          background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)',
+                          padding: 4, display: 'flex', transition: 'transform 0.2s'
+                        }}
+                        title="Pick from map"
+                        onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'}
+                        onMouseLeave={e => e.currentTarget.style.transform = 'translateY(-50%) scale(1)'}
+                      >
+                        <Map style={{ width: 16, height: 16 }} />
+                      </button>
+                    }
+                    hint={regLat ? `📍 ${regLat.toFixed(4)}, ${regLng.toFixed(4)}` : ''}
                   />
+
+                  {showMapPicker && (
+                    <MapZonePicker
+                      value={regDept}
+                      onChange={(val, coords) => {
+                        setRegDept(val);
+                        if (coords) {
+                          setRegLat(coords.lat);
+                          setRegLng(coords.lng);
+                        }
+                      }}
+                      onClose={() => setShowMapPicker(false)}
+                    />
+                  )}
                   <div>
                     <Field
                       id="reg-password"
