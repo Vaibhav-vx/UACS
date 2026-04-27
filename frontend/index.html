@@ -8,6 +8,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <title>UACS — Unified Authority Communication System</title>
+    <script>
+      // Global fallback to prevent ReferenceError in older cached bundles
+      window.MapPin = function() { return null; }; 
+    </script>
   </head>
   <body>
     <div id="root"></div>
