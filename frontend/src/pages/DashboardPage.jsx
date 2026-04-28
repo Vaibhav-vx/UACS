@@ -805,15 +805,58 @@ export default function DashboardPage() {
 
               <div>
                 <label className="block text-sm font-medium mb-1.5 text-[var(--text-secondary)]">
-                  {t('targetZone') || 'Target Zone'} <span className="text-red-500">*</span>
+                  {t('targetLocation') || 'Target Location'} <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  className="input-field w-full"
-                  placeholder={t('zonePlaceholder') || "e.g. Zone 4, Mumbai"}
-                  value={emergencyZone}
-                  onChange={e => setEmergencyZone(e.target.value)}
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    className="input-field w-full"
+                    placeholder={t('locationPlaceholder') || "e.g. Mumbai, Zone 4 or exact address"}
+                    value={emergencyZone}
+                    onChange={e => setEmergencyZone(e.target.value)}
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => setShowMap(!showMap)} 
+                    className="btn-secondary px-3 shrink-0"
+                    title="Pick exact location on map"
+                  >
+                    <MapIcon style={{ width: 16, height: 16 }} />
+                  </button>
+                </div>
+                {showMap && (
+                  <div className="mt-2" style={{ position: 'relative', zIndex: 100 }}>
+                    <MapZonePicker 
+                      value={emergencyZone} 
+                      onChange={(v, coords) => {
+                        setEmergencyZone(v);
+                        if (coords) {
+                          setEmergencyText(prev => `${prev}\n\n[Location Coordinates: ${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}]`);
+                        }
+                      }} 
+                      onClose={() => setShowMap(false)} 
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-sm font-medium mb-1.5 text-[var(--text-secondary)] flex justify-between">
+                  <span>{t('alertRadius') || 'Alert Radius'}</span>
+                  <span className="text-accent font-bold">5 km</span>
+                </label>
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="50" 
+                  defaultValue={5}
+                  className="w-full accent-red-500"
                 />
+                <div className="flex justify-between text-[10px] text-theme-muted mt-1">
+                  <span>1 km</span>
+                  <span>25 km</span>
+                  <span>50 km</span>
+                </div>
               </div>
 
               <div className="p-4 bg-[var(--bg-hover)] border border-[var(--border)] rounded-lg text-xs text-[var(--text-muted)] space-y-1 mt-2">
@@ -838,7 +881,7 @@ export default function DashboardPage() {
               <button 
                 onClick={() => setIsEmergencyModalOpen(false)}
                 disabled={emergencyLoading}
-                className="w-full py-2 rounded-lg font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border(--border)] hover:bg-[var(--bg-hover)] transition-colors"
+                className="w-full py-2 rounded-lg font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border)] hover:bg-[var(--bg-hover)] transition-colors"
               >
                 {t('cancel') || 'Cancel'}
               </button>
