@@ -561,14 +561,43 @@ export default function DashboardPage() {
              {recentReports.length === 0 ? (
                <div className="text-center py-8 text-theme-muted text-sm">No recent safety reports</div>
              ) : recentReports.map((r, idx) => (
-               <div key={r.id || idx} className="flex items-center justify-between text-xs p-2 rounded-lg bg-theme-hover">
-                 <div className="flex items-center gap-2">
-                   <div className={`w-2 h-2 rounded-full ${r.status === 'safe' ? 'bg-green-500' : 'bg-red-500'}`} /> 
-                   <span className={r.status === 'assistance' ? 'font-bold' : ''}>
-                     {r.status === 'assistance' ? 'SOS: ' : ''}{r.user_name} ({r.zone || 'Unknown'})
-                   </span>
+               <div key={r.id || idx} className="flex items-center justify-between text-xs p-2 rounded-lg bg-theme-hover mb-2 border border-theme-border">
+                 <div className="flex flex-col">
+                   <div className="flex items-center gap-2">
+                     <div className={`w-2 h-2 rounded-full ${r.status === 'safe' ? 'bg-green-500' : 'bg-red-500 animate-pulse'}`} /> 
+                     <span className={r.status === 'assistance' ? 'font-black text-red-500' : 'font-medium'}>
+                       {r.status === 'assistance' ? 'SOS: ' : 'SAFE: '}{r.user_name}
+                     </span>
+                     <span className="text-[10px] text-theme-dim">({r.zone || 'Unknown'})</span>
+                   </div>
+                   {r.status === 'assistance' && !r.assisted && (
+                     <span className="ml-4 mt-1 text-[9px] text-orange-500 font-bold uppercase">Pending Rescue</span>
+                   )}
+                   {r.assisted && (
+                     <span className="ml-4 mt-1 text-[9px] text-green-500 font-bold uppercase flex items-center gap-1">
+                       <CheckCircle className="w-3 h-3" /> Assisted
+                     </span>
+                   )}
                  </div>
-                 <span className="text-theme-dim">{new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                 <div className="flex items-center gap-3">
+                   <span className="text-theme-dim text-[10px]">{new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                   {r.status === 'assistance' && !r.assisted && (
+                     <button 
+                       onClick={async () => {
+                         try {
+                           await messagesApi.assistCitizen(r.id);
+                           toast.success('Dispatched Rescue Team');
+                           fetchData();
+                         } catch(e) {
+                           toast.error('Failed to dispatch rescue');
+                         }
+                       }}
+                       className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors flex items-center gap-1"
+                     >
+                       <Zap className="w-3 h-3" /> DISPATCH HELP
+                     </button>
+                   )}
+                 </div>
                </div>
              ))}
           </div>
@@ -587,7 +616,26 @@ export default function DashboardPage() {
       </div>
 
       {activeTab==='active' && (<div className="space-y-3">
-        {activeMessages.length===0 ? (<div className="glass-card p-12 text-center"><Activity className="w-12 h-12 mx-auto mb-4 text-theme-dim" /><h3 className="text-lg font-medium text-theme-secondary mb-2">{t('noActiveAlerts')}</h3><p className="text-sm text-theme-muted mb-4">{t('noActiveDesc')}</p><button onClick={()=>navigate('/compose')} className="btn-primary text-sm"><Send className="w-4 h-4" /> {t('composeMessage')}</button></div>
+        {activeMessages.length===0 ? (
+          <div className="glass-card p-12 text-center">
+            <Activity className="w-12 h-12 mx-auto mb-4 text-theme-dim" />
+            <h3 className="text-lg font-medium text-theme-secondary mb-2">{t('noActiveAlerts')}</h3>
+            <p className="text-sm text-theme-muted mb-4">{t('noActiveDesc')}</p>
+            {isAdmin ? (
+              <button onClick={()=>navigate('/compose')} className="btn-primary text-sm mx-auto"><Send className="w-4 h-4" /> {t('composeMessage')}</button>
+            ) : (
+              <div className="flex flex-col items-center justify-center gap-3">
+                <button 
+                  onClick={handleSOS}
+                  disabled={emergencyLoading}
+                  className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-black rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 mx-auto"
+                >
+                  <AlertTriangle className="w-5 h-5" /> {emergencyLoading ? 'SENDING...' : 'SOS: I NEED HELP'}
+                </button>
+                <p className="text-xs text-theme-muted">If you are in danger, tap the SOS button to alert the response centre.</p>
+              </div>
+            )}
+          </div>
         ) : activeMessages.map((msg,i)=>(
           <div key={msg.id} className="glass-card p-5 animate-slide-up" style={{ animationDelay:`${i*60}ms` }}>
             <div className="flex flex-col lg:flex-row lg:items-start gap-4">
