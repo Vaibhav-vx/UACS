@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
 // ─── POST /api/recipients ──────────────────────────────
 router.post('/', async (req, res) => {
   try {
-    const { name, phone, zone, language } = req.body;
+    const { name, phone, zone, language, lat, lng } = req.body;
     if (!name || !phone) return res.status(400).json({ error: 'name and phone are required' });
 
     // Auto-normalize phone: prepend +91 if missing country code
@@ -38,6 +38,8 @@ router.post('/', async (req, res) => {
       phone: normalizedPhone,
       zone: zone || null,
       language: language || 'en',
+      lat: lat || null,
+      lng: lng || null
     });
 
     // AUTO-SYNC TO USERS: Create a portal account for this recipient
@@ -53,7 +55,9 @@ router.post('/', async (req, res) => {
         role:       'user',
         department: zone || 'General',
         zone:       zone || 'General',
-        language:   language || 'english'
+        language:   language || 'english',
+        lat:        lat || null,
+        lng:        lng || null
       });
       console.log(`[UACS RECIPIENTS] Auto-created User account for ${name} (PWD: ${password})`);
     }
@@ -72,12 +76,14 @@ router.put('/:id', async (req, res) => {
     const existing = await dbGetById('recipients', id);
     if (!existing) return res.status(404).json({ error: 'Recipient not found' });
 
-    const { name, phone, zone, language } = req.body;
+    const { name, phone, zone, language, lat, lng } = req.body;
     const updates = {};
     if (name)     updates.name     = name;
     if (phone)    updates.phone    = phone.startsWith('+') ? phone : `+91${phone.replace(/^0/, '')}`;
     if (zone !== undefined) updates.zone = zone || null;
     if (language) updates.language = language;
+    if (lat !== undefined) updates.lat = lat;
+    if (lng !== undefined) updates.lng = lng;
 
     const updated = await dbUpdate('recipients', id, updates);
 
@@ -87,11 +93,13 @@ router.put('/:id', async (req, res) => {
       const userUpdates = {};
       if (name) userUpdates.name = name.trim();
       if (updates.phone) userUpdates.email = updates.phone;
-      if (zone) {
+      if (zone !== undefined) {
         userUpdates.department = zone;
         userUpdates.zone = zone;
       }
       if (language) userUpdates.language = language;
+      if (lat !== undefined) userUpdates.lat = lat;
+      if (lng !== undefined) userUpdates.lng = lng;
       
       // If name changed, update password to match the new name-sx format (per user request)
       if (name && name !== existing.name) {

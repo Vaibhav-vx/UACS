@@ -388,7 +388,7 @@ export default function DashboardPage() {
                       <h3 className="text-lg font-black text-white uppercase tracking-tight flex items-center gap-2">
                         My Preparedness Score <span className="px-2 py-0.5 rounded bg-accent/20 text-accent text-[10px] border border-accent/30">🏆 Well Prepared</span>
                       </h3>
-                      <p className="text-xs text-theme-muted">You are in the top 15% of Zone 4 citizens. Complete tasks to improve.</p>
+                      <p className="text-xs text-theme-muted">You are in the top 15% of {user.zone || localStorage.getItem('uacs_pref_zone') || 'your area'} citizens. Complete tasks to improve.</p>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {[

@@ -9,19 +9,20 @@ CREATE TABLE IF NOT EXISTS messages (
   master_content   TEXT NOT NULL,
   urgency          TEXT NOT NULL CHECK(urgency IN ('low', 'medium', 'high', 'critical')),
   target_zone      TEXT,
-  channels         TEXT,
-  languages        TEXT,
-  translations     TEXT,
-  status           TEXT DEFAULT 'draft' CHECK(status IN ('draft', 'pending', 'active', 'expired')),
+  channels         TEXT NOT NULL,
+  languages        TEXT NOT NULL,
+  translations     TEXT NOT NULL,
+  status           TEXT NOT NULL CHECK(status IN ('draft', 'pending', 'active', 'expired')),
   sent_by          TEXT,
   approved_by      TEXT,
   sent_at          TIMESTAMPTZ,
   expires_at       TIMESTAMPTZ,
-  expiry_action    TEXT DEFAULT 'flag' CHECK(expiry_action IN ('delete', 'replace', 'flag')),
+  expiry_action    TEXT,
   expiry_message   TEXT,
-  expiry_reason    TEXT, -- "Why was this alert expired?"
+  expiry_reason    TEXT,
   lat              DECIMAL(10, 8),
   lng              DECIMAL(11, 8),
+  radius           INTEGER,
   created_at       TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -139,6 +140,9 @@ BEGIN
   END IF;
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='messages' AND column_name='lng') THEN
     ALTER TABLE messages ADD COLUMN lng DECIMAL(11, 8);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='messages' AND column_name='radius') THEN
+    ALTER TABLE messages ADD COLUMN radius INTEGER;
   END IF;
 
 END $$;

@@ -188,15 +188,18 @@ router.get('/', async (req, res) => {
 // ─── POST /api/messages ────────────────────────────────
 router.post('/', async (req, res) => {
   try {
-    const { title, master_content, urgency, target_zone, channels, languages, expires_at } = req.body;
+    const { title, master_content, urgency, target_zone, channels, languages, expires_at, lat, lng, radius, status } = req.body;
     const newMsg = await dbInsert('messages', {
       title, master_content, urgency,
       target_zone: target_zone || null,
       channels: JSON.stringify(channels || []),
       languages: JSON.stringify(languages || []),
-      status: 'draft',
+      status: status || 'draft',
       sent_by: req.user?.name || 'Unknown',
-      expires_at: expires_at || null
+      expires_at: expires_at || null,
+      lat: lat || null,
+      lng: lng || null,
+      radius: radius || null
     });
     res.status(201).json(parseMsg(newMsg));
   } catch (err) {
