@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
-  Users, UserPlus, Send, Trash2, Loader2, Phone, Map,
+  Users, UserPlus, Send, Trash2, Loader2, Phone, Map as MapIcon,
   Languages, Search, X, CheckCircle2, AlertCircle, RefreshCw,
   ChevronDown, ToggleLeft, ToggleRight, Edit2, Save
 } from 'lucide-react';
@@ -102,7 +102,7 @@ function RecipientModal({ initial, onSave, onClose, saving }) {
           {/* Zone */}
           <div>
             <label className="block text-sm font-medium mb-1.5 text-theme-secondary">
-              <Map style={{ width: 13, height: 13, display: 'inline', marginRight: 4 }} />
+              <MapIcon style={{ width: 13, height: 13, display: 'inline', marginRight: 4 }} />
               {t('locationZone') || 'Location / Zone'}
             </label>
             <div className="flex gap-2 mb-2">
@@ -119,7 +119,7 @@ function RecipientModal({ initial, onSave, onClose, saving }) {
                 title="Pick zone on map" 
                 className="btn-secondary px-3 shrink-0"
               >
-                <Map style={{ width: 16, height: 16 }} />
+                <MapIcon style={{ width: 16, height: 16 }} />
               </button>
             </div>
             
@@ -344,7 +344,7 @@ export default function RecipientsPage() {
         {/* Zone filter */}
         {zones.length > 0 && (
           <div style={{ position: 'relative' }}>
-            <Map style={{ width: 13, height: 13, position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
+            <MapIcon style={{ width: 13, height: 13, position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
             <select className="input-field" value={filterZone} onChange={e => setFilterZone(e.target.value)} style={{ paddingLeft: 26, paddingRight: 28, minWidth: 130 }}>
               <option value="all">{t('allZones') || "All Zones"}</option>
               {zones.map(z => <option key={z} value={z}>{z}</option>)}

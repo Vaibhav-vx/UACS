@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Lock, Mail, Eye, EyeOff, Loader2, AlertCircle, Sun, Moon, Globe, ChevronDown, 
-  User, Map, UserPlus, LogIn, CheckCircle2, ArrowRight, Smartphone, ScrollText, 
+  User, Map as MapIcon, UserPlus, LogIn, CheckCircle2, ArrowRight, Smartphone, ScrollText, 
   KeyRound
 } from 'lucide-react';
 import { authApi } from '../api';
@@ -500,7 +500,7 @@ export default function LoginPage() {
                         zIndex: 10
                       }}
                     >
-                      <Map size={14} />
+                      <MapIcon size={14} />
                       MAP
                     </button>
                   </div>

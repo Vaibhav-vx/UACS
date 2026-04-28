@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   User, Lock, Building2, Smartphone, Save, Loader2,
   AlertCircle, CheckCircle2, KeyRound, Activity,
-  Eye, EyeOff, LogOut, Globe, Map, Bell, Phone
+  Eye, EyeOff, LogOut, Globe, Map as MapIcon, Bell, Phone
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { authApi } from '../api';
@@ -286,7 +286,7 @@ export default function ProfilePage() {
                 title="Pick zone on map" 
                 className="btn-secondary px-3 shrink-0"
               >
-                <Map style={{ width: 16, height: 16 }} />
+                <MapIcon style={{ width: 16, height: 16 }} />
               </button>
             </div>
             

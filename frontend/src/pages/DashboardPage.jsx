@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Activity, Clock, AlertTriangle, CheckCircle, Send, Timer, RefreshCw, Eye, RotateCcw, 
-  Zap, TrendingUp, X, PenSquare, Map, Globe, Info,
+  Zap, TrendingUp, X, PenSquare, Map as MapIcon, Globe, Info,
   Navigation, Heart, History, BarChart3, CloudRain
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -205,7 +205,7 @@ export default function DashboardPage() {
                  </h1>
                  <div className="flex flex-wrap items-center gap-4 text-sm font-bold opacity-80">
                     <div className="flex items-center gap-2">
-                      <Map className="w-4 h-4 text-accent" /> {userZone}
+                      <MapIcon className="w-4 h-4 text-accent" /> {userZone}
                     </div>
                     <span className="opacity-30">|</span>
                     <div className="flex items-center gap-2">
@@ -415,7 +415,7 @@ export default function DashboardPage() {
             {/* 4. NEARBY SAFETY HUBS */}
             <section className="glass-card p-6 rounded-3xl border-0 shadow-xl bg-accent/5">
                <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                 <Map className="w-5 h-5 text-accent" /> {t('nearbySafetyHubs') || 'Nearby Safety Hubs'}
+                 <MapIcon className="w-5 h-5 text-accent" /> {t('nearbySafetyHubs') || 'Nearby Safety Hubs'}
                </h2>
                <div className="space-y-3">
                   {EAPS.slice(0, 3).map((eap, idx) => (
@@ -486,7 +486,7 @@ export default function DashboardPage() {
               className="glass-card p-8 rounded-3xl border-2 border-dashed border-accent/30 hover:border-accent hover:bg-accent/5 cursor-pointer transition-all group flex flex-col items-center justify-center gap-4 min-h-[200px]"
             >
               <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Map className="w-8 h-8 text-accent" />
+                <MapIcon className="w-8 h-8 text-accent" />
               </div>
               <div className="text-center">
                 <h3 className="text-xl font-bold text-white uppercase tracking-tight">Open Situation Room Map</h3>

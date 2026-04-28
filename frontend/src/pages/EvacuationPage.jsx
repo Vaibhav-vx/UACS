@@ -137,7 +137,7 @@ export default function EvacuationPage() {
             ) : (
               <>
                 <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                  <Map className="w-6 h-6" />
+                  <MapIcon className="w-6 h-6" />
                 </div>
                 SHARE MY LOCATION WITH AUTHORITIES
               </>

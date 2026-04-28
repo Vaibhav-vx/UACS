@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Map, X, Search, Check } from 'lucide-react';
+import { MapIcon, X, Search, Check } from 'lucide-react';
 
 // Leaflet CSS must be imported here (once, globally in index.css is also fine)
 import 'leaflet/dist/leaflet.css';
@@ -17,7 +17,7 @@ const PRESET_ZONES = [
 
 export default function MapZonePicker({ value, onChange, onClose }) {
   const mapRef = useRef(null);
-  const leafletMap = useRef(null);
+  const leafletMapIcon = useRef(null);
   const markerRef = useRef(null);
   const circleRef = useRef(null);
   const [selectedCoords, setSelectedCoords] = useState(null);
@@ -26,8 +26,8 @@ export default function MapZonePicker({ value, onChange, onClose }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searching, setSearching] = useState(false);
 
-  const updateMapOverlay = useCallback((lat, lng, km, L) => {
-    if (!leafletMap.current) return;
+  const updateMapIconOverlay = useCallback((lat, lng, km, L) => {
+    if (!leafletMapIcon.current) return;
 
     // Remove old overlays
     if (markerRef.current) markerRef.current.remove();
@@ -41,20 +41,20 @@ export default function MapZonePicker({ value, onChange, onClose }) {
       iconAnchor: [14, 28],
     });
 
-    markerRef.current = L.marker([lat, lng], { icon }).addTo(leafletMap.current);
+    markerRef.current = L.marker([lat, lng], { icon }).addTo(leafletMapIcon.current);
     circleRef.current = L.circle([lat, lng], {
       radius: km * 1000,
       color: 'var(--accent, #0ea5e9)',
       fillColor: '#0ea5e9',
       fillOpacity: 0.15,
       weight: 2,
-    }).addTo(leafletMap.current);
+    }).addTo(leafletMapIcon.current);
 
-    leafletMap.current.flyTo([lat, lng], 11, { duration: 0.8 });
+    leafletMapIcon.current.flyTo([lat, lng], 11, { duration: 0.8 });
   }, []);
 
   useEffect(() => {
-    if (!mapRef.current || leafletMap.current) return;
+    if (!mapRef.current || leafletMapIcon.current) return;
 
     import('leaflet').then((L) => {
       // Fix default icon path issue with webpack/vite
@@ -65,22 +65,22 @@ export default function MapZonePicker({ value, onChange, onClose }) {
         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
       });
 
-      leafletMap.current = L.map(mapRef.current, {
+      leafletMapIcon.current = L.map(mapRef.current, {
         center: [20.5937, 78.9629], // India center
         zoom: 5,
         zoomControl: true,
       });
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
+        attribution: '© OpenStreetMapIcon contributors',
         maxZoom: 18,
-      }).addTo(leafletMap.current);
+      }).addTo(leafletMapIcon.current);
 
     // Click on map to select zone
-      leafletMap.current.on('click', async (e) => {
+      leafletMapIcon.current.on('click', async (e) => {
         const { lat, lng } = e.latlng;
         setSelectedCoords({ lat, lng });
-        updateMapOverlay(lat, lng, radius, L);
+        updateMapIconOverlay(lat, lng, radius, L);
         
         // Reverse geocode to get zone name
         try {
@@ -97,9 +97,9 @@ export default function MapZonePicker({ value, onChange, onClose }) {
     });
 
     return () => {
-      if (leafletMap.current) {
-        leafletMap.current.remove();
-        leafletMap.current = null;
+      if (leafletMapIcon.current) {
+        leafletMapIcon.current.remove();
+        leafletMapIcon.current = null;
       }
     };
   }, []);
@@ -108,7 +108,7 @@ export default function MapZonePicker({ value, onChange, onClose }) {
   useEffect(() => {
     if (!selectedCoords) return;
     import('leaflet').then((L) => {
-      updateMapOverlay(selectedCoords.lat, selectedCoords.lng, radius, L);
+      updateMapIconOverlay(selectedCoords.lat, selectedCoords.lng, radius, L);
     });
   }, [radius]);
 
@@ -116,7 +116,7 @@ export default function MapZonePicker({ value, onChange, onClose }) {
     setSelectedCoords({ lat: zone.lat, lng: zone.lng });
     setZoneName(zone.name);
     import('leaflet').then((L) => {
-      updateMapOverlay(zone.lat, zone.lng, radius, L);
+      updateMapIconOverlay(zone.lat, zone.lng, radius, L);
     });
   };
 
@@ -134,7 +134,7 @@ export default function MapZonePicker({ value, onChange, onClose }) {
         // Use just first 2 parts of the display name for clarity
         const shortName = display_name.split(',').slice(0, 2).join(',').trim();
         setZoneName(shortName);
-        import('leaflet').then((L) => updateMapOverlay(parsed.lat, parsed.lng, radius, L));
+        import('leaflet').then((L) => updateMapIconOverlay(parsed.lat, parsed.lng, radius, L));
       } else {
         alert('Location not found. Try a different search term.');
       }
@@ -158,8 +158,8 @@ export default function MapZonePicker({ value, onChange, onClose }) {
         {/* Header */}
         <div className="p-4 border-b border-[var(--border)] flex items-center justify-between shrink-0">
           <h2 className="text-lg font-bold flex items-center gap-2">
-            <Map className="w-5 h-5" style={{ color: 'var(--accent)' }} />
-            Select Target Zone on Map
+            <MapIcon className="w-5 h-5" style={{ color: 'var(--accent)' }} />
+            Select Target Zone on MapIcon
           </h2>
           <button onClick={onClose} className="text-theme-muted hover:text-theme-primary transition-colors">
             <X className="w-5 h-5" />
@@ -239,7 +239,7 @@ export default function MapZonePicker({ value, onChange, onClose }) {
                     const lat = parseFloat(e.target.value);
                     const lng = selectedCoords?.lng || 78.9629;
                     setSelectedCoords({ lat, lng });
-                    import('leaflet').then(L => updateMapOverlay(lat, lng, radius, L));
+                    import('leaflet').then(L => updateMapIconOverlay(lat, lng, radius, L));
                   }}
                   className="input-field w-full text-xs py-1"
                 />
@@ -254,7 +254,7 @@ export default function MapZonePicker({ value, onChange, onClose }) {
                     const lng = parseFloat(e.target.value);
                     const lat = selectedCoords?.lat || 20.5937;
                     setSelectedCoords({ lat, lng });
-                    import('leaflet').then(L => updateMapOverlay(lat, lng, radius, L));
+                    import('leaflet').then(L => updateMapIconOverlay(lat, lng, radius, L));
                   }}
                   className="input-field w-full text-xs py-1"
                 />
@@ -264,7 +264,7 @@ export default function MapZonePicker({ value, onChange, onClose }) {
             <p className="text-xs text-theme-dim">💡 Click anywhere on the map to pin a custom zone or type coordinates manually above.</p>
           </div>
 
-          {/* Map */}
+          {/* MapIcon */}
           <div className="flex-1 relative min-h-[250px] md:min-h-[400px]">
             <div ref={mapRef} className="w-full h-full" />
           </div>

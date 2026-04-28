@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { 
-  Users, UserPlus, Heart, Map, Clock, Activity,
+  Users, UserPlus, Heart, Map as MapIcon, Clock, Activity,
   Send, AlertTriangle, CheckCircle, Search, RefreshCw,
   MoreVertical, Phone, MessageCircle
 } from 'lucide-react';
@@ -158,7 +158,7 @@ export default function FamilyPage() {
                         {member.emergencyContact && <Activity className="w-4 h-4 text-red-500" title="Emergency Contact" />}
                       </h3>
                       <div className="flex items-center gap-2 text-xs text-theme-muted">
-                        <Map className="w-3.5 h-3.5" /> {member.zone}
+                        <MapIcon className="w-3.5 h-3.5" /> {member.zone}
                       </div>
                    </div>
                 </div>

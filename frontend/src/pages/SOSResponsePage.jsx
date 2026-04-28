@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   AlertCircle, 
   Phone, 
-  Map, 
+  Map as MapIcon, 
   CheckCircle, 
   Clock, 
   ExternalLink,
@@ -150,7 +150,7 @@ const SOSResponsePage = () => {
                         </div>
                         <div className="flex items-center gap-4 mt-1 text-sm text-slate-400">
                           <span className="flex items-center gap-1">
-                            <Map className="w-3.5 h-3.5" /> {report.zone}
+                            <MapIcon className="w-3.5 h-3.5" /> {report.zone}
                           </span>
                           <span className="flex items-center gap-1">
                             <Clock className="w-3.5 h-3.5" /> {new Date(report.created_at).toLocaleTimeString()}
@@ -206,7 +206,7 @@ const SOSResponsePage = () => {
                           <Phone className="w-5 h-5" />
                         </button>
                         <button className="p-3 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-all border border-white/5">
-                          <Map className="w-5 h-5" />
+                          <MapIcon className="w-5 h-5" />
                         </button>
                       </>
                     ) : (
