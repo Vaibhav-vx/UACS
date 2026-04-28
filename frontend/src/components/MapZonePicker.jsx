@@ -76,11 +76,23 @@ export default function MapZonePicker({ value, onChange, onClose }) {
         maxZoom: 18,
       }).addTo(leafletMap.current);
 
-      // Click on map to select zone
-      leafletMap.current.on('click', (e) => {
+    // Click on map to select zone
+      leafletMap.current.on('click', async (e) => {
         const { lat, lng } = e.latlng;
         setSelectedCoords({ lat, lng });
         updateMapOverlay(lat, lng, radius, L);
+        
+        // Reverse geocode to get zone name
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+          const data = await res.json();
+          if (data && data.display_name) {
+            const shortName = data.display_name.split(',').slice(0, 2).join(',').trim();
+            setZoneName(shortName);
+          }
+        } catch (err) {
+          console.error("Reverse geocode failed", err);
+        }
       });
     });
 
@@ -108,7 +120,8 @@ export default function MapZonePicker({ value, onChange, onClose }) {
     });
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (e) => {
+    if (e) e.preventDefault();
     if (!searchQuery.trim()) return;
     setSearching(true);
     try {
@@ -132,7 +145,8 @@ export default function MapZonePicker({ value, onChange, onClose }) {
     }
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = (e) => {
+    if (e) e.preventDefault();
     const finalZone = zoneName.trim() || (selectedCoords ? `Zone (${selectedCoords.lat.toFixed(3)}, ${selectedCoords.lng.toFixed(3)})` : '');
     onChange(finalZone, selectedCoords);
     onClose();
@@ -163,11 +177,11 @@ export default function MapZonePicker({ value, onChange, onClose }) {
                   type="text"
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                  onKeyDown={e => e.key === 'Enter' && handleSearch(e)}
                   placeholder="e.g. Dharavi, Mumbai"
                   className="input-field flex-1 text-sm py-1.5"
                 />
-                <button onClick={handleSearch} disabled={searching} className="btn-primary px-3 py-1.5">
+                <button type="button" onClick={handleSearch} disabled={searching} className="btn-primary px-3 py-1.5">
                   <Search className="w-4 h-4" />
                 </button>
               </div>
@@ -258,8 +272,8 @@ export default function MapZonePicker({ value, onChange, onClose }) {
 
         {/* Footer */}
         <div className="p-4 border-t border-[var(--border)] flex gap-3 justify-end shrink-0" style={{ background: 'var(--bg-surface)' }}>
-          <button onClick={onClose} className="btn-secondary">Cancel</button>
-          <button onClick={handleConfirm} disabled={!zoneName.trim() && !selectedCoords} className="btn-primary">
+          <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
+          <button type="button" onClick={handleConfirm} disabled={!zoneName.trim() && !selectedCoords} className="btn-primary">
             <Check className="w-4 h-4" /> Confirm Zone: {zoneName || '(click map first)'}
           </button>
         </div>

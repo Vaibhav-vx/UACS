@@ -34,7 +34,7 @@ export default function ComposerPage() {
   const [intelAction, setIntelAction] = useState(null); // 'preview' or 'quick'
   
   const [form, setForm] = useState(() => {
-    const defaultForm = { title: '', master_content: '', urgency: 'medium', target_zone: '', channels: ['sms'], languages: [], expires_at: '', expiry_action: 'flag', expiry_message: '' };
+    const defaultForm = { title: '', master_content: '', urgency: 'medium', target_zone: '', channels: ['sms'], languages: [], expires_at: '', expiry_action: 'flag', expiry_message: '', lat: null, lng: null };
     if (location.state && location.state.template) {
       return { 
         ...defaultForm, 
@@ -194,7 +194,13 @@ export default function ComposerPage() {
       {showMapPicker && (
         <MapZonePicker
           value={form.target_zone}
-          onChange={(zone) => updateForm('target_zone', zone)}
+          onChange={(zone, coords) => {
+            updateForm('target_zone', zone);
+            if (coords) {
+              updateForm('lat', coords.lat);
+              updateForm('lng', coords.lng);
+            }
+          }}
           onClose={() => setShowMapPicker(false)}
         />
       )}

@@ -23,9 +23,12 @@ export default function SituationMapCard() {
   const [loading, setLoading] = useState(true);
   const [mapSize, setMapSize] = useState('medium'); // small, medium, large
   const [nasaEvents, setNasaEvents] = useState([]);
+  const [recipients, setRecipients] = useState([]);
   const [clickPos, setClickPos] = useState(null);
   const [pinTitle, setPinTitle] = useState('');
   const [pinDesc, setPinDesc] = useState('');
+  const [pinZone, setPinZone] = useState('');
+  const [pinRadius, setPinRadius] = useState(5);
   const [pinUrgency, setPinUrgency] = useState('critical');
   const [submitting, setSubmitting] = useState(false);
 
@@ -33,6 +36,14 @@ export default function SituationMapCard() {
     useMapEvents({
       click(e) {
         setClickPos(e.latlng);
+        // Reverse geocode to get name
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.display_name) {
+              setPinZone(data.display_name.split(',').slice(0, 2).join(',').trim());
+            }
+          }).catch(() => {});
       },
     });
     return null;
@@ -41,12 +52,14 @@ export default function SituationMapCard() {
   useEffect(() => {
     const fetchAlerts = async () => {
       try {
-        const [msgRes, nasaRes] = await Promise.all([
+        const [msgRes, nasaRes, recRes] = await Promise.all([
           messagesApi.getAll('active'),
-          nasaApi.getEvents(30).catch(() => ({ data: { events: [] } }))
+          nasaApi.getEvents(30).catch(() => ({ data: { events: [] } })),
+          import('../api').then(m => m.recipientsApi.getAll()).catch(() => ({ data: [] }))
         ]);
         setAlerts(msgRes.data);
         setNasaEvents(nasaRes.data.events || []);
+        setRecipients(recRes.data || []);
       } catch (err) {
         console.error('Failed to fetch dashboard map alerts:', err);
       } finally {
@@ -93,7 +106,8 @@ export default function SituationMapCard() {
         title: `[PIN] ${pinTitle}`,
         master_content: pinDesc,
         urgency: pinUrgency,
-        target_zone: 'General',
+        target_zone: pinZone || 'General',
+        radius: pinRadius,
         channels: ['website', 'sms'],
         languages: ['en'],
         lat: clickPos.lat,
@@ -104,6 +118,7 @@ export default function SituationMapCard() {
       setClickPos(null);
       setPinTitle('');
       setPinDesc('');
+      setPinZone('');
       // Refresh
       const msgRes = await messagesApi.getAll('active');
       setAlerts(msgRes.data);
@@ -198,6 +213,15 @@ export default function SituationMapCard() {
                   value={pinDesc}
                   onChange={e => setPinDesc(e.target.value)}
                 />
+                <input 
+                  placeholder="Location Name (e.g. Dharavi)" 
+                  className="w-full bg-theme-hover p-2 rounded-lg text-xs border border-theme-border"
+                  value={pinZone}
+                  onChange={e => setPinZone(e.target.value)}
+                />
+                <div className="flex items-center gap-2 text-xs font-bold text-theme-muted">
+                  Radius: <input type="number" min="1" max="50" value={pinRadius} onChange={e => setPinRadius(e.target.value)} className="w-16 bg-theme-hover p-1 rounded border border-theme-border text-center" /> km
+                </div>
                 <div className="flex gap-2">
                   <button 
                     onClick={() => setPinUrgency('critical')}
@@ -240,7 +264,7 @@ export default function SituationMapCard() {
             <div key={alert.id}>
               <Circle 
                 center={pos} 
-                radius={1000} 
+                radius={(alert.radius || 10) * 1000} 
                 pathOptions={{ color, fillColor: color, fillOpacity: 0.2, weight: 2 }} 
               />
               <Marker position={pos} icon={alertIcon(alert.urgency)}>
@@ -253,6 +277,22 @@ export default function SituationMapCard() {
                 </Popup>
               </Marker>
             </div>
+          );
+        })}
+
+        {/* Recipients */}
+        {recipients.map(r => {
+          if (!r.lat || !r.lng) return null;
+          return (
+            <Marker key={r.id} position={[r.lat, r.lng]} icon={L.divIcon({ html: '<div style="font-size: 14px;">👤</div>', className: 'custom-div-icon', iconSize: [20, 20] })}>
+              <Popup>
+                <div className="p-1 text-xs">
+                  <div className="font-bold">{r.name}</div>
+                  <div className="text-theme-muted">{r.phone}</div>
+                  <div className="text-[9px] uppercase mt-1">{r.zone}</div>
+                </div>
+              </Popup>
+            </Marker>
           );
         })}
 
