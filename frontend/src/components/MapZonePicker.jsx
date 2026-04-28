@@ -148,7 +148,7 @@ export default function MapZonePicker({ value, onChange, onClose }) {
   const handleConfirm = (e) => {
     if (e) e.preventDefault();
     const finalZone = zoneName.trim() || (selectedCoords ? `Zone (${selectedCoords.lat.toFixed(3)}, ${selectedCoords.lng.toFixed(3)})` : '');
-    onChange(finalZone, selectedCoords);
+    onChange(finalZone, selectedCoords, radius);
     onClose();
   };
 

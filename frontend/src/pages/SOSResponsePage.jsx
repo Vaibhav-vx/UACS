@@ -202,12 +202,21 @@ const SOSResponsePage = () => {
                           <CheckCircle className="w-4 h-4" />
                           Mark Assisted
                         </button>
-                        <button className="p-3 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-all border border-white/5">
+                        <a 
+                          href={`tel:${report.user_phone || '911'}`}
+                          className="p-3 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-all border border-white/5 flex items-center justify-center"
+                        >
                           <Phone className="w-5 h-5" />
-                        </button>
-                        <button className="p-3 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-all border border-white/5">
-                          <MapIcon className="w-5 h-5" />
-                        </button>
+                        </a>
+                        {report.lat && report.lng && (
+                          <a 
+                            href={`https://www.google.com/maps/search/?api=1&query=${report.lat},${report.lng}`}
+                            target="_blank" rel="noreferrer"
+                            className="p-3 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-all border border-white/5 flex items-center justify-center"
+                          >
+                            <MapIcon className="w-5 h-5" />
+                          </a>
+                        )}
                       </>
                     ) : (
                       <div className="flex items-center gap-2 text-emerald-400 text-sm font-bold bg-emerald-500/10 px-4 py-2 rounded-lg">

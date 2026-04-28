@@ -152,7 +152,7 @@ export default function MapPage() {
 
           {/* Active Alerts */}
           {alerts.map(alert => {
-            const pos = alert.lat && alert.lng ? [alert.lat, alert.lng] : (ZONE_COORDS[alert.target_zone] || ZONE_COORDS['General']);
+            const pos = alert.lat && alert.lng ? [alert.lat, alert.lng] : (ZONE_COORDS[alert.target_zone] || [20.5937, 78.9629]);
             const color = alert.urgency === 'critical' ? '#ef4444' : '#f97316';
             return (
               <div key={alert.id}>

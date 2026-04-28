@@ -7,11 +7,24 @@ import {
 import { useLanguage } from '../i18n/LanguageContext';
 import { useTheme } from '../ThemeContext';
 import toast from 'react-hot-toast';
+import MapZonePicker from '../components/MapZonePicker';
+import { authApi } from '../api';
+import { useAuth } from '../context/AuthContext';
 
 export default function SettingsPage() {
   const { language, setLanguage, LANGUAGES } = useLanguage();
   const { theme, toggleTheme } = useTheme();
+  const { user: authUser, fetchUser } = useAuth();
   const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('uacs_user') || '{}'));
+  
+  const [profileForm, setProfileForm] = useState({
+    name: user.name || '',
+    zone: user.zone || user.department || localStorage.getItem('uacs_pref_zone') || 'General',
+    lat: user.lat || null,
+    lng: user.lng || null
+  });
+  
+  const [showMapPicker, setShowMapPicker] = useState(false);
   
   const [notifications, setNotifications] = useState({
     critical: true,
@@ -29,8 +42,20 @@ export default function SettingsPage() {
     includeStats: true
   });
 
-  const handleSave = () => {
-    toast.success("Preferences updated successfully");
+  const handleSave = async () => {
+    try {
+      await authApi.updateProfile({
+        name: profileForm.name,
+        zone: profileForm.zone,
+        lat: profileForm.lat,
+        lng: profileForm.lng
+      });
+      localStorage.setItem('uacs_pref_zone', profileForm.zone);
+      if (fetchUser) await fetchUser();
+      toast.success("Preferences updated successfully");
+    } catch (e) {
+      toast.error("Failed to update profile");
+    }
   };
 
   return (
@@ -72,20 +97,34 @@ export default function SettingsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                  <div className="space-y-1.5">
                     <label className="text-[10px] font-black uppercase tracking-widest text-theme-dim">Full Name</label>
-                    <input type="text" className="w-full px-4 py-2.5 bg-theme-hover border border-theme-border rounded-xl text-sm font-medium" value={user.name} readOnly />
+                    <input type="text" className="w-full px-4 py-2.5 bg-theme-hover border border-theme-border rounded-xl text-sm font-medium" value={profileForm.name} onChange={e => setProfileForm(p => ({...p, name: e.target.value}))} />
                  </div>
                  <div className="space-y-1.5">
                     <label className="text-[10px] font-black uppercase tracking-widest text-theme-dim">Phone Number</label>
-                    <input type="text" className="w-full px-4 py-2.5 bg-theme-hover border border-theme-border rounded-xl text-sm font-medium" value={user.phone || '+91 81698 25915'} readOnly />
+                    <input type="text" className="w-full px-4 py-2.5 bg-theme-hover border border-theme-border rounded-xl text-sm font-medium" value={user.phone || user.email || '+91 81698 25915'} readOnly />
                  </div>
                  <div className="space-y-1.5">
                     <label className="text-[10px] font-black uppercase tracking-widest text-theme-dim">Primary Zone</label>
                     <div className="flex items-center gap-2">
-                       <input type="text" className="w-full px-4 py-2.5 bg-theme-hover border border-theme-border rounded-xl text-sm font-medium" value={localStorage.getItem('uacs_pref_zone') || 'Zone 4'} readOnly />
-                       <button className="px-3 py-2.5 bg-theme-hover rounded-xl text-xs font-bold hover:text-accent transition-all">Change</button>
+                       <input type="text" className="w-full px-4 py-2.5 bg-theme-hover border border-theme-border rounded-xl text-sm font-medium" value={profileForm.zone} onChange={e => setProfileForm(p => ({...p, zone: e.target.value}))} />
+                       <button onClick={() => setShowMapPicker(true)} className="px-3 py-2.5 bg-theme-hover rounded-xl text-xs font-bold hover:text-accent transition-all shrink-0">Change</button>
                     </div>
                  </div>
               </div>
+              {showMapPicker && (
+                <MapZonePicker
+                  value={profileForm.zone}
+                  onChange={(val, coords) => {
+                    setProfileForm(p => ({
+                      ...p,
+                      zone: val,
+                      lat: coords?.lat || null,
+                      lng: coords?.lng || null
+                    }));
+                  }}
+                  onClose={() => setShowMapPicker(false)}
+                />
+              )}
            </section>
 
            {/* 2. LANGUAGE & APPEARANCE */}

@@ -7,6 +7,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { dbSelect, dbGetById, dbGetOne, dbInsert, dbUpdate, dbDelete } from '../database/db.js';
 import { sendSMS } from '../integrations/smsGateway.js';
+import { detectZoneFromLocation } from '../utils/zoneMapper.js';
 
 const router = Router();
 
@@ -32,11 +33,12 @@ router.post('/', async (req, res) => {
 
     // Auto-normalize phone: prepend +91 if missing country code
     const normalizedPhone = phone.startsWith('+') ? phone : `+91${phone.replace(/^0/, '')}`;
+    const detectedZone = detectZoneFromLocation(zone);
 
     const newRecipient = await dbInsert('recipients', {
       name,
       phone: normalizedPhone,
-      zone: zone || null,
+      zone: detectedZone,
       language: language || 'en',
       lat: lat || null,
       lng: lng || null
@@ -53,8 +55,8 @@ router.post('/', async (req, res) => {
         email:      normalizedPhone, // phone stored in email column
         password:   hash,
         role:       'user',
-        department: zone || 'General',
-        zone:       zone || 'General',
+        department: detectedZone,
+        zone:       detectedZone,
         language:   language || 'english',
         lat:        lat || null,
         lng:        lng || null
@@ -80,7 +82,13 @@ router.put('/:id', async (req, res) => {
     const updates = {};
     if (name)     updates.name     = name;
     if (phone)    updates.phone    = phone.startsWith('+') ? phone : `+91${phone.replace(/^0/, '')}`;
-    if (zone !== undefined) updates.zone = zone || null;
+    
+    let detectedZone = existing.zone;
+    if (zone !== undefined) {
+      detectedZone = detectZoneFromLocation(zone);
+      updates.zone = detectedZone;
+    }
+    
     if (language) updates.language = language;
     if (lat !== undefined) updates.lat = lat;
     if (lng !== undefined) updates.lng = lng;
@@ -94,8 +102,8 @@ router.put('/:id', async (req, res) => {
       if (name) userUpdates.name = name.trim();
       if (updates.phone) userUpdates.email = updates.phone;
       if (zone !== undefined) {
-        userUpdates.department = zone;
-        userUpdates.zone = zone;
+        userUpdates.department = detectedZone;
+        userUpdates.zone = detectedZone;
       }
       if (language) userUpdates.language = language;
       if (lat !== undefined) userUpdates.lat = lat;

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { ThemeProvider, useTheme } from './ThemeContext';
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import DashboardPage   from './pages/DashboardPage';
 import ComposerPage    from './pages/ComposerPage';
 import ApprovalPage    from './pages/ApprovalPage';
@@ -114,7 +115,7 @@ function LanguageSwitcher() {
 
 /* ── App Layout ───────────────────────────────────── */
 function AppLayout() {
-  const [user, setUser]               = useState(null);
+  const { user, setUser }             = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate                      = useNavigate();
   const { theme, toggleTheme }        = useTheme();
@@ -123,12 +124,8 @@ function AppLayout() {
   const isSimulation                  = location.pathname === '/admin/simulation';
 
   useEffect(() => {
-    const token  = localStorage.getItem('uacs_token');
-    const stored = localStorage.getItem('uacs_user');
-    if (!token || !stored) { navigate('/login'); return; }
-    try { setUser(JSON.parse(stored)); }
-    catch { localStorage.removeItem('uacs_token'); localStorage.removeItem('uacs_user'); navigate('/login'); }
-  }, [navigate]);
+    if (!user) { navigate('/login'); }
+  }, [user, navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('uacs_token');
@@ -383,23 +380,25 @@ export default function App() {
     <LanguageProvider>
       <ThemeProvider>
         <BrowserRouter>
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              duration: 4000,
-              style: {
-                background: 'var(--bg-surface)', color: 'var(--text-primary)',
-                border: '1px solid var(--border)', borderRadius: '12px',
-                fontSize: '14px', boxShadow: 'var(--shadow-md)',
-              },
-              success: { iconTheme: { primary: '#22c55e', secondary: '#fff' } },
-              error:   { iconTheme: { primary: '#ef4444', secondary: '#fff' } },
-            }}
-          />
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/*"     element={<AppLayout />} />
-          </Routes>
+          <AuthProvider>
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: 'var(--bg-surface)', color: 'var(--text-primary)',
+                  border: '1px solid var(--border)', borderRadius: '12px',
+                  fontSize: '14px', boxShadow: 'var(--shadow-md)',
+                },
+                success: { iconTheme: { primary: '#22c55e', secondary: '#fff' } },
+                error:   { iconTheme: { primary: '#ef4444', secondary: '#fff' } },
+              }}
+            />
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/*"     element={<AppLayout />} />
+            </Routes>
+          </AuthProvider>
         </BrowserRouter>
       </ThemeProvider>
     </LanguageProvider>

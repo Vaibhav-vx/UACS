@@ -9,6 +9,7 @@ import { authApi } from '../api';
 import { useTheme } from '../ThemeContext';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import MapZonePicker from '../components/MapZonePicker';
 
 function Section({ title, subtitle, icon: Icon, children }) {
@@ -59,6 +60,7 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const { t } = useLanguage();
+  const { user, fetchUser } = useAuth();
 
   // Profile section
   const [name,       setName]       = useState('');
@@ -93,23 +95,26 @@ export default function ProfilePage() {
   const [emMsg, setEmMsg] = useState({ type: '', text: '' });
 
   useEffect(() => {
-    try {
-      const u = JSON.parse(localStorage.getItem('uacs_user') || '{}');
-      setName(u.name || '');
-      setPhone(u.phone || '');
-      setDept(u.department || '');
-      setRole(u.role || 'admin');
-    } catch {}
-
-    // Load preferences
-    authApi.getPreferences().then(res => {
-      setLang(res.data.language || 'english');
-      setZone(res.data.zone || 'General');
-      setLat(res.data.lat);
-      setLng(res.data.lng);
-      setSmsActive(res.data.active !== false);
-    }).catch(console.error);
-  }, []);
+    if (user) {
+      setName(user.name || '');
+      setPhone(user.phone || user.email || '');
+      setDept(user.department || user.zone || '');
+      setRole(user.role || '');
+      setZone(user.zone || 'General');
+      setLat(user.lat || null);
+      setLng(user.lng || null);
+      setLang(user.language || 'english');
+    }
+    import('../api').then(m => m.authApi.getPreferences().then(res => {
+      if (res.data) {
+        setLang(res.data.language || 'english');
+        setZone(res.data.zone || 'General');
+        setLat(res.data.lat || null);
+        setLng(res.data.lng || null);
+        setSmsActive(res.data.active !== false);
+      }
+    }).catch(console.error));
+  }, [user]);
 
   const saveProfile = async () => {
     setProfMsg({ type: '', text: '' });
@@ -153,9 +158,7 @@ export default function ProfilePage() {
     try {
       await authApi.updatePreferences({ language: lang, zone, lat, lng, active: smsActive });
       setPrefMsg({ type: 'success', text: 'Preferences saved successfully' });
-      // update local storage for dashboard usage
-      localStorage.setItem('uacs_pref_zone', zone);
-      localStorage.setItem('uacs_pref_lang', lang);
+      await fetchUser(); // Updates the auth context and dashboard globally
       toast.success('Preferences saved');
     } catch (err) {
       setPrefMsg({ type: 'error', text: err.response?.data?.error || 'Failed to update preferences' });

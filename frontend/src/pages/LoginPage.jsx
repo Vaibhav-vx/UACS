@@ -477,32 +477,21 @@ export default function LoginPage() {
                       onChange={e => { setRegDept(e.target.value); setRegError(''); }}
                       placeholder="e.g. Mumbai, Zone 4"
                       hint={regLat ? `📌 Pinned: ${regLat.toFixed(4)}, ${regLng.toFixed(4)}` : t('mapHint') || 'Enter area name or use map icon'}
+                      rightEl={
+                        <button
+                          type="button"
+                          onClick={() => setShowMapPicker(true)}
+                          style={{
+                            position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)',
+                            height: '80%', padding: '0 12px', background: 'var(--accent)',
+                            color: 'white', border: 'none', borderRadius: '6px', fontSize: '11px',
+                            fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px',
+                          }}
+                        >
+                          <MapIcon size={14} /> MAP
+                        </button>
+                      }
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowMapPicker(true)}
-                      style={{
-                        position: 'absolute',
-                        right: '10px',
-                        bottom: '10px',
-                        height: '32px',
-                        padding: '0 10px',
-                        background: 'var(--accent)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        fontSize: '10px',
-                        fontWeight: 800,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        zIndex: 10
-                      }}
-                    >
-                      <MapIcon size={14} />
-                      MAP
-                    </button>
                   </div>
 
                   {showMapPicker && (

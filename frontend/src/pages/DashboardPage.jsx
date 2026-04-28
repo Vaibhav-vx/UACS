@@ -13,6 +13,7 @@ import ChannelBadge from '../components/ChannelBadge';
 import AlertBanner from '../components/AlertBanner';
 import SituationMapCard from '../components/SituationMapCard';
 import { EAPS, ZONE_COORDS } from '../constants';
+import { useAuth } from '../context/AuthContext';
 
 export default function DashboardPage() {
   const [activeMessages, setActiveMessages]   = useState([]);
@@ -38,8 +39,8 @@ export default function DashboardPage() {
   
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('uacs_user') || '{}'));
-  const isAdmin = user.role?.toLowerCase() === 'admin';
+  const { user } = useAuth();
+  const isAdmin = user?.role?.toLowerCase() === 'admin';
 
   const fetchData = useCallback(async () => {
     try {
@@ -62,7 +63,7 @@ export default function DashboardPage() {
         setSafetyStats(safStats.data);
         setRecentReports(safRecent.data);
       } else {
-        const userZone = localStorage.getItem('uacs_pref_zone') || 'General';
+        const userZone = user?.zone || 'General';
         const [rec, saf] = await Promise.all([
           recipientsApi.getAll(userZone),
           messagesApi.getSafetyStats()
@@ -178,16 +179,39 @@ export default function DashboardPage() {
   if (loading) return (<div className="space-y-6"><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">{[1,2,3,4].map(i=><div key={i} className="glass-card p-5 h-24 shimmer rounded-xl"/>)}</div><div className="space-y-3">{[1,2,3].map(i=><div key={i} className="glass-card p-6 h-32 shimmer rounded-xl"/>)}</div></div>);
 
   if (!isAdmin) {
-    const userZone = localStorage.getItem('uacs_pref_zone') || 'General';
+    const userZone = user?.zone || 'General';
+    
+    // Improved logic for identifying myAlerts vs nearbyAlerts
+    const zoneNumberMatch = userZone.match(/Zone (\d+)/);
+    const zoneNameMatch = userZone.match(/—\s*(.*)/);
+    const userCity = zoneNameMatch ? zoneNameMatch[1] : userZone;
+
     const myAlerts = activeMessages.filter(msg => {
-      if (userZone === 'General') return true;
-      if (!msg.target_zone || msg.target_zone === 'All' || msg.target_zone === 'General') return true;
-      return msg.target_zone === userZone;
+      if (!msg.target_zone || msg.target_zone === 'All Zones' || msg.target_zone === 'General') return true;
+      return msg.target_zone.includes(userZone) || (zoneNumberMatch && msg.target_zone.includes(`Zone ${zoneNumberMatch[1]}`)) || (userCity && msg.target_zone.includes(userCity));
     });
     const nearbyAlerts = activeMessages.filter(msg => !myAlerts.includes(msg));
 
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+
     return (
       <div className="space-y-8 animate-fade-in max-w-5xl mx-auto pb-12">
+        {/* User Greeting & LIVE Indicator */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-black">{greeting}, {user?.name || 'Citizen'} 👋</h1>
+            <p className="text-sm font-bold text-theme-muted mt-1">
+              Your Zone: <span className="text-accent">{userZone}</span> | Language: {user?.language?.toUpperCase() || 'EN'}
+            </p>
+          </div>
+          <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/30 px-4 py-2 rounded-full">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+            <span className="text-xs font-bold text-green-500 tracking-widest uppercase">LIVE — Updates every 30s</span>
+            <span className="text-[10px] text-theme-dim ml-2 border-l border-theme-border pl-2">Last updated: {new Date().toLocaleTimeString()}</span>
+          </div>
+        </div>
+
         {/* Status Header */}
         <div className="glass-card p-8 rounded-3xl relative overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-theme-surface to-accent/5">
            <div style={{ position: 'absolute', top: 0, right: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg, transparent, var(--accent-bg))', opacity: 0.5, pointerEvents: 'none' }} />
@@ -337,30 +361,46 @@ export default function DashboardPage() {
                              </h4>
                              <div className="flex flex-col sm:flex-row gap-3">
                                <button 
+                                 disabled={actionLoading[`safe-${msg.id}`]}
                                  onClick={async () => {
+                                   setActionLoading(p => ({ ...p, [`safe-${msg.id}`]: true }));
                                    try {
                                      await messagesApi.submitSafety(msg.id, 'safe');
-                                     toast.success("Glad to hear you're safe!");
+                                     localStorage.setItem(`safety_${msg.id}_${user?.id}`, 'safe');
+                                     toast.success("✅ Marked Safe successfully!");
                                      fetchData();
                                    } catch (e) { toast.error("Failed to submit"); }
+                                   finally { setActionLoading(p => ({ ...p, [`safe-${msg.id}`]: false })); }
                                  }}
-                                 className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg"
+                                 className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg"
                                >
-                                 <CheckCircle className="w-5 h-5" /> {t('iAmSafe') || 'YES, I AM SAFE'}
+                                 {actionLoading[`safe-${msg.id}`] ? <Loader2 className="w-5 h-5 animate-spin" /> : <><CheckCircle className="w-5 h-5" /> {t('iAmSafe') || 'YES, I AM SAFE'}</>}
                                </button>
                                <button 
+                                 disabled={actionLoading[`sos-${msg.id}`]}
                                  onClick={async () => {
+                                   setActionLoading(p => ({ ...p, [`sos-${msg.id}`]: true }));
                                    try {
                                      await messagesApi.submitSafety(msg.id, 'assistance');
-                                     toast.error("Assistance request sent");
+                                     localStorage.setItem(`safety_${msg.id}_${user?.id}`, 'need_help');
+                                     toast.error("🆘 Help requested. Authorities notified.", { duration: 6000 });
                                      fetchData();
                                    } catch (e) { toast.error("Failed to submit SOS"); }
+                                   finally { setActionLoading(p => ({ ...p, [`sos-${msg.id}`]: false })); }
                                  }}
-                                 className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg"
+                                 className="flex-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg"
                                >
-                                 <AlertTriangle className="w-5 h-5" /> {t('iNeedAssistance') || 'SOS: I NEED HELP'}
+                                 {actionLoading[`sos-${msg.id}`] ? <Loader2 className="w-5 h-5 animate-spin" /> : <><AlertTriangle className="w-5 h-5" /> {t('iNeedAssistance') || 'SOS: I NEED HELP'}</>}
                                </button>
                              </div>
+                           </div>
+                         )}
+                         {localStorage.getItem(`safety_${msg.id}_${user?.id}`) && (
+                           <div className="mt-4 p-4 rounded-xl bg-theme-hover border border-theme-border flex items-center gap-3">
+                             {localStorage.getItem(`safety_${msg.id}_${user?.id}`) === 'safe' 
+                               ? <><CheckCircle className="w-5 h-5 text-green-500" /> <span className="text-sm font-bold text-green-500">✅ Marked Safe</span></>
+                               : <><AlertTriangle className="w-5 h-5 text-red-500" /> <span className="text-sm font-bold text-red-500">🆘 Help Requested</span></>
+                             }
                            </div>
                          )}
                        </div>

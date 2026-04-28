@@ -6,6 +6,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { dbGetOne, dbUpdate, dbInsert } from '../database/db.js';
+import { detectZoneFromLocation } from '../utils/zoneMapper.js';
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'uacs_super_secret_2026';
@@ -152,12 +153,14 @@ router.post('/register', async (req, res) => {
 
     // Hash password and create user
     const hash = bcrypt.hashSync(password, 10);
+    const detectedZone = detectZoneFromLocation(department);
     const newUser = await dbInsert('users', {
       name:       name.trim(),
       email:      normalizedPhone, // Use email column to store phone
       password:   hash,
       role:       'user', // FORCE USER ROLE - NO EXCEPTIONS
-      department: department?.trim() || null,
+      department: detectedZone,
+      zone:       detectedZone,
       lat:        latitude || null,
       lng:        longitude || null,
     });
@@ -168,7 +171,7 @@ router.post('/register', async (req, res) => {
       await dbInsert('recipients', {
         name:       name.trim(),
         phone:      normalizedPhone,
-        zone:       department?.trim() || 'General',
+        zone:       detectedZone,
         language:   'english',
         active:     true,
         lat:        latitude || null,
@@ -178,11 +181,11 @@ router.post('/register', async (req, res) => {
     } else {
       // Update existing recipient if coordinates are provided
       if (latitude && longitude) {
-        await dbUpdate('recipients', { 
+        await dbUpdate('recipients', existingRecipient.id, { 
           lat: latitude, 
           lng: longitude, 
-          zone: department?.trim() || existingRecipient.zone 
-        }, { id: existingRecipient.id });
+          zone: detectedZone
+        });
       }
     }
 
@@ -220,7 +223,15 @@ router.get('/me', async (req, res) => {
     if (!user) return res.status(401).json({ error: 'User not found' });
 
     const { password: _, ...safe } = user;
-    res.json(safe);
+    
+    // Ensure all required fields are available for frontend
+    const profileData = {
+      ...safe,
+      zone: safe.zone || safe.department || 'Zone 9 — Other Regions',
+      language: safe.language || 'en',
+    };
+    
+    res.json(profileData);
   } catch (err) {
     if (err.name === 'TokenExpiredError') return res.status(401).json({ error: 'Token expired', code: 'TOKEN_EXPIRED' });
     if (err.name === 'JsonWebTokenError')  return res.status(401).json({ error: 'Invalid token',  code: 'INVALID_TOKEN' });
@@ -237,9 +248,34 @@ router.put('/profile', async (req, res) => {
       return res.status(401).json({ error: 'No token provided' });
     const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, JWT_SECRET);
-    const { name, department } = req.body;
+    const { name, department, zone, lat, lng } = req.body;
     if (!name?.trim()) return res.status(400).json({ error: 'Name is required' });
-    const updated = await dbUpdate('users', decoded.id, { name: name.trim(), department: department?.trim() || null });
+    
+    let detectedZone = department?.trim();
+    if (zone) detectedZone = detectZoneFromLocation(zone);
+
+    const userUpdates = { name: name.trim() };
+    if (detectedZone) {
+       userUpdates.department = detectedZone;
+       userUpdates.zone = detectedZone;
+    }
+    if (lat !== undefined) userUpdates.lat = lat;
+    if (lng !== undefined) userUpdates.lng = lng;
+
+    const updated = await dbUpdate('users', decoded.id, userUpdates);
+
+    // Sync to Recipients table (by phone/email)
+    if (updated && updated.email) {
+       const existingRecipient = await dbGetOne('recipients', { phone: updated.email });
+       if (existingRecipient) {
+          const recUpdates = { name: updated.name };
+          if (detectedZone) recUpdates.zone = detectedZone;
+          if (lat !== undefined) recUpdates.lat = lat;
+          if (lng !== undefined) recUpdates.lng = lng;
+          await dbUpdate('recipients', existingRecipient.id, recUpdates);
+       }
+    }
+
     const { password: _, ...safe } = updated;
     res.json({ success: true, user: safe });
   } catch (err) {

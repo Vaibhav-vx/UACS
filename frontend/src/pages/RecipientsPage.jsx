@@ -7,6 +7,7 @@ import {
 import toast from 'react-hot-toast';
 import { recipientsApi } from '../api';
 import { useLanguage } from '../i18n/LanguageContext';
+import { detectZoneFromLocation } from '../utils/zoneMapper';
 import MapZonePicker from '../components/MapZonePicker';
 import 'leaflet/dist/leaflet.css';
 
@@ -50,8 +51,11 @@ function RecipientModal({ initial, onSave, onClose, saving }) {
   const { t } = useLanguage();
   const [form, setForm] = useState(initial || { name: '', phone: '', zone: '', lat: null, lng: null, language: 'en' });
   const [showMapPicker, setShowMapPicker] = useState(false);
+  
   const upd = (k, v) => setForm(p => ({ ...p, [k]: v }));
   const updCoords = (v, lat, lng) => setForm(p => ({ ...p, zone: v, lat, lng }));
+
+  const detectedZone = detectZoneFromLocation(form.zone);
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
@@ -103,13 +107,13 @@ function RecipientModal({ initial, onSave, onClose, saving }) {
           <div>
             <label className="block text-sm font-medium mb-1.5 text-theme-secondary">
               <MapIcon style={{ width: 13, height: 13, display: 'inline', marginRight: 4 }} />
-              {t('locationZone') || 'Location / Zone'}
+              {t('locationZone') || 'City / Area'}
             </label>
             <div className="flex gap-2 mb-2">
               <input 
                 type="text"
                 className="input-field flex-1"
-                placeholder={t('zonePlaceholder') || "e.g. Mumbai, Zone 4"}
+                placeholder={t('zonePlaceholder') || "e.g. Delhi, Mumbai North, Pune"}
                 value={form.zone}
                 onChange={e => upd('zone', e.target.value)}
               />
@@ -122,16 +126,11 @@ function RecipientModal({ initial, onSave, onClose, saving }) {
                 <MapIcon style={{ width: 16, height: 16 }} />
               </button>
             </div>
-            
-            <select 
-              className="input-field mb-2 text-xs"
-              value={form.zone}
-              onChange={e => upd('zone', e.target.value)}
-            >
-              <option value="">{t('quickPresets') || 'Quick Presets...'}</option>
-              {Object.keys(ZONE_PRESETS).map(z => <option key={z} value={z}>{z}</option>)}
-              <option value="General">General / All</option>
-            </select>
+            {form.zone && (
+              <p className="text-xs text-green-500 mt-1 mb-2 font-medium">
+                📍 Detected Zone: {detectedZone}
+              </p>
+            )}
           </div>
 
           {showMapPicker && (
