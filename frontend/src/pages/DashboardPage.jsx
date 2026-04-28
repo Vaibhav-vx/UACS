@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Activity, Clock, AlertTriangle, CheckCircle, Send, Timer, RefreshCw, Eye, RotateCcw, 
   Zap, TrendingUp, X, PenSquare, Map as MapIcon, Globe, Info,
-  Navigation, Heart, History, BarChart3, CloudRain
+  Navigation, Heart, History, BarChart3, CloudRain, Phone, Loader2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { messagesApi, authApi, recipientsApi } from '../api';
@@ -180,6 +180,9 @@ export default function DashboardPage() {
 
   if (!isAdmin) {
     const userZone = user?.zone || 'General';
+    const userPhone = user?.phone || user?.email || 'Not Provided';
+    const userLang = user?.language || 'en';
+    const userCoords = user?.lat && user?.lng ? `${user.lat.toFixed(4)}, ${user.lng.toFixed(4)}` : 'GPS Not Synced';
     
     // Improved logic for identifying myAlerts vs nearbyAlerts
     const zoneNumberMatch = userZone.match(/Zone (\d+)/);
@@ -190,7 +193,6 @@ export default function DashboardPage() {
       if (!msg.target_zone || msg.target_zone === 'All Zones' || msg.target_zone === 'General') return true;
       return msg.target_zone.includes(userZone) || (zoneNumberMatch && msg.target_zone.includes(`Zone ${zoneNumberMatch[1]}`)) || (userCity && msg.target_zone.includes(userCity));
     });
-    const nearbyAlerts = activeMessages.filter(msg => !myAlerts.includes(msg));
 
     const hour = new Date().getHours();
     const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
@@ -201,304 +203,238 @@ export default function DashboardPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-black">{greeting}, {user?.name || 'Citizen'} 👋</h1>
-            <p className="text-sm font-bold text-theme-muted mt-1">
-              Your Zone: <span className="text-accent">{userZone}</span> | Language: {user?.language?.toUpperCase() || 'EN'}
+            <p className="text-sm font-bold text-theme-muted mt-1 flex items-center gap-2">
+              <Phone className="w-4 h-4 text-theme-secondary" /> {userPhone}
+              <span className="opacity-30">|</span>
+              <Globe className="w-4 h-4 text-theme-secondary" /> {userLang.toUpperCase()}
             </p>
           </div>
           <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/30 px-4 py-2 rounded-full">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            <span className="text-xs font-bold text-green-500 tracking-widest uppercase">LIVE — Updates every 30s</span>
-            <span className="text-[10px] text-theme-dim ml-2 border-l border-theme-border pl-2">Last updated: {new Date().toLocaleTimeString()}</span>
+            <span className="text-xs font-bold text-green-500 tracking-widest uppercase">LIVE SYNCHRONIZATION</span>
+            <span className="text-[10px] text-theme-dim ml-2 border-l border-theme-border pl-2">Updates every 30s</span>
           </div>
         </div>
 
-        {/* Status Header */}
+        {/* Modern Synced Dashboard Profile Header */}
         <div className="glass-card p-8 rounded-3xl relative overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-theme-surface to-accent/5">
-           <div style={{ position: 'absolute', top: 0, right: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg, transparent, var(--accent-bg))', opacity: 0.5, pointerEvents: 'none' }} />
-           
-           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="space-y-2">
-                 <div className="flex items-center gap-2 mb-1">
-                    <span className={`w-3 h-3 rounded-full ${myAlerts.length === 0 ? 'bg-green-500' : 'bg-red-500 animate-pulse'}`} />
-                    <span className={`text-xs font-black uppercase tracking-[0.2em] ${myAlerts.length === 0 ? 'text-green-500' : 'text-red-500'}`}>
-                      {myAlerts.length === 0 ? 'Live: All Clear' : 'Live: Critical Alert'}
-                    </span>
-                 </div>
-                 <h1 className="text-4xl font-black tracking-tight">
-                   {myAlerts.length === 0 ? '🟢 YOU ARE SAFE' : '🔴 ALERT IN YOUR ZONE'}
-                 </h1>
-                 <div className="flex flex-wrap items-center gap-4 text-sm font-bold opacity-80">
-                    <div className="flex items-center gap-2">
-                      <MapIcon className="w-4 h-4 text-accent" /> {userZone}
-                    </div>
-                    <span className="opacity-30">|</span>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-accent" /> Last checked in: 2 hours ago
-                    </div>
-                 </div>
+          <div style={{ position: 'absolute', top: 0, right: 0, width: '50%', height: '100%', background: 'linear-gradient(90deg, transparent, var(--accent-bg))', opacity: 0.3, pointerEvents: 'none' }} />
+          
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+            <div className="flex items-center gap-6">
+              <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center text-accent text-3xl font-black shadow-inner border-4 border-accent/10">
+                {(user?.name || 'C').charAt(0).toUpperCase()}
               </div>
-
-              <div className="flex flex-col items-end gap-2">
-                 <div className="relative group">
-                   <button 
-                     onMouseDown={() => {
-                        setSosConfirming(true);
-                        const start = Date.now();
-                        const timer = setInterval(() => {
-                           const p = Math.min(((Date.now() - start) / 3000) * 100, 100);
-                           setSosProgress(p);
-                           if (p >= 100) {
-                              clearInterval(timer);
-                              setSosConfirming(false);
-                              setSosProgress(0);
-                              handleSOS();
-                           }
-                        }, 50);
-                        const endHandler = () => {
-                          clearInterval(timer);
-                          setSosConfirming(false);
-                          setSosProgress(0);
-                          window.removeEventListener('mouseup', endHandler);
-                        };
-                        window.addEventListener('mouseup', endHandler);
-                     }}
-                     className={`relative w-20 h-20 md:w-24 md:h-24 rounded-full font-black text-2xl shadow-2xl transition-all flex items-center justify-center border-4 border-red-500/50 overflow-hidden ${sosConfirming ? 'scale-110' : 'hover:scale-105 active:scale-95'}`}
-                     style={{ background: '#ef4444', color: 'white' }}
-                   >
-                     <div 
-                        className="absolute bottom-0 left-0 w-full bg-red-800 transition-all duration-75" 
-                        style={{ height: `${sosProgress}%`, opacity: 0.5 }} 
-                     />
-                     <Zap className={`relative z-10 w-8 h-8 md:w-10 md:h-10 fill-white ${sosConfirming ? 'animate-pulse' : ''}`} />
-                   </button>
-                   {sosConfirming && (
-                     <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-bold px-3 py-1 rounded-full whitespace-nowrap animate-bounce">
-                        HOLD FOR 3S TO SOS
-                     </div>
-                   )}
-                 </div>
-                 <span className="text-[10px] font-black text-red-500/70 uppercase tracking-widest mr-2">Hold to confirm SOS</span>
+              <div className="space-y-1">
+                <div className="flex items-center gap-3">
+                  <h1 className="text-3xl font-black tracking-tight">{userZone}</h1>
+                  <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 text-[10px] font-bold uppercase border border-green-500/20 flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3" /> Area Synced
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-theme-muted">
+                  <span className="flex items-center gap-1.5 text-accent"><MapIcon className="w-3.5 h-3.5" /> Recipient Registry Profile</span>
+                </div>
               </div>
-           </div>
+            </div>
+            
+            <div className="flex items-center gap-4 bg-theme-surface/50 p-4 rounded-2xl border border-theme-border backdrop-blur-sm">
+               <div className="space-y-1">
+                 <div className="text-[10px] uppercase font-black tracking-widest text-theme-muted">GPS Coordinates</div>
+                 <div className="font-mono text-sm font-bold text-theme-primary">{userCoords}</div>
+               </div>
+               <div className="h-8 w-px bg-theme-border mx-2"></div>
+               <div className="space-y-1">
+                 <div className="text-[10px] uppercase font-black tracking-widest text-theme-muted">Hold For SOS</div>
+                 <button 
+                   onMouseDown={() => {
+                      setSosConfirming(true);
+                      const start = Date.now();
+                      const timer = setInterval(() => {
+                         const p = Math.min(((Date.now() - start) / 3000) * 100, 100);
+                         setSosProgress(p);
+                         if (p >= 100) { clearInterval(timer); setSosConfirming(false); setSosProgress(0); handleSOS(); }
+                      }, 50);
+                      const endHandler = () => { clearInterval(timer); setSosConfirming(false); setSosProgress(0); window.removeEventListener('mouseup', endHandler); };
+                      window.addEventListener('mouseup', endHandler);
+                   }}
+                   className={`relative w-12 h-12 rounded-full flex items-center justify-center transition-all overflow-hidden ${sosConfirming ? 'scale-110 shadow-lg shadow-red-500/50' : 'hover:scale-105'} bg-red-600 text-white mx-auto`}
+                 >
+                   <div className="absolute bottom-0 left-0 w-full bg-red-800 transition-all" style={{ height: `${sosProgress}%`, opacity: 0.5 }} />
+                   <Zap className={`relative z-10 w-5 h-5 ${sosConfirming ? 'animate-pulse' : ''}`} />
+                 </button>
+               </div>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-            
-            {/* 1. MY ZONE SUMMARY (REAL DATA) */}
-            <section className="glass-card p-6 rounded-3xl border-0 shadow-xl grid grid-cols-2 md:grid-cols-4 gap-4 bg-accent/5">
-               <div className="space-y-1">
-                  <div className="text-xs font-bold text-theme-muted uppercase tracking-wider">Your Location</div>
-                  <div className="text-lg font-black text-theme-primary">{userZone}</div>
-               </div>
-               <div className="space-y-1">
-                  <div className="text-xs font-bold text-theme-muted uppercase tracking-wider">Registered</div>
-                  <div className="text-lg font-black text-theme-primary">{citizenStats.count}</div>
-               </div>
-               <div className="space-y-1">
-                  <div className="text-xs font-bold text-theme-muted uppercase tracking-wider">Marked Safe</div>
-                  <div className="text-lg font-black text-green-500">{citizenStats.safeToday}</div>
-               </div>
-               <div className="space-y-1">
-                  <div className="text-xs font-bold text-theme-muted uppercase tracking-wider">Active Alerts</div>
-                  <div className="text-lg font-black text-accent">{myAlerts.length}</div>
-               </div>
-            </section>
+             {/* ALERTS SECTION */}
+             <section className="space-y-4">
+               <h2 className="text-xl font-bold flex items-center gap-3">
+                 <Zap className="w-6 h-6 text-red-500 fill-red-500/20" />
+                 {t('yourActiveAlerts') || 'YOUR ACTIVE ALERTS'} ({myAlerts.length})
+               </h2>
 
-            {/* 2. WEATHER WIDGET (Seasonal: April Summer) */}
-            <section className="glass-card p-6 rounded-3xl border-0 shadow-xl flex items-center justify-between bg-orange-500/5 border border-orange-500/10">
-               <div className="flex items-center gap-6">
-                  <div className="text-5xl animate-pulse">☀️</div>
+               {myAlerts.length === 0 ? (
+                  <div className="glass-card p-12 text-center rounded-3xl border-dashed border-2 bg-theme-surface/50">
+                    <CheckCircle className="w-16 h-16 mx-auto mb-4 text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.3)]" />
+                    <h3 className="text-xl font-black mb-2">{t('allClear') || 'All Clear in Your Zone'}</h3>
+                    <p className="text-sm text-theme-muted">{t('noActiveZoneAlerts') || 'There are no active emergency alerts matching your exact synchronized location.'}</p>
+                  </div>
+               ) : (
+                 <div className="grid gap-6">
+                    {myAlerts.map((msg) => {
+                      // Dynamic Timer & Color Logic
+                      let countdownColor = 'text-green-500';
+                      let timerBg = 'bg-green-500/10 border-green-500/20';
+                      let timerLabel = 'ACTIVE';
+                      
+                      if (msg.expires_at) {
+                         const diff = new Date(msg.expires_at).getTime() - Date.now();
+                         if (diff < 0) {
+                           countdownColor = 'text-theme-muted'; timerBg = 'bg-theme-hover border-theme-border'; timerLabel = 'EXPIRED';
+                         } else if (diff < 3600000) {
+                           // Less than 1 hour: RED
+                           countdownColor = 'text-red-500 animate-pulse'; timerBg = 'bg-red-500/10 border-red-500/20';
+                           timerLabel = `${Math.floor(diff/60000)}m left`;
+                         } else if (diff < 7200000) {
+                           // Less than 2 hours: YELLOW
+                           countdownColor = 'text-yellow-500'; timerBg = 'bg-yellow-500/10 border-yellow-500/20';
+                           timerLabel = `${Math.floor(diff/3600000)}h ${Math.floor((diff%3600000)/60000)}m`;
+                         } else {
+                           // More than 2 hours: GREEN
+                           countdownColor = 'text-green-500'; timerBg = 'bg-green-500/10 border-green-500/20';
+                           timerLabel = `${Math.floor(diff/3600000)}h ${Math.floor((diff%3600000)/60000)}m`;
+                         }
+                      }
+                      
+                      return (
+                      <div key={msg.id} className="glass-card overflow-hidden rounded-3xl border-0 shadow-lg group hover:shadow-2xl transition-all duration-300">
+                        <div style={{ height: 6, background: msg.urgency === 'critical' ? '#ef4444' : '#facc15' }} />
+                        <div className="p-6">
+                          <div className="flex items-start justify-between gap-4 mb-4">
+                            <div className="flex items-center gap-3">
+                              <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${msg.urgency === 'critical' ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.4)]' : 'bg-yellow-500 text-white shadow-[0_0_15px_rgba(234,179,8,0.4)]'}`}>
+                                {msg.urgency}
+                              </span>
+                              <h3 className="font-bold text-xl">{msg.title}</h3>
+                            </div>
+                            
+                            <div className={`px-3 py-1.5 rounded-xl text-sm font-mono font-bold border ${timerBg} ${countdownColor} flex items-center gap-2 shadow-inner`}>
+                              <Clock className="w-4 h-4" /> {timerLabel}
+                            </div>
+                          </div>
+                          
+                          <p className="text-lg leading-relaxed text-theme-primary mb-6 whitespace-pre-wrap">{msg.master_content}</p>
+
+                          {msg.urgency === 'critical' && (
+                            <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-6 mb-2 relative overflow-hidden">
+                              <div className="absolute top-0 right-0 p-4 opacity-5"><AlertTriangle className="w-32 h-32 text-red-500" /></div>
+                              <h4 className="font-bold text-red-500 text-lg mb-4 flex items-center gap-2 relative z-10">
+                                <AlertTriangle className="w-5 h-5" /> Safety Check-in Required
+                              </h4>
+                              <div className="flex flex-col sm:flex-row gap-3 relative z-10">
+                                <button 
+                                  disabled={actionLoading[`safe-${msg.id}`]}
+                                  onClick={async () => {
+                                    setActionLoading(p => ({ ...p, [`safe-${msg.id}`]: true }));
+                                    try {
+                                      await messagesApi.submitSafety(msg.id, 'safe', { lat: user?.lat, lng: user?.lng });
+                                      localStorage.setItem(`safety_${msg.id}_${user?.id}`, 'safe');
+                                      toast.success("✅ Marked Safe successfully!");
+                                      fetchData();
+                                    } catch (e) { toast.error("Failed to submit"); }
+                                    finally { setActionLoading(p => ({ ...p, [`safe-${msg.id}`]: false })); }
+                                  }}
+                                  className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-transform"
+                                >
+                                  {actionLoading[`safe-${msg.id}`] ? <RefreshCw className="w-5 h-5 animate-spin" /> : <><CheckCircle className="w-5 h-5" /> YES, I AM SAFE</>}
+                                </button>
+                                <button 
+                                  disabled={actionLoading[`sos-${msg.id}`]}
+                                  onClick={async () => {
+                                    setActionLoading(p => ({ ...p, [`sos-${msg.id}`]: true }));
+                                    try {
+                                      await messagesApi.submitSafety(msg.id, 'assistance', { lat: user?.lat, lng: user?.lng });
+                                      localStorage.setItem(`safety_${msg.id}_${user?.id}`, 'need_help');
+                                      toast.error("🆘 Help requested. Authorities notified.", { duration: 6000 });
+                                      fetchData();
+                                    } catch (e) { toast.error("Failed to submit SOS"); }
+                                    finally { setActionLoading(p => ({ ...p, [`sos-${msg.id}`]: false })); }
+                                  }}
+                                  className="flex-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-transform"
+                                >
+                                  {actionLoading[`sos-${msg.id}`] ? <RefreshCw className="w-5 h-5 animate-spin" /> : <><AlertTriangle className="w-5 h-5" /> SOS: I NEED HELP</>}
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                          {localStorage.getItem(`safety_${msg.id}_${user?.id}`) && (
+                            <div className="mt-4 p-4 rounded-xl bg-theme-surface border border-theme-border flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                {localStorage.getItem(`safety_${msg.id}_${user?.id}`) === 'safe' 
+                                  ? <><CheckCircle className="w-6 h-6 text-green-500" /> <span className="text-sm font-black text-green-500">✅ Safety Confirmed at {userCoords}</span></>
+                                  : <><AlertTriangle className="w-6 h-6 text-red-500 animate-pulse" /> <span className="text-sm font-black text-red-500">🆘 Emergency Assistance Requested</span></>
+                                }
+                              </div>
+                              <div className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">{new Date().toLocaleTimeString()}</div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )})}
+                 </div>
+               )}
+             </section>
+          </div>
+
+          <div className="space-y-8">
+            {/* WEATHER WIDGET (Seasonal: April Summer) */}
+            <section className="glass-card p-6 rounded-3xl border-0 shadow-xl bg-gradient-to-br from-orange-500/10 to-orange-500/5 border border-orange-500/20 relative overflow-hidden">
+               <div className="absolute top-0 right-0 p-2 opacity-20"><Globe className="w-24 h-24 text-orange-500" /></div>
+               <div className="flex items-start gap-4 mb-4 relative z-10">
+                  <div className="text-4xl animate-pulse mt-1 drop-shadow-[0_0_10px_rgba(249,115,22,0.5)]">☀️</div>
                   <div>
-                     <h3 className="text-2xl font-black text-orange-700">Severe Heatwave — Mumbai</h3>
-                     <div className="flex items-center gap-4 text-sm font-bold text-theme-muted mt-1">
-                        <span>Temp: 41°C</span>
-                        <span>•</span>
-                        <span>Humidity: 45% (Dry)</span>
-                        <span>•</span>
-                        <span>UV Index: 11 (Extreme)</span>
-                     </div>
+                     <h3 className="text-xl font-black text-orange-600 leading-tight">Severe Heatwave<br/><span className="text-theme-primary">{userCity || 'Your City'}</span></h3>
                   </div>
                </div>
-               <div className="hidden md:block px-4 py-2 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-600 font-bold text-xs">
+               <div className="grid grid-cols-2 gap-3 text-xs font-bold text-theme-muted mb-4 relative z-10">
+                  <div className="p-3 bg-theme-surface/80 backdrop-blur-sm rounded-xl border border-theme-border shadow-inner">Temp: <span className="text-theme-primary text-sm block font-black">41°C</span></div>
+                  <div className="p-3 bg-theme-surface/80 backdrop-blur-sm rounded-xl border border-theme-border shadow-inner">Humidity: <span className="text-theme-primary text-sm block font-black">45%</span></div>
+                  <div className="p-3 bg-red-500/10 backdrop-blur-sm rounded-xl border border-red-500/20 col-span-2">UV Index: <span className="text-red-500 text-sm block font-black">11 (Extreme)</span></div>
+               </div>
+               <div className="w-full px-4 py-3 rounded-xl bg-red-500 text-white font-black text-[10px] text-center uppercase tracking-widest shadow-[0_0_15px_rgba(239,68,68,0.4)] relative z-10">
                  ⚠️ High risk of dehydration
                </div>
             </section>
 
-            {/* 3. YOUR ACTIVE ALERTS */}
-            <section className="space-y-4">
-              <h2 className="text-xl font-bold flex items-center gap-3">
-                <Zap className="w-6 h-6 text-red-500 fill-red-500/20" />
-                {t('yourActiveAlerts') || 'YOUR ACTIVE ALERTS'} ({myAlerts.length})
-              </h2>
-
-              {myAlerts.length === 0 ? (
-                 <div className="glass-card p-12 text-center rounded-3xl border-dashed border-2">
-                   <CheckCircle className="w-12 h-12 mx-auto mb-4 text-green-500" />
-                   <h3 className="text-lg font-bold">{t('allClear') || 'All Clear in Your Zone'}</h3>
-                   <p className="text-sm text-theme-muted">{t('noActiveZoneAlerts') || 'There are no active emergency alerts matching your current zone.'}</p>
-                 </div>
-              ) : (
-                <div className="grid gap-6">
-                   {myAlerts.map((msg) => (
-                     <div key={msg.id} className="glass-card overflow-hidden rounded-3xl border-0 shadow-lg group hover:shadow-2xl transition-all duration-300">
-                       <div style={{ height: 4, background: msg.urgency === 'critical' ? '#ef4444' : '#f97316' }} />
-                       <div className="p-6">
-                         <div className="flex items-start justify-between gap-4 mb-4">
-                           <div className="flex items-center gap-3">
-                             <AlertBanner urgency={msg.urgency} />
-                             <h3 className="font-bold text-xl">{msg.title}</h3>
-                           </div>
-                           <span className="text-xs font-bold px-2 py-1 rounded bg-theme-hover text-theme-dim">{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                         </div>
-                         
-                         <p className="text-lg leading-relaxed text-theme-primary mb-6 whitespace-pre-wrap">{msg.master_content}</p>
-
-                         {msg.urgency === 'critical' && (
-                           <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 mb-6">
-                             <h4 className="font-bold text-red-500 text-lg mb-4 flex items-center gap-2">
-                               <AlertTriangle className="w-5 h-5" /> Are you safe?
-                             </h4>
-                             <div className="flex flex-col sm:flex-row gap-3">
-                               <button 
-                                 disabled={actionLoading[`safe-${msg.id}`]}
-                                 onClick={async () => {
-                                   setActionLoading(p => ({ ...p, [`safe-${msg.id}`]: true }));
-                                   try {
-                                     await messagesApi.submitSafety(msg.id, 'safe');
-                                     localStorage.setItem(`safety_${msg.id}_${user?.id}`, 'safe');
-                                     toast.success("✅ Marked Safe successfully!");
-                                     fetchData();
-                                   } catch (e) { toast.error("Failed to submit"); }
-                                   finally { setActionLoading(p => ({ ...p, [`safe-${msg.id}`]: false })); }
-                                 }}
-                                 className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg"
-                               >
-                                 {actionLoading[`safe-${msg.id}`] ? <Loader2 className="w-5 h-5 animate-spin" /> : <><CheckCircle className="w-5 h-5" /> {t('iAmSafe') || 'YES, I AM SAFE'}</>}
-                               </button>
-                               <button 
-                                 disabled={actionLoading[`sos-${msg.id}`]}
-                                 onClick={async () => {
-                                   setActionLoading(p => ({ ...p, [`sos-${msg.id}`]: true }));
-                                   try {
-                                     await messagesApi.submitSafety(msg.id, 'assistance');
-                                     localStorage.setItem(`safety_${msg.id}_${user?.id}`, 'need_help');
-                                     toast.error("🆘 Help requested. Authorities notified.", { duration: 6000 });
-                                     fetchData();
-                                   } catch (e) { toast.error("Failed to submit SOS"); }
-                                   finally { setActionLoading(p => ({ ...p, [`sos-${msg.id}`]: false })); }
-                                 }}
-                                 className="flex-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg"
-                               >
-                                 {actionLoading[`sos-${msg.id}`] ? <Loader2 className="w-5 h-5 animate-spin" /> : <><AlertTriangle className="w-5 h-5" /> {t('iNeedAssistance') || 'SOS: I NEED HELP'}</>}
-                               </button>
-                             </div>
-                           </div>
-                         )}
-                         {localStorage.getItem(`safety_${msg.id}_${user?.id}`) && (
-                           <div className="mt-4 p-4 rounded-xl bg-theme-hover border border-theme-border flex items-center gap-3">
-                             {localStorage.getItem(`safety_${msg.id}_${user?.id}`) === 'safe' 
-                               ? <><CheckCircle className="w-5 h-5 text-green-500" /> <span className="text-sm font-bold text-green-500">✅ Marked Safe</span></>
-                               : <><AlertTriangle className="w-5 h-5 text-red-500" /> <span className="text-sm font-bold text-red-500">🆘 Help Requested</span></>
-                             }
-                           </div>
-                         )}
-                       </div>
-                     </div>
-                   ))}
-                </div>
-              )}
-            </section>
-
-            {/* 4. PREPAREDNESS SCORE (Gamification) */}
-            <section className="glass-card p-6 rounded-3xl border-0 shadow-xl bg-gradient-to-br from-theme-surface to-accent/10 relative overflow-hidden">
-               <div className="relative z-10 flex flex-col md:flex-row gap-6 items-center">
-                  <div className="relative w-24 h-24 flex items-center justify-center">
-                    <svg className="w-full h-full -rotate-90">
-                      <circle cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-white/10" />
-                      <circle cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-accent" strokeDasharray={2 * Math.PI * 40} strokeDashoffset={2 * Math.PI * 40 * (1 - 0.78)} strokeLinecap="round" />
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-2xl font-black text-white">78</span>
-                      <span className="text-[8px] font-bold text-accent uppercase tracking-widest">Score</span>
-                    </div>
-                  </div>
-                  <div className="flex-1 space-y-3">
-                    <div>
-                      <h3 className="text-lg font-black text-white uppercase tracking-tight flex items-center gap-2">
-                        My Preparedness Score <span className="px-2 py-0.5 rounded bg-accent/20 text-accent text-[10px] border border-accent/30">🏆 Well Prepared</span>
-                      </h3>
-                      <p className="text-xs text-theme-muted">You are in the top 15% of {user.zone || localStorage.getItem('uacs_pref_zone') || 'your area'} citizens. Complete tasks to improve.</p>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {[
-                        { label: 'Emergency Contact', done: true },
-                        { label: 'Zone Verified', done: true },
-                        { label: 'Go-Bag Checklist', done: false, pts: '+10' },
-                        { label: 'EAP Identified', done: true },
-                      ].map((task, i) => (
-                        <div key={i} className={`flex items-center justify-between p-2 rounded-xl text-[10px] font-bold border ${task.done ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-white/5 border-white/10 text-theme-muted'}`}>
-                          <span className="flex items-center gap-2">
-                            {task.done ? <CheckCircle className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
-                            {task.label}
-                          </span>
-                          {!task.done && <span className="text-accent">{task.pts}</span>}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-               </div>
-            </section>
-          </div>
-
-          <div className="space-y-8">
-            {/* 4. NEARBY SAFETY HUBS */}
+            {/* NEARBY SAFETY HUBS */}
             <section className="glass-card p-6 rounded-3xl border-0 shadow-xl bg-accent/5">
                <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
                  <MapIcon className="w-5 h-5 text-accent" /> {t('nearbySafetyHubs') || 'Nearby Safety Hubs'}
                </h2>
                <div className="space-y-3">
                   {EAPS.slice(0, 3).map((eap, idx) => (
-                    <div key={idx} className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-accent/50 transition-all cursor-pointer group">
+                    <div key={idx} className="p-4 rounded-2xl bg-theme-surface/50 backdrop-blur-sm border border-theme-border hover:border-accent/50 transition-all cursor-pointer group shadow-sm hover:shadow-lg">
                        <div className="flex items-center justify-between mb-1">
                           <h4 className="font-bold text-sm group-hover:text-accent transition-colors">{eap.name}</h4>
-                          <span className="text-[10px] font-bold text-accent px-2 py-0.5 rounded-full bg-accent/10">Active</span>
+                          <span className="text-[10px] font-black text-accent px-2 py-0.5 rounded-full bg-accent/10 border border-accent/20">Active</span>
                        </div>
-                       <p className="text-[10px] text-theme-muted mb-3">{eap.type} • Capacity: {eap.capacity}</p>
+                       <p className="text-[10px] text-theme-muted mb-3 font-medium">{eap.type} • Capacity: {eap.capacity}</p>
                        <button 
                          onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${eap.pos[0]},${eap.pos[1]}`, '_blank')}
-                         className="w-full py-2 bg-theme-hover rounded-xl text-[10px] font-bold flex items-center justify-center gap-2 hover:bg-accent hover:text-white transition-all"
+                         className="w-full py-2 bg-theme-hover border border-theme-border rounded-xl text-[10px] font-bold flex items-center justify-center gap-2 hover:bg-accent hover:border-accent hover:text-white transition-all"
                        >
-                         <Navigation className="w-3 h-3" /> {t('getDirections') || 'GET DIRECTIONS'}
+                         <Navigation className="w-3.5 h-3.5" /> {t('getDirections') || 'GET DIRECTIONS'}
                        </button>
                     </div>
                   ))}
                </div>
-               <button onClick={() => navigate('/map')} className="w-full mt-4 text-xs font-bold text-theme-dim hover:text-accent flex items-center justify-center gap-2">
+               <button onClick={() => navigate('/map')} className="w-full mt-4 py-3 rounded-xl bg-theme-hover border border-theme-border text-xs font-bold text-theme-primary hover:text-accent hover:border-accent/50 flex items-center justify-center gap-2 transition-all">
                  {t('viewAllOnMap') || 'View all on map'} →
                </button>
-            </section>
-
-            {/* 5. SURVIVAL KNOWLEDGE BASE */}
-            <section className="space-y-4">
-               <h2 className="text-lg font-bold flex items-center gap-2">
-                 <Activity className="w-5 h-5 text-accent" /> {t('survivalGuide') || 'Survival Guide'}
-               </h2>
-               <div className="grid grid-cols-1 gap-3">
-                  {[
-                    { title: 'Earthquake Safety', icon: '🫨', color: 'bg-orange-500', steps: ['Drop, Cover, Hold on', 'Stay away from glass'] },
-                    { title: 'Flood Response', icon: '🌊', color: 'bg-blue-500', steps: ['Seek higher ground', 'Avoid moving water'] },
-                    { title: 'Fire Protocol', icon: '🔥', color: 'bg-red-500', steps: ['Stop, Drop, Roll', 'Stay low to smoke'] },
-                  ].map((guide, idx) => (
-                    <div key={idx} className="glass-card p-4 rounded-2xl border-0 shadow-lg flex items-center gap-4 hover:translate-x-2 transition-transform cursor-pointer">
-                       <div className={`w-12 h-12 ${guide.color} rounded-2xl flex items-center justify-center text-2xl shadow-inner`}>{guide.icon}</div>
-                       <div>
-                          <h4 className="font-bold text-sm">{guide.title}</h4>
-                          <p className="text-[10px] text-theme-muted line-clamp-1">{guide.steps.join(' • ')}</p>
-                       </div>
-                    </div>
-                  ))}
-               </div>
             </section>
           </div>
         </div>
