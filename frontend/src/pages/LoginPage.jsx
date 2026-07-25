@@ -251,7 +251,7 @@ export default function LoginPage() {
       className="relative min-h-screen w-full flex items-center justify-center p-4 overflow-hidden transition-all duration-500"
       style={{ 
         background: theme === 'light' 
-          ? 'linear-gradient(110deg, #0a0a0f 0%, #0a0a0f 45.5%, #ffffff 45.5%, #ffffff 47%, #5b21b6 47%, #ede9fe 100%)'
+          ? '#f8f4e9'
           : 'radial-gradient(circle at 50% 50%, var(--bg-surface) 0%, var(--bg-base) 100%)'
       }}
     >
@@ -259,8 +259,26 @@ export default function LoginPage() {
       {/* Dynamic Background Layer — theme conditional */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
         {theme === 'light' ? (
-          /* Light theme: subtle edge vignette on split-screen */
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,transparent_35%,rgba(0,0,0,0.10)_100%)]" />
+          <>
+            {/* Left Side: Violet Dusk Gradient */}
+            <div 
+              className="absolute inset-0 w-full h-full"
+              style={{
+                background: 'linear-gradient(135deg, #502d55 0%, #935073 50%, #f6dbc0 90%, #f8f4e9 100%)',
+                clipPath: 'polygon(0 0, 48% 0, 52% 100%, 0 100%)'
+              }}
+            />
+            {/* Right Side: Maple Sunset Gradient */}
+            <div 
+              className="absolute inset-0 w-full h-full"
+              style={{
+                background: 'linear-gradient(135deg, #ca2851 0%, #ff6766 45%, #ffb173 80%, #ffe3b3 100%)',
+                clipPath: 'polygon(48% 0, 100% 0, 100% 100%, 52% 100%)'
+              }}
+            />
+            {/* Subtle edge vignette */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,transparent_50%,rgba(0,0,0,0.12)_100%)]" />
+          </>
         ) : (
           /* Dark theme: floating glassmorphic orbs */
           <>
