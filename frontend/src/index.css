@@ -7,6 +7,9 @@
 @theme {
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --animate-pulse-fast: pulse 0.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-dark: var(--accent-dark);
 }
 
 /* ═══════════════════════════════════════════════════════ */
@@ -324,6 +327,7 @@
 .text-theme-secondary { color: var(--text-secondary); }
 .text-theme-muted     { color: var(--text-muted); }
 .text-theme-dim       { color: var(--text-dim); }
+.text-accent          { color: var(--accent); }
 
 /* ─── Theme-aware background utilities ─── */
 .bg-theme-base    { background-color: var(--bg-base); }
@@ -331,9 +335,12 @@
 .bg-theme-card    { background-color: var(--bg-card); }
 .bg-theme-hover   { background-color: var(--bg-hover); }
 .bg-theme-input   { background-color: var(--bg-input); }
+.bg-accent        { background-color: var(--accent); }
+.bg-accent-hover:hover { background-color: var(--accent-hover); }
 
 /* ─── Theme-aware border utility ─── */
 .border-theme { border-color: var(--border); }
+.border-accent { border-color: var(--accent); }
 
 /* ═══════════════════════════════════════════════════════ */
 /* Keyframes                                               */

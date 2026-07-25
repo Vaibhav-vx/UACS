@@ -386,7 +386,11 @@ export default function LoginPage() {
               type="submit"
               id="login-submit-btn"
               disabled={loginLoading}
-              className="w-full py-3.5 bg-accent hover:bg-accent/95 disabled:opacity-50 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-0 cursor-pointer shadow-lg shadow-accent/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className={`w-full py-3.5 disabled:opacity-50 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-0 cursor-pointer shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all ${
+                theme === 'light' 
+                  ? 'bg-zinc-950 hover:bg-zinc-900 shadow-zinc-950/20' 
+                  : 'bg-accent hover:bg-accent-hover shadow-accent/20'
+              }`}
             >
               {loginLoading ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> {t('signingIn') || 'Signing in...'}</>
@@ -400,7 +404,9 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setTab('register')}
-                className="bg-transparent border-0 cursor-pointer text-accent font-bold text-xs p-0 hover:underline"
+                className={`bg-transparent border-0 cursor-pointer font-bold text-xs p-0 hover:underline ${
+                  theme === 'light' ? 'text-zinc-950 font-black' : 'text-accent'
+                }`}
               >
                 {t('createOne') || 'Create one'}
               </button>
@@ -565,7 +571,11 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={regLoading || !canSubmitReg}
-                    className="w-full py-3.5 bg-accent hover:bg-accent/95 disabled:opacity-50 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-0 cursor-pointer shadow-lg shadow-accent/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                    className={`w-full py-3.5 disabled:opacity-50 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-0 cursor-pointer shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all ${
+                      theme === 'light' 
+                        ? 'bg-zinc-950 hover:bg-zinc-900 shadow-zinc-950/20' 
+                        : 'bg-accent hover:bg-accent-hover shadow-accent/20'
+                    }`}
                   >
                     {regLoading ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> {t('creatingAccount') || 'Creating Account...'}</>
@@ -593,7 +603,9 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setTab('login')}
-                    className="bg-transparent border-0 cursor-pointer text-accent font-bold text-xs p-0 hover:underline"
+                    className={`bg-transparent border-0 cursor-pointer font-bold text-xs p-0 hover:underline ${
+                      theme === 'light' ? 'text-zinc-950 font-black' : 'text-accent'
+                    }`}
                   >
                     {t('loginButton') || 'Sign in'}
                   </button>
@@ -603,7 +615,7 @@ export default function LoginPage() {
           </form>
         )}
 
-        <p className="text-center text-[10px] text-theme-muted mt-6 font-medium">
+        <p className={`text-center text-[10px] mt-6 font-medium ${theme === 'light' ? 'text-zinc-700' : 'text-theme-muted'}`}>
           🇮🇳 {t('govFooter') || 'Government of India • Secure Communication Portal • v1.0'}
         </p>
       </div>
