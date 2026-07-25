@@ -289,11 +289,11 @@ export default function LoginPage() {
                 clipPath: 'polygon(0 0, 60% 0, 40% 100%, 0 100%)'
               }}
             />
-            {/* Right Side: Crimson Oxide Gradient */}
+            {/* Right Side: Obsidian Cyber-Cyan Gradient */}
             <div 
               className="absolute inset-0 w-full h-full"
               style={{
-                background: 'linear-gradient(315deg, #080205 0%, #15050c 15%, #250914 30%, #380d1d 45%, #4f1127 60%, #681632 75%, #831c3f 90%, #9f224d 100%)',
+                background: 'linear-gradient(315deg, #010d0f 0%, #021a1e 15%, #03292f 30%, #043a42 45%, #054d58 60%, #076270 75%, #08798a 90%, #0a92a5 100%)',
                 clipPath: 'polygon(60% 0, 100% 0, 100% 100%, 40% 100%)'
               }}
             />
