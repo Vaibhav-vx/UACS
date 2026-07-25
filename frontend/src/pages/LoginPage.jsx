@@ -264,16 +264,16 @@ export default function LoginPage() {
             <div 
               className="absolute inset-0 w-full h-full"
               style={{
-                background: 'linear-gradient(135deg, #502d55 0%, #935073 50%, #f6dbc0 90%, #f8f4e9 100%)',
-                clipPath: 'polygon(0 0, 48% 0, 52% 100%, 0 100%)'
+                background: 'linear-gradient(135deg, #502d55 0%, #935073 40%, #f6dbc0 80%, #f8f4e9 100%)',
+                clipPath: 'polygon(0 0, 100% 0, 0 100%)'
               }}
             />
             {/* Right Side: Maple Sunset Gradient */}
             <div 
               className="absolute inset-0 w-full h-full"
               style={{
-                background: 'linear-gradient(135deg, #ca2851 0%, #ff6766 45%, #ffb173 80%, #ffe3b3 100%)',
-                clipPath: 'polygon(48% 0, 100% 0, 100% 100%, 52% 100%)'
+                background: 'linear-gradient(315deg, #ca2851 0%, #ff6766 40%, #ffb173 80%, #ffe3b3 100%)',
+                clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
               }}
             />
             {/* Subtle edge vignette */}
