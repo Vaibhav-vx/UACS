@@ -248,7 +248,7 @@ export default function LoginPage() {
 
   return (
     <div 
-      className="relative min-h-screen w-full flex items-center justify-center p-4 overflow-hidden transition-all duration-500"
+      className="relative min-h-screen w-full flex items-center justify-center p-4 overflow-hidden transition-colors duration-500"
       style={{ 
         background: theme === 'light' 
           ? '#f8f4e9'
@@ -257,7 +257,7 @@ export default function LoginPage() {
     >
       
       {/* Dynamic Background Layer — theme conditional */}
-      <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
+      <div className="fixed inset-0 z-0 pointer-events-none select-none overflow-hidden">
         {theme === 'light' ? (
           <>
             {/* Left Side: Violet Dusk Gradient */}
