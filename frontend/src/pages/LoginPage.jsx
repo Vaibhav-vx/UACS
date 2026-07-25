@@ -239,13 +239,19 @@ export default function LoginPage() {
       {/* Dynamic Glassmorphic Gradient Background */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
         {/* Glow shape 1 */}
-        <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-gradient-to-br from-accent/20 to-accent/5 blur-[120px] dark:from-accent/15 dark:to-accent/0" />
+        <div 
+          className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full blur-[120px]" 
+          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.18 }}
+        />
         {/* Glow shape 2 */}
-        <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-gradient-to-tr from-accent/20 to-accent/5 blur-[120px] dark:from-accent/15 dark:to-accent/0" />
+        <div 
+          className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full blur-[120px]" 
+          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.18 }}
+        />
         {/* Frost / Glass overlay */}
-        <div className="absolute inset-0 bg-theme-base/40 backdrop-blur-[60px]" />
+        <div className="absolute inset-0 bg-theme-base/30 backdrop-blur-[60px]" />
         {/* Subtle grid pattern for texture */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,var(--bg-base)_90%)] opacity-30" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,var(--bg-base)_90%)] opacity-35" />
       </div>
 
       {/* Top-right: language + theme selector */}
