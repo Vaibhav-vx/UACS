@@ -338,7 +338,7 @@ export default function LoginPage() {
       <div className="relative w-full max-w-[460px] z-20 animate-slide-up">
         
         {/* Tab Switcher */}
-        <div className={`flex p-1.5 rounded-2xl border mb-6 ${theme === 'light' ? 'bg-white border-white/30 shadow-lg' : 'bg-theme-surface/70 backdrop-blur-md border-theme-border'}`}>
+        <div className={`flex p-1.5 rounded-2xl border mb-6 ${theme === 'light' ? 'bg-[#faf8f5] border-[rgba(145,99,203,0.2)] shadow-sm' : 'bg-[#0d0e12] border-[rgba(79,89,112,0.3)]'}`}>
           {[
             { key: 'login',    label: t('loginButton') || 'Sign In',    Icon: LogIn },
             { key: 'register', label: t('register') || 'Register',   Icon: UserPlus },
@@ -346,7 +346,15 @@ export default function LoginPage() {
             <button
               key={key}
               onClick={() => { setTab(key); setLoginError(''); setRegError(''); }}
-              className={`flex-1 py-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 border-0 cursor-pointer transition-all duration-300 ${tab === key ? 'bg-accent text-white shadow-lg shadow-accent/25' : 'bg-transparent text-theme-muted hover:text-theme-primary'}`}
+              className={`flex-1 py-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 border-0 cursor-pointer transition-all duration-300 ${
+                tab === key 
+                  ? theme === 'light'
+                    ? 'bg-[#a61b3c] text-white shadow-lg shadow-[#a61b3c]/20'
+                    : 'bg-[#2b313e] text-white shadow-lg shadow-black/40'
+                  : theme === 'light'
+                    ? 'bg-transparent text-zinc-500 hover:text-zinc-800'
+                    : 'bg-transparent text-theme-muted hover:text-theme-primary'
+              }`}
             >
               <Icon className="w-4 h-4" />
               {label}
@@ -356,7 +364,17 @@ export default function LoginPage() {
 
         {/* ── Login Form ───────────────────────────────── */}
         {tab === 'login' && (
-          <form onSubmit={handleLogin} className="rounded-3xl p-8 space-y-6 border" style={{ background: theme === 'light' ? '#ffffff' : 'var(--bg-surface)', borderColor: theme === 'light' ? 'rgba(255,255,255,0.5)' : 'var(--border)', boxShadow: theme === 'light' ? '0 32px 64px -12px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.2)' : '0 25px 50px -12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07)' }}>
+          <form 
+            onSubmit={handleLogin} 
+            className="rounded-3xl p-8 space-y-6 border" 
+            style={{ 
+              background: theme === 'light' ? '#faf8f5' : '#0d0e12', 
+              borderColor: theme === 'light' ? 'rgba(145,99,203,0.18)' : 'rgba(79,89,112,0.3)', 
+              boxShadow: theme === 'light' 
+                ? '0 32px 64px -12px rgba(80,45,85,0.18), 0 0 0 1px rgba(255,255,255,0.3)' 
+                : '0 25px 50px -12px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05)' 
+            }}
+          >
             <div>
               <h2 className={`text-xl font-black tracking-tight ${theme === 'light' ? 'text-zinc-950' : 'text-theme-primary'}`}>{t('welcomeBack') || 'Welcome back'}</h2>
               <p className={`text-xs mt-1 ${theme === 'light' ? 'text-zinc-600' : 'text-theme-muted'}`}>{t('signInToUacs') || 'Sign in to your UACS account'}</p>
@@ -399,8 +417,8 @@ export default function LoginPage() {
               disabled={loginLoading}
               className={`w-full py-3.5 disabled:opacity-50 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-0 cursor-pointer shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all ${
                 theme === 'light' 
-                  ? 'bg-zinc-950 hover:bg-zinc-900 shadow-zinc-950/20' 
-                  : 'bg-accent hover:bg-accent-hover shadow-accent/20'
+                  ? 'bg-[#a61b3c] hover:bg-[#8f1430] shadow-[#a61b3c]/20' 
+                  : 'bg-[#2b313e] hover:bg-[#363e4e] shadow-black/35'
               }`}
             >
               {loginLoading ? (
@@ -427,7 +445,17 @@ export default function LoginPage() {
 
         {/* ── Register Form ─────────────────────────────── */}
         {tab === 'register' && (
-          <form onSubmit={handleRegister} className="rounded-3xl p-8 space-y-6 border max-h-[88vh] overflow-y-auto" style={{ background: theme === 'light' ? '#ffffff' : 'var(--bg-surface)', borderColor: theme === 'light' ? 'rgba(255,255,255,0.5)' : 'var(--border)', boxShadow: theme === 'light' ? '0 32px 64px -12px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.2)' : '0 25px 50px -12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07)' }}>
+          <form 
+            onSubmit={handleRegister} 
+            className="rounded-3xl p-8 space-y-6 border max-h-[88vh] overflow-y-auto" 
+            style={{ 
+              background: theme === 'light' ? '#faf8f5' : '#0d0e12', 
+              borderColor: theme === 'light' ? 'rgba(145,99,203,0.18)' : 'rgba(79,89,112,0.3)', 
+              boxShadow: theme === 'light' 
+                ? '0 32px 64px -12px rgba(80,45,85,0.18), 0 0 0 1px rgba(255,255,255,0.3)' 
+                : '0 25px 50px -12px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05)' 
+            }}
+          >
             {regSuccess ? (
               <div className="text-center py-8 space-y-4">
                 <div className="w-14 h-14 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto animate-bounce">
@@ -584,8 +612,8 @@ export default function LoginPage() {
                     disabled={regLoading || !canSubmitReg}
                     className={`w-full py-3.5 disabled:opacity-50 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-0 cursor-pointer shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all ${
                       theme === 'light' 
-                        ? 'bg-zinc-950 hover:bg-zinc-900 shadow-zinc-950/20' 
-                        : 'bg-accent hover:bg-accent-hover shadow-accent/20'
+                        ? 'bg-[#a61b3c] hover:bg-[#8f1430] shadow-[#a61b3c]/20' 
+                        : 'bg-[#2b313e] hover:bg-[#363e4e] shadow-black/35'
                     }`}
                   >
                     {regLoading ? (
