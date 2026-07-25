@@ -42,10 +42,10 @@ function Field({ id, label, icon: Icon, type = 'text', value, onChange, placehol
           placeholder={placeholder}
           autoFocus={autoFocus}
           autoComplete={autoComplete}
-          className={`w-full pl-10 pr-10 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all ${
+          className={`w-full pl-10 pr-10 py-3 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 transition-all ${
             isLight 
-              ? 'bg-zinc-100 border-zinc-300 text-black placeholder-zinc-400' 
-              : 'bg-theme-hover border-theme-border text-theme-primary placeholder-theme-muted'
+              ? 'bg-zinc-100 border-zinc-300 text-black placeholder-zinc-400 focus:border-[#a61b3c] focus:ring-[#a61b3c]' 
+              : 'bg-theme-hover border-theme-border text-theme-primary placeholder-theme-muted focus:border-white focus:ring-white'
           }`}
         />
         {rightEl}
@@ -517,7 +517,11 @@ export default function LoginPage() {
                           type="button"
                           onClick={() => setShowMapPicker(true)}
                           title="Pick location on map"
-                          className="absolute right-1.5 top-1/2 -translate-y-1/2 h-[80%] px-3 bg-accent text-white border-0 rounded-lg text-sm font-bold cursor-pointer hover:bg-accent/90 flex items-center justify-center transition-colors"
+                          className={`absolute right-1.5 top-1/2 -translate-y-1/2 h-[80%] px-3 border-0 rounded-lg text-sm font-bold cursor-pointer transition-colors flex items-center justify-center ${
+                            theme === 'light' 
+                              ? 'bg-[#a61b3c] hover:bg-[#8f1430] text-white' 
+                              : 'bg-white hover:bg-zinc-100 text-black'
+                          }`}
                         >
                           📍
                         </button>
@@ -557,7 +561,9 @@ export default function LoginPage() {
                           onClick={() => setRegLanguage(l.code)}
                           className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border transition-all duration-200 ${
                             regLanguage === l.code 
-                              ? 'border-accent bg-accent/10 text-accent' 
+                              ? theme === 'light'
+                                ? 'border-[#a61b3c] bg-[#a61b3c]/10 text-[#a61b3c]'
+                                : 'border-white bg-white/10 text-white'
                               : theme === 'light' 
                                 ? 'border-zinc-200 bg-zinc-100 text-zinc-700 hover:bg-zinc-200 hover:text-zinc-950' 
                                 : 'border-theme-border bg-theme-hover text-theme-muted hover:text-theme-primary'
