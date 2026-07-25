@@ -787,5 +787,29 @@ p, span, h1, h2, h3, h4, h5, h6, div, td, th {
   }
 }
 
+/* Glassmorphic Background Elements */
+@keyframes float-orb-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(6%, 8%) scale(1.12); }
+}
+@keyframes float-orb-2 {
+  0%, 100% { transform: translate(0, 0) scale(1.08); }
+  50% { transform: translate(-8%, -6%) scale(0.92); }
+}
+@keyframes float-orb-3 {
+  0%, 100% { transform: translate(0, 0) scale(0.95); }
+  50% { transform: translate(5%, -8%) scale(1.05); }
+}
+
+.animate-float-orb-1 {
+  animation: float-orb-1 18s ease-in-out infinite alternate;
+}
+.animate-float-orb-2 {
+  animation: float-orb-2 22s ease-in-out infinite alternate;
+}
+.animate-float-orb-3 {
+  animation: float-orb-3 15s ease-in-out infinite alternate;
+}
+
 
 

@@ -234,24 +234,37 @@ export default function LoginPage() {
   );
 
   return (
-    <div className="relative min-h-screen w-full flex items-center justify-center p-4 bg-theme-base overflow-hidden">
+    <div 
+      className="relative min-h-screen w-full flex items-center justify-center p-4 overflow-hidden transition-colors duration-500"
+      style={{ background: 'radial-gradient(circle at 50% 50%, var(--bg-surface) 0%, var(--bg-base) 100%)' }}
+    >
       
       {/* Dynamic Glassmorphic Gradient Background */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
-        {/* Glow shape 1 */}
+        {/* Glow shape 1: Accent color top-left */}
         <div 
-          className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full blur-[120px]" 
-          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.18 }}
+          className="absolute -top-[15%] -left-[10%] w-[55%] h-[55%] rounded-full blur-[130px] animate-float-orb-1" 
+          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.22 }}
         />
-        {/* Glow shape 2 */}
+        {/* Glow shape 2: Accent color bottom-right */}
         <div 
-          className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full blur-[120px]" 
-          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.18 }}
+          className="absolute -bottom-[15%] -right-[10%] w-[55%] h-[55%] rounded-full blur-[130px] animate-float-orb-2" 
+          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.22 }}
+        />
+        {/* Glow shape 3: Secondary tone (hue-rotated) center-left */}
+        <div 
+          className="absolute top-[25%] left-[15%] w-[50%] h-[50%] rounded-full blur-[120px] animate-float-orb-3" 
+          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.16, filter: 'hue-rotate(50deg)' }}
+        />
+        {/* Glow shape 4: Alternative tone (hue-rotated reverse) center-right */}
+        <div 
+          className="absolute bottom-[30%] right-[10%] w-[45%] h-[45%] rounded-full blur-[120px] animate-float-orb-1" 
+          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.14, filter: 'hue-rotate(-45deg)' }}
         />
         {/* Frost / Glass overlay */}
-        <div className="absolute inset-0 bg-theme-base/30 backdrop-blur-[60px]" />
+        <div className="absolute inset-0 bg-theme-base/20 backdrop-blur-[80px]" />
         {/* Subtle grid pattern for texture */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,var(--bg-base)_90%)] opacity-35" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,var(--bg-base)_90%)] opacity-30" />
       </div>
 
       {/* Top-right: language + theme selector */}
