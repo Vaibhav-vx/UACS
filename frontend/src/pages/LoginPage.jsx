@@ -241,30 +241,30 @@ export default function LoginPage() {
       
       {/* Dynamic Glassmorphic Gradient Background */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
-        {/* Glow shape 1: Accent color top-left */}
+        {/* Glow shape 1: Accent color top-left — boosted opacity */}
         <div 
           className="absolute -top-[15%] -left-[10%] w-[55%] h-[55%] rounded-full blur-[130px] animate-float-orb-1" 
-          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.22 }}
+          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.40 }}
         />
-        {/* Glow shape 2: Accent color bottom-right */}
+        {/* Glow shape 2: Accent color bottom-right — boosted opacity */}
         <div 
           className="absolute -bottom-[15%] -right-[10%] w-[55%] h-[55%] rounded-full blur-[130px] animate-float-orb-2" 
-          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.22 }}
+          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.40 }}
         />
-        {/* Glow shape 3: Secondary tone (hue-rotated) center-left */}
+        {/* Glow shape 3: Secondary hue-shifted orb */}
         <div 
           className="absolute top-[25%] left-[15%] w-[50%] h-[50%] rounded-full blur-[120px] animate-float-orb-3" 
-          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.16, filter: 'hue-rotate(50deg)' }}
+          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.30, filter: 'hue-rotate(70deg)' }}
         />
-        {/* Glow shape 4: Alternative tone (hue-rotated reverse) center-right */}
+        {/* Glow shape 4: Counter-hue orb */}
         <div 
           className="absolute bottom-[30%] right-[10%] w-[45%] h-[45%] rounded-full blur-[120px] animate-float-orb-1" 
-          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.14, filter: 'hue-rotate(-45deg)' }}
+          style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.26, filter: 'hue-rotate(-65deg)' }}
         />
         {/* Frost / Glass overlay */}
         <div className="absolute inset-0 bg-theme-base/20 backdrop-blur-[80px]" />
-        {/* Subtle grid pattern for texture */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,var(--bg-base)_90%)] opacity-30" />
+        {/* Subtle vignette */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--bg-base)_100%)] opacity-40" />
       </div>
 
       {/* Top-right: language + theme selector */}
@@ -294,7 +294,7 @@ export default function LoginPage() {
           )}
         </div>
         <button onClick={toggleTheme} className="flex items-center justify-center w-9 h-9 bg-theme-hover border border-theme-border rounded-xl text-theme-muted hover:text-theme-primary hover:bg-theme-border cursor-pointer transition-colors" aria-label="Toggle theme">
-          {theme === 'dark' ? <Sun className="w-4 h-4 text-orange-500" /> : <Moon className="w-4 h-4 text-blue-500" />}
+          {theme === 'dark' ? <Sun className="w-4 h-4 text-theme-muted" /> : <Moon className="w-4 h-4 text-theme-muted" />}
         </button>
       </div>
 
@@ -320,7 +320,7 @@ export default function LoginPage() {
 
         {/* ── Login Form ───────────────────────────────── */}
         {tab === 'login' && (
-          <form onSubmit={handleLogin} className="glass-card backdrop-blur-xl bg-theme-surface/60 border border-theme-border rounded-3xl p-8 shadow-2xl space-y-6">
+          <form onSubmit={handleLogin} className="rounded-3xl p-8 space-y-6 bg-theme-surface border border-theme-border" style={{ boxShadow: '0 25px 50px -12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07)' }}>
             <div>
               <h2 className="text-xl font-black text-theme-primary tracking-tight">{t('welcomeBack') || 'Welcome back'}</h2>
               <p className="text-xs text-theme-muted mt-1">{t('signInToUacs') || 'Sign in to your UACS account'}</p>
@@ -385,7 +385,7 @@ export default function LoginPage() {
 
         {/* ── Register Form ─────────────────────────────── */}
         {tab === 'register' && (
-          <form onSubmit={handleRegister} className="glass-card backdrop-blur-xl bg-theme-surface/60 border border-theme-border rounded-3xl p-8 shadow-2xl space-y-6">
+          <form onSubmit={handleRegister} className="rounded-3xl p-8 space-y-6 bg-theme-surface border border-theme-border max-h-[88vh] overflow-y-auto" style={{ boxShadow: '0 25px 50px -12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07)' }}>
             {regSuccess ? (
               <div className="text-center py-8 space-y-4">
                 <div className="w-14 h-14 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto animate-bounce">
