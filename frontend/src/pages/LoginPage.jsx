@@ -22,13 +22,18 @@ const REG_LANGUAGES = [
 
 // ── Input field component ─────────────────────────────────
 function Field({ id, label, icon: Icon, type = 'text', value, onChange, placeholder, autoFocus, autoComplete, rightEl, hint }) {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
   return (
     <div className="space-y-1.5 text-left">
-      <label htmlFor={id} className="block text-xs font-bold text-theme-muted uppercase tracking-wider">
+      <label 
+        htmlFor={id} 
+        className={`block text-xs font-bold uppercase tracking-wider ${isLight ? 'text-zinc-700' : 'text-theme-muted'}`}
+      >
         {label}
       </label>
       <div className="relative">
-        <Icon className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-theme-muted pointer-events-none" />
+        <Icon className={`w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none ${isLight ? 'text-zinc-500' : 'text-theme-muted'}`} />
         <input
           id={id}
           type={type}
@@ -37,11 +42,19 @@ function Field({ id, label, icon: Icon, type = 'text', value, onChange, placehol
           placeholder={placeholder}
           autoFocus={autoFocus}
           autoComplete={autoComplete}
-          className="w-full pl-10 pr-10 py-3 bg-theme-hover border border-theme-border rounded-xl text-sm font-medium placeholder-theme-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
+          className={`w-full pl-10 pr-10 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all ${
+            isLight 
+              ? 'bg-zinc-100 border-zinc-300 text-black placeholder-zinc-400' 
+              : 'bg-theme-hover border-theme-border text-theme-primary placeholder-theme-muted'
+          }`}
         />
         {rightEl}
       </div>
-      {hint && <p className="text-[10px] text-theme-muted leading-relaxed">{hint}</p>}
+      {hint && (
+        <p className={`text-[10px] leading-relaxed ${isLight ? 'text-zinc-600' : 'text-theme-muted'}`}>
+          {hint}
+        </p>
+      )}
     </div>
   );
 }
@@ -334,8 +347,8 @@ export default function LoginPage() {
         {tab === 'login' && (
           <form onSubmit={handleLogin} className="rounded-3xl p-8 space-y-6 border" style={{ background: theme === 'light' ? '#ffffff' : 'var(--bg-surface)', borderColor: theme === 'light' ? 'rgba(255,255,255,0.5)' : 'var(--border)', boxShadow: theme === 'light' ? '0 32px 64px -12px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.2)' : '0 25px 50px -12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07)' }}>
             <div>
-              <h2 className="text-xl font-black text-theme-primary tracking-tight">{t('welcomeBack') || 'Welcome back'}</h2>
-              <p className="text-xs text-theme-muted mt-1">{t('signInToUacs') || 'Sign in to your UACS account'}</p>
+              <h2 className={`text-xl font-black tracking-tight ${theme === 'light' ? 'text-zinc-950' : 'text-theme-primary'}`}>{t('welcomeBack') || 'Welcome back'}</h2>
+              <p className={`text-xs mt-1 ${theme === 'light' ? 'text-zinc-600' : 'text-theme-muted'}`}>{t('signInToUacs') || 'Sign in to your UACS account'}</p>
             </div>
 
             {loginError && (
@@ -382,7 +395,7 @@ export default function LoginPage() {
               )}
             </button>
 
-            <p className="text-center text-xs text-theme-muted">
+            <p className={`text-center text-xs ${theme === 'light' ? 'text-zinc-600' : 'text-theme-muted'}`}>
               {t('dontHaveAccount') || "Don't have an account?"}{' '}
               <button
                 type="button"
@@ -404,15 +417,15 @@ export default function LoginPage() {
                   <CheckCircle2 className="w-7 h-7 text-green-500" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg text-theme-primary">{t('accountCreated') || 'Account Created!'}</h3>
-                  <p className="text-xs text-theme-muted mt-1">{t('redirecting') || 'Redirecting to dashboard...'}</p>
+                  <h3 className={`font-bold text-lg ${theme === 'light' ? 'text-zinc-950' : 'text-theme-primary'}`}>{t('accountCreated') || 'Account Created!'}</h3>
+                  <p className={`text-xs mt-1 ${theme === 'light' ? 'text-zinc-600' : 'text-theme-muted'}`}>{t('redirecting') || 'Redirecting to dashboard...'}</p>
                 </div>
               </div>
             ) : (
               <>
                 <div>
-                  <h2 className="text-xl font-black text-theme-primary tracking-tight">{t('createAccount') || 'Create Your Account'}</h2>
-                  <p className="text-xs text-theme-muted mt-1">{t('joinUacs') || 'Citizen Safety Portal — Register to receive zone alerts'}</p>
+                  <h2 className={`text-xl font-black tracking-tight ${theme === 'light' ? 'text-zinc-950' : 'text-theme-primary'}`}>{t('createAccount') || 'Create Your Account'}</h2>
+                  <p className={`text-xs mt-1 ${theme === 'light' ? 'text-zinc-600' : 'text-theme-muted'}`}>{t('joinUacs') || 'Citizen Safety Portal — Register to receive zone alerts'}</p>
                 </div>
 
                 {regError && (
@@ -488,7 +501,7 @@ export default function LoginPage() {
 
                   {/* Language Selector */}
                   <div className="space-y-2">
-                    <label className="block text-xs font-bold text-theme-muted uppercase tracking-wider">
+                    <label className={`block text-xs font-bold uppercase tracking-wider ${theme === 'light' ? 'text-zinc-700' : 'text-theme-muted'}`}>
                       Preferred Language
                     </label>
                     <div className="flex flex-wrap gap-1.5">
@@ -497,7 +510,13 @@ export default function LoginPage() {
                           key={l.code}
                           type="button"
                           onClick={() => setRegLanguage(l.code)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border transition-all duration-200 ${regLanguage === l.code ? 'border-accent bg-accent/10 text-accent' : 'border-theme-border bg-theme-hover text-theme-muted hover:text-theme-primary'}`}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border transition-all duration-200 ${
+                            regLanguage === l.code 
+                              ? 'border-accent bg-accent/10 text-accent' 
+                              : theme === 'light' 
+                                ? 'border-zinc-200 bg-zinc-100 text-zinc-700 hover:bg-zinc-200 hover:text-zinc-950' 
+                                : 'border-theme-border bg-theme-hover text-theme-muted hover:text-theme-primary'
+                          }`}
                         >
                           {l.flag} {l.label}
                         </button>
@@ -559,13 +578,17 @@ export default function LoginPage() {
                     type="button"
                     onClick={handleDemoLogin}
                     disabled={regLoading}
-                    className="w-full py-3.5 bg-theme-hover hover:bg-theme-border border border-theme-border text-theme-primary rounded-xl font-bold text-sm flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
+                    className={`w-full py-3.5 border rounded-xl font-bold text-sm flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all ${
+                      theme === 'light' 
+                        ? 'bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200 hover:border-zinc-300' 
+                        : 'bg-theme-hover hover:bg-theme-border border-theme-border text-theme-primary'
+                    }`}
                   >
                     <UserPlus className="w-4 h-4 text-theme-muted" /> {t('demoLogin') || 'Try Demo Profile'}
                   </button>
                 </div>
 
-                <p className="text-center text-xs text-theme-muted pt-2">
+                <p className={`text-center text-xs pt-2 ${theme === 'light' ? 'text-zinc-600' : 'text-theme-muted'}`}>
                   {t('alreadyHaveAccount') || 'Already have an account?'}{' '}
                   <button
                     type="button"
