@@ -14,6 +14,8 @@ import AlertBanner from '../components/AlertBanner';
 import SituationMapCard from '../components/SituationMapCard';
 import { EAPS, ZONE_COORDS } from '../constants';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../ThemeContext';
+
 
 export default function DashboardPage() {
   const [activeMessages, setActiveMessages]   = useState([]);
@@ -199,16 +201,34 @@ export default function DashboardPage() {
     }
   };
 
-  const Stat = ({ icon: Icon, label, value, color, trend }) => (
-    <div className="stat-card animate-slide-up">
-      <div className="flex items-center justify-between">
-        <span className="text-xs uppercase tracking-wider font-medium text-theme-muted">{label}</span>
-        <Icon className="w-4 h-4" style={{ color }} />
+  const Stat = ({ icon: Icon, label, value, color, trend }) => {
+    const { theme } = useTheme();
+    return (
+      <div 
+        className="animate-slide-up p-5 rounded-2xl border transition-all duration-300 hover:scale-[1.02] shadow-sm flex flex-col justify-between"
+        style={{
+          background: theme === 'light' ? '#faf8f5' : '#0d0e12',
+          borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
+          boxShadow: theme === 'light' 
+            ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
+            : '0 15px 30px -15px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)'
+        }}
+      >
+        <div className="flex items-center justify-between">
+          <span className={`text-[10px] uppercase tracking-wider font-bold ${theme === 'light' ? 'text-zinc-500' : 'text-theme-muted'}`}>{label}</span>
+          <div className="p-2 rounded-xl" style={{ background: `${color}15` }}>
+            <Icon className="w-4 h-4" style={{ color }} />
+          </div>
+        </div>
+        <div className={`text-3xl font-black mt-3 tracking-tight ${theme === 'light' ? 'text-zinc-900' : 'text-white'}`}>{value}</div>
+        {trend ? (
+          <div className="text-[10px] text-green-500 font-bold mt-1.5 flex items-center gap-1">📈 {trend}</div>
+        ) : (
+          <div className="text-[10px] opacity-0 mt-1.5 flex items-center gap-1">Spacer</div>
+        )}
       </div>
-      <div className="text-3xl font-bold mt-1">{value}</div>
-      {trend && <div className="text-[10px] text-green-500 mt-1">{trend}</div>}
-    </div>
-  );
+    );
+  };
 
   if (loading) return (<div className="space-y-6"><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">{[1,2,3,4].map(i=><div key={i} className="glass-card p-5 h-24 shimmer rounded-xl"/>)}</div><div className="space-y-3">{[1,2,3].map(i=><div key={i} className="glass-card p-6 h-32 shimmer rounded-xl"/>)}</div></div>);
 
@@ -548,11 +568,20 @@ export default function DashboardPage() {
       {isAdmin && (
         <div className="animate-slide-up">
           {showMap ? (
-            <div className="relative">
+            <div 
+              className="relative rounded-3xl border overflow-hidden shadow-lg"
+              style={{
+                background: theme === 'light' ? '#faf8f5' : '#0d0e12',
+                borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
+                boxShadow: theme === 'light' 
+                  ? '0 20px 40px -15px rgba(80, 45, 85, 0.12)' 
+                  : '0 30px 60px -20px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05)'
+              }}
+            >
               <SituationMapCard />
               <button 
                 onClick={() => setShowMap(false)}
-                className="absolute top-4 right-4 z-[1000] p-2 bg-red-600 text-white rounded-xl shadow-xl hover:bg-red-700 transition-all flex items-center gap-2 font-bold text-xs"
+                className="absolute top-4 right-4 z-[1000] px-4 py-2.5 bg-red-600 text-white rounded-xl shadow-xl hover:bg-red-700 transition-all flex items-center gap-2 font-black text-xs border-0 cursor-pointer"
               >
                 <X className="w-4 h-4" /> Close Map
               </button>
@@ -560,14 +589,21 @@ export default function DashboardPage() {
           ) : (
             <div 
               onClick={() => setShowMap(true)}
-              className="glass-card p-8 rounded-3xl border-2 border-dashed border-accent/30 hover:border-accent hover:bg-accent/5 cursor-pointer transition-all group flex flex-col items-center justify-center gap-4 min-h-[200px]"
+              className="p-8 rounded-3xl border-2 border-dashed transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] cursor-pointer group flex flex-col items-center justify-center gap-4 min-h-[200px]"
+              style={{
+                background: theme === 'light' ? '#faf8f5' : '#0d0e12',
+                borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.25)' : 'rgba(79, 89, 112, 0.35)',
+                boxShadow: theme === 'light' 
+                  ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
+                  : 'inset 0 1px 0 rgba(255,255,255,0.02)'
+              }}
             >
-              <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <MapIcon className="w-8 h-8 text-accent" />
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform ${theme === 'light' ? 'bg-[#a61b3c]/10' : 'bg-white/10'}`}>
+                <MapIcon className={`w-8 h-8 ${theme === 'light' ? 'text-[#a61b3c]' : 'text-white'}`} />
               </div>
               <div className="text-center">
-                <h3 className="text-xl font-bold text-white uppercase tracking-tight">Open Situation Room Map</h3>
-                <p className="text-sm text-theme-muted">Click to visualize live alerts and citizen locations</p>
+                <h3 className={`text-xl font-bold uppercase tracking-tight ${theme === 'light' ? 'text-zinc-950' : 'text-white'}`}>Open Situation Room Map</h3>
+                <p className={`text-sm ${theme === 'light' ? 'text-zinc-500' : 'text-theme-muted'}`}>Click to visualize live alerts and citizen locations</p>
               </div>
             </div>
           )}
@@ -599,10 +635,19 @@ export default function DashboardPage() {
       {/* Safety Analytics Section */}
       {isAdmin && (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="glass-card p-6 rounded-2xl border-0 shadow-lg relative overflow-hidden">
-          <div style={{ position: 'absolute', top: 0, right: 0, width: '100px', height: '100px', background: 'radial-gradient(circle, var(--accent-bg) 0%, transparent 70%)', opacity: 0.3 }} />
+        {/* Safety Response Analytics */}
+        <div 
+          className="p-6 rounded-3xl border relative overflow-hidden"
+          style={{
+            background: theme === 'light' ? '#faf8f5' : '#0d0e12',
+            borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
+            boxShadow: theme === 'light' 
+              ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
+              : '0 20px 40px -15px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)'
+          }}
+        >
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-accent" /> {t('safety Response Analytics') || 'Safety Response Analytics'}
+            <Activity className={`w-5 h-5 ${theme === 'light' ? 'text-[#a61b3c]' : 'text-white'}`} /> {t('safety Response Analytics') || 'Safety Response Analytics'}
           </h2>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
@@ -617,28 +662,49 @@ export default function DashboardPage() {
           
           <div 
             onClick={() => navigate('/admin/simulation')}
-            className="p-4 rounded-2xl bg-accent/5 border border-dashed border-accent/30 hover:border-accent hover:bg-accent/10 cursor-pointer transition-all group"
+            className={`p-4 rounded-2xl border border-dashed transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] cursor-pointer group ${
+              theme === 'light' 
+                ? 'bg-[#a61b3c]/5 border-[#a61b3c]/20 hover:border-[#a61b3c]' 
+                : 'bg-white/5 border-white/10 hover:border-white/30'
+            }`}
           >
             <div className="flex items-center gap-3">
-              <Zap className="w-5 h-5 text-accent animate-pulse" />
+              <Zap className={`w-5 h-5 animate-pulse ${theme === 'light' ? 'text-[#a61b3c]' : 'text-white'}`} />
               <div>
                 <div className="text-sm font-bold">UACS Live Simulation</div>
                 <div className="text-[10px] text-theme-muted">Run side-by-side comparison</div>
               </div>
-              <button className="ml-auto text-xs font-bold text-accent">Launch →</button>
+              <button className={`ml-auto text-xs font-black border-0 bg-transparent ${theme === 'light' ? 'text-[#a61b3c] hover:underline' : 'text-white hover:underline'}`}>Launch →</button>
             </div>
           </div>
         </div>
 
-        <div className="glass-card p-6 rounded-2xl border-0 shadow-lg">
+        {/* Recent Safety Reports */}
+        <div 
+          className="p-6 rounded-3xl border"
+          style={{
+            background: theme === 'light' ? '#faf8f5' : '#0d0e12',
+            borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
+            boxShadow: theme === 'light' 
+              ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
+              : '0 20px 40px -15px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)'
+          }}
+        >
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-accent" /> {t('Recent Safety Reports') || 'Recent Safety Reports'}
+            <Activity className={`w-5 h-5 ${theme === 'light' ? 'text-[#a61b3c]' : 'text-white'}`} /> {t('Recent Safety Reports') || 'Recent Safety Reports'}
           </h2>
           <div className="space-y-3">
              {recentReports.length === 0 ? (
                <div className="text-center py-8 text-theme-muted text-sm">No recent safety reports</div>
              ) : recentReports.map((r, idx) => (
-               <div key={r.id || idx} className="flex items-center justify-between text-xs p-2 rounded-lg bg-theme-hover mb-2 border border-theme-border">
+               <div 
+                 key={r.id || idx} 
+                 className={`flex items-center justify-between text-xs p-3.5 rounded-xl border transition-all ${
+                   theme === 'light' 
+                     ? 'bg-zinc-100/50 border-zinc-200 text-zinc-800' 
+                     : 'bg-[#161922] border-theme-border text-theme-primary'
+                 }`}
+               >
                  <div className="flex flex-col">
                    <div className="flex items-center gap-2">
                      <div className={`w-2 h-2 rounded-full ${r.status === 'safe' ? 'bg-green-500' : 'bg-red-500 animate-pulse'}`} /> 
@@ -669,7 +735,11 @@ export default function DashboardPage() {
                            toast.error('Failed to dispatch rescue');
                          }
                        }}
-                       className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors flex items-center gap-1"
+                       className={`px-3 py-1.5 border-0 rounded-lg text-[10px] font-black cursor-pointer shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-1 ${
+                          theme === 'light' 
+                            ? 'bg-[#a61b3c] hover:bg-[#8f1430] text-white shadow-[#a61b3c]/20' 
+                            : 'bg-white hover:bg-zinc-100 text-black'
+                        }`}
                      >
                        <Zap className="w-3 h-3" /> DISPATCH HELP
                      </button>
@@ -682,14 +752,38 @@ export default function DashboardPage() {
       </div>
       )}
 
-      <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
+      <div 
+        className="flex gap-1.5 p-1.5 rounded-2xl border w-fit" 
+        style={{ 
+          background: theme === 'light' ? '#faf8f5' : '#0d0e12', 
+          borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.3)' 
+        }}
+      >
         {[
           { key: 'active',  icon: Zap,      label: `${t('activeAlerts') || 'Active'} (${activeMessages.length})`, roles: ['admin', 'user'] },
           { key: 'drafts',  icon: PenSquare, label: `${t('draftsTab') || 'Drafts'} (${draftMessages.length})`, roles: ['admin'] },
           { key: 'expired', icon: Clock,    label: `${t('expiredAlerts') || 'Expired'} (${expiredMessages.length})`, roles: ['admin', 'user'] },
-        ].filter(tb => tb.roles.includes(user.role || 'admin')).map(tb => (
-          <button key={tb.key} onClick={() => setActiveTab(tb.key)} className="px-5 py-2 rounded-lg text-sm font-medium flex items-center gap-2" style={{ background: activeTab===tb.key?'var(--accent)':'transparent', color: activeTab===tb.key?'white':'var(--text-muted)', boxShadow: activeTab===tb.key?'var(--shadow-md)':'none', border: 'none', cursor: 'pointer' }}><tb.icon className="w-3.5 h-3.5"/>{tb.label}</button>
-        ))}
+        ].filter(tb => tb.roles.includes(user.role || 'admin')).map(tb => {
+          const isActive = activeTab === tb.key;
+          return (
+            <button 
+              key={tb.key} 
+              onClick={() => setActiveTab(tb.key)} 
+              className={`px-5 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 border-0 cursor-pointer transition-all duration-300 ${
+                isActive 
+                  ? theme === 'light'
+                    ? 'bg-[#a61b3c] text-white shadow-lg shadow-[#a61b3c]/20'
+                    : 'bg-white text-black shadow-lg shadow-white/5'
+                  : theme === 'light'
+                    ? 'bg-transparent text-zinc-500 hover:text-zinc-800'
+                    : 'bg-transparent text-theme-muted hover:text-theme-primary'
+              }`}
+            >
+              <tb.icon className="w-3.5 h-3.5"/>
+              {tb.label}
+            </button>
+          );
+        })}
       </div>
 
       {activeTab==='active' && (<div className="space-y-3">
@@ -714,7 +808,18 @@ export default function DashboardPage() {
             )}
           </div>
         ) : activeMessages.map((msg,i)=>(
-          <div key={msg.id} className="glass-card p-5 animate-slide-up" style={{ animationDelay:`${i*60}ms` }}>
+          <div 
+            key={msg.id} 
+            className="p-5 rounded-2xl border transition-all duration-300 animate-slide-up hover:scale-[1.01]"
+            style={{ 
+              animationDelay: `${i*60}ms`,
+              background: theme === 'light' ? '#faf8f5' : '#0d0e12',
+              borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
+              boxShadow: theme === 'light' 
+                ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
+                : '0 20px 40px -15px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)'
+            }}
+          >
             <div className="flex flex-col lg:flex-row lg:items-start gap-4">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-2 flex-wrap"><AlertBanner urgency={msg?.urgency} /><h3 className="font-semibold text-lg">{msg?.title}</h3></div>
@@ -725,9 +830,32 @@ export default function DashboardPage() {
                 {msg.expires_at && <ExpiryTimer expiresAt={msg.expires_at} status={msg.status}/>}
                 {isAdmin && (
                 <div className="flex items-center gap-2">
-                  <button onClick={()=>handleExtend(msg?.id)} disabled={actionLoading[`x-${msg?.id}`]} className="btn-secondary text-xs py-1.5 px-3">{actionLoading[`x-${msg?.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<Timer className="w-3 h-3"/>} {t('extend')}</button>
-                  <button onClick={()=>setExpiryAlertId(msg?.id)} className="btn-danger text-xs py-1.5 px-3"><AlertTriangle className="w-3 h-3"/> {t('expireNow')}</button>
-                  <button onClick={()=>handleDelete(msg?.id)} disabled={actionLoading[`d-${msg?.id}`]} className="btn-secondary text-xs py-1.5 px-3" style={{color:'#ef4444',borderColor:'rgba(239,68,68,0.3)'}}>{actionLoading[`d-${msg?.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<X className="w-3 h-3"/>}</button>
+                  <button 
+                    onClick={()=>handleExtend(msg?.id)} 
+                    disabled={actionLoading[`x-${msg?.id}`]} 
+                    className={`px-3.5 py-2 border rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
+                      theme === 'light'
+                        ? 'bg-zinc-100 border-zinc-300 text-zinc-800 hover:bg-zinc-200'
+                        : 'bg-[#1c1e26] border-theme-border text-theme-primary hover:bg-[#2b313e]'
+                    }`}
+                  >
+                    {actionLoading[`x-${msg?.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<Timer className="w-3 h-3"/>} {t('extend')}
+                  </button>
+                  
+                  <button 
+                    onClick={()=>setExpiryAlertId(msg?.id)} 
+                    className="px-3.5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border-0 cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <AlertTriangle className="w-3 h-3"/> {t('expireNow')}
+                  </button>
+                  
+                  <button 
+                    onClick={()=>handleDelete(msg?.id)} 
+                    disabled={actionLoading[`d-${msg?.id}`]} 
+                    className="px-3 py-2 border rounded-xl text-xs font-bold transition-all flex items-center justify-center cursor-pointer text-red-500 border-red-500/25 hover:bg-red-500/10 hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    {actionLoading[`d-${msg?.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<X className="w-3 h-3"/>}
+                  </button>
                 </div>
                 )}
               </div>
@@ -739,7 +867,19 @@ export default function DashboardPage() {
       {activeTab==='drafts' && (<div className="space-y-3">
         {draftMessages.length===0 ? (<div className="glass-card p-12 text-center"><PenSquare className="w-12 h-12 mx-auto mb-4 text-theme-dim" /><h3 className="text-lg font-medium text-theme-secondary mb-2">{t('noDraftsTitle') || 'No Draft Messages'}</h3><p className="text-sm text-theme-muted mb-4">{t('noDraftsDesc') || 'Saved drafts will appear here'}</p><button onClick={()=>navigate('/compose')} className="btn-primary text-sm"><Send className="w-4 h-4" /> {t('composeMessage')}</button></div>
         ) : draftMessages.map((msg,i)=>(
-          <div key={msg.id} className="glass-card p-5 animate-slide-up" style={{ animationDelay:`${i*60}ms`, borderLeft: '3px solid var(--accent)' }}>
+          <div 
+            key={msg.id} 
+            className="p-5 rounded-2xl border border-l-4 transition-all duration-300 animate-slide-up hover:scale-[1.01]"
+            style={{ 
+              animationDelay: `${i*60}ms`,
+              borderLeftColor: theme === 'light' ? '#a61b3c' : '#ffffff',
+              background: theme === 'light' ? '#faf8f5' : '#0d0e12',
+              borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
+              boxShadow: theme === 'light' 
+                ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
+                : '0 20px 40px -15px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)'
+            }}
+          >
             <div className="flex items-center justify-between gap-4">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-1 flex-wrap"><AlertBanner urgency={msg.urgency} /><h3 className="font-semibold">{msg.title}</h3></div>
@@ -747,9 +887,35 @@ export default function DashboardPage() {
                 <p className="text-xs text-theme-dim mt-1">{t('by')} {msg.sent_by} · {new Date(msg.created_at||Date.now()).toLocaleDateString()}</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <button onClick={()=>navigate('/compose')} className="btn-secondary text-xs py-1.5 px-3"><PenSquare className="w-3 h-3"/> {t('editBtn') || 'Edit'}</button>
-                <button onClick={()=>navigate(`/approval/${msg.id}`)} className="btn-primary text-xs py-1.5 px-3"><Send className="w-3 h-3"/> {t('send')}</button>
-                <button onClick={()=>handleDelete(msg.id)} disabled={actionLoading[`d-${msg.id}`]} className="btn-secondary text-xs py-1.5 px-3" style={{color:'#ef4444',borderColor:'rgba(239,68,68,0.3)'}}>{actionLoading[`d-${msg.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<X className="w-3 h-3"/>}</button>
+                <button 
+                  onClick={()=>navigate('/compose')} 
+                  className={`px-3.5 py-2 border rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
+                    theme === 'light'
+                      ? 'bg-zinc-100 border-zinc-300 text-zinc-800 hover:bg-zinc-200'
+                      : 'bg-[#1c1e26] border-theme-border text-theme-primary hover:bg-[#2b313e]'
+                  }`}
+                >
+                  <PenSquare className="w-3 h-3"/> {t('editBtn') || 'Edit'}
+                </button>
+                
+                <button 
+                  onClick={()=>navigate(`/approval/${msg.id}`)} 
+                  className={`px-3.5 py-2 border-0 rounded-xl text-xs font-black cursor-pointer shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-1.5 ${
+                    theme === 'light' 
+                      ? 'bg-[#a61b3c] hover:bg-[#8f1430] text-white shadow-[#a61b3c]/20' 
+                      : 'bg-white hover:bg-zinc-100 text-black'
+                  }`}
+                >
+                  <Send className="w-3 h-3"/> {t('send')}
+                </button>
+                
+                <button 
+                  onClick={()=>handleDelete(msg.id)} 
+                  disabled={actionLoading[`d-${msg.id}`]} 
+                  className="px-3 py-2 border rounded-xl text-xs font-bold transition-all flex items-center justify-center cursor-pointer text-red-500 border-red-500/25 hover:bg-red-500/10 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  {actionLoading[`d-${msg.id}`]?<RefreshCw className="w-3 h-3 animate-spin"/>:<X className="w-3 h-3"/>}
+                </button>
               </div>
             </div>
           </div>
@@ -759,7 +925,18 @@ export default function DashboardPage() {
       {activeTab==='expired' && (<div className="space-y-3">
         {expiredMessages.length===0 ? (<div className="glass-card p-12 text-center"><Clock className="w-12 h-12 mx-auto mb-4 text-theme-dim" /><h3 className="text-lg font-medium text-theme-secondary mb-2">{t('noExpiredAlerts')}</h3><p className="text-sm text-theme-muted">{t('noExpiredDesc')}</p></div>
         ) : expiredMessages.map((msg,i)=>(
-          <div key={msg.id} className="glass-card p-5 opacity-75 animate-slide-up" style={{ animationDelay:`${i*60}ms` }}>
+          <div 
+            key={msg.id} 
+            className="p-5 rounded-2xl border transition-all duration-300 opacity-75 animate-slide-up hover:scale-[1.01]"
+            style={{ 
+              animationDelay: `${i*60}ms`,
+              background: theme === 'light' ? '#faf8f5' : '#0d0e12',
+              borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
+              boxShadow: theme === 'light' 
+                ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
+                : '0 20px 40px -15px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)'
+            }}
+          >
             <div className="flex flex-col lg:flex-row lg:items-start gap-4">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-2 flex-wrap"><span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider" style={{ background:'var(--bg-hover)',color:'var(--text-muted)',border:'1px solid var(--border)'}}>{t('expired')}</span><h3 className="font-semibold">{msg.title}</h3></div>
@@ -767,8 +944,26 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-3 text-xs text-theme-dim"><span>{t('expired')}: {msg.expires_at ? new Date(msg.expires_at).toLocaleString() : t('manual')}</span></div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <button onClick={()=>navigate(`/approval/${msg.id}`)} className="btn-secondary text-xs py-1.5 px-3"><RotateCcw className="w-3 h-3"/> {t('resend')}</button>
-                <button onClick={()=>navigate(`/approval/${msg.id}`)} className="btn-secondary text-xs py-1.5 px-3"><Eye className="w-3 h-3"/> {t('view')}</button>
+                <button 
+                  onClick={()=>navigate(`/approval/${msg.id}`)} 
+                  className={`px-3.5 py-2 border rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
+                    theme === 'light'
+                      ? 'bg-zinc-100 border-zinc-300 text-zinc-800 hover:bg-zinc-200'
+                      : 'bg-[#1c1e26] border-theme-border text-theme-primary hover:bg-[#2b313e]'
+                  }`}
+                >
+                  <RotateCcw className="w-3 h-3"/> {t('resend')}
+                </button>
+                <button 
+                  onClick={()=>navigate(`/approval/${msg.id}`)} 
+                  className={`px-3.5 py-2 border rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
+                    theme === 'light'
+                      ? 'bg-zinc-100 border-zinc-300 text-zinc-800 hover:bg-zinc-200'
+                      : 'bg-[#1c1e26] border-theme-border text-theme-primary hover:bg-[#2b313e]'
+                  }`}
+                >
+                  <Eye className="w-3 h-3"/> {t('view')}
+                </button>
               </div>
             </div>
           </div>
@@ -799,13 +994,27 @@ export default function DashboardPage() {
 
       {/* Emergency Modal */}
       {isEmergencyModalOpen && (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="glass-card max-w-lg w-full bg-[var(--bg-base)] border border-red-500/30 overflow-hidden shadow-2xl flex flex-col">
-            
-            <div className="p-6 border-b border-[var(--border)] bg-red-500/10 relative">
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
+          <div 
+            className="max-w-lg w-full rounded-3xl border overflow-hidden flex flex-col"
+            style={{ 
+              background: theme === 'light' ? '#faf8f5' : '#0d0e12', 
+              borderColor: theme === 'light' ? 'rgba(145,99,203,0.18)' : 'rgba(79,89,112,0.25)', 
+              boxShadow: theme === 'light' 
+                ? '0 32px 64px -12px rgba(80,45,85,0.22), 0 0 0 1px rgba(255,255,255,0.3)' 
+                : '0 25px 50px -12px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05)' 
+            }}
+          >
+            <div 
+              className="p-6 border-b relative"
+              style={{
+                borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.12)' : 'rgba(79, 89, 112, 0.2)',
+                background: 'rgba(239, 68, 68, 0.08)'
+              }}
+            >
               <button 
                 onClick={() => setIsEmergencyModalOpen(false)}
-                className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                className="absolute top-4 right-4 bg-transparent border-0 cursor-pointer text-theme-muted hover:text-theme-primary"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -905,12 +1114,21 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="p-6 border-t border-[var(--border)] bg-[var(--bg-surface)] flex flex-col gap-3">
+            <div 
+              className="p-6 border-t flex flex-col gap-3"
+              style={{
+                borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.12)' : 'rgba(79, 89, 112, 0.2)',
+                background: theme === 'light' ? '#faf8f5' : '#0d0e12'
+              }}
+            >
               <button 
                 onClick={handleEmergencySubmit}
                 disabled={emergencyLoading}
-                className="w-full py-3 rounded-lg font-bold text-white uppercase tracking-wider text-sm transition-all"
-                style={{ background: emergencyLoading ? '#991b1b' : '#ef4444' }}
+                className={`w-full py-3.5 border-0 rounded-xl font-bold uppercase tracking-wider text-xs cursor-pointer shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all ${
+                  theme === 'light' 
+                    ? 'bg-[#a61b3c] hover:bg-[#8f1430] text-white shadow-[#a61b3c]/20' 
+                    : 'bg-white hover:bg-zinc-100 text-black shadow-white/5'
+                }`}
               >
                 {emergencyLoading ? <RefreshCw className="w-5 h-5 mx-auto animate-spin" /> : (t('sendEmergency') || 'SEND EMERGENCY BROADCAST')}
               </button>
@@ -918,12 +1136,16 @@ export default function DashboardPage() {
               <button 
                 onClick={() => setIsEmergencyModalOpen(false)}
                 disabled={emergencyLoading}
-                className="w-full py-2 rounded-lg font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border)] hover:bg-[var(--bg-hover)] transition-colors"
+                className={`w-full py-2.5 rounded-xl border font-bold text-xs cursor-pointer transition-all ${
+                  theme === 'light' 
+                    ? 'bg-zinc-100 border-zinc-300 hover:bg-zinc-200 text-zinc-800' 
+                    : 'bg-[#1c1e26] border-theme-border hover:bg-[#2b313e] text-theme-primary'
+                }`}
               >
                 {t('cancel') || 'Cancel'}
               </button>
               
-              <p className="text-xs text-center text-red-500 font-medium">
+              <p className="text-[10px] text-center text-red-500 font-bold uppercase tracking-wider mt-1">
                 {t('emergencyWarning') || '⚠️ This will immediately broadcast to all channels. This action cannot be undone.'}
               </p>
             </div>
