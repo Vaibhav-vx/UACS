@@ -43,6 +43,7 @@ export default function DashboardPage() {
   const [ndmaCount, setNdmaCount] = useState(0);
 
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const { t } = useLanguage();
   const { user } = useAuth();
   const isAdmin = user?.role?.toLowerCase() === 'admin';
