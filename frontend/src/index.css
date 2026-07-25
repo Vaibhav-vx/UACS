@@ -13,42 +13,42 @@
 /* Theme Variables                                         */
 /* ═══════════════════════════════════════════════════════ */
 
-/* Dark theme (default) */
-:root, .dark {
-  --bg-base: #111827;
-  --bg-surface: #1f2937;
-  --bg-card: #1f2937;
-  --bg-card-solid: #1f2937;
-  --bg-hover: #374151;
-  --bg-input: #374151;
-  --bg-selected: rgba(59, 130, 246, 0.1);
+/* Default Theme — Nordic Frost (Cyber Blue / Antarctic Polar) */
+:root, .nordic-frost {
+  --bg-base: #0a0e17;
+  --bg-surface: #101626;
+  --bg-card: #101626;
+  --bg-card-solid: #101626;
+  --bg-hover: #1b263e;
+  --bg-input: #1b263e;
+  --bg-selected: rgba(6, 182, 212, 0.1);
 
-  --text-primary: #f9fafb;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
-  --text-dim: #4b5563;
-  --text-inverse: #111827;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-dim: #475569;
+  --text-inverse: #0a0e17;
 
-  --border: #374151;
-  --border-hover: #4b5563;
-  --border-strong: #4b5563;
+  --border: #1b263e;
+  --border-hover: #27375a;
+  --border-strong: #27375a;
 
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-  --accent-dark: #1e40af;
-  --accent-bg: rgba(37, 99, 235, 0.1);
-  --accent-border: rgba(37, 99, 235, 0.3);
+  --accent: #06b6d4;
+  --accent-hover: #0891b2;
+  --accent-dark: #0e7490;
+  --accent-bg: rgba(6, 182, 212, 0.12);
+  --accent-border: rgba(6, 182, 212, 0.35);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
 
   --card-blur: none;
   --card-shadow: none;
 
-  --scrollbar-track: #111827;
-  --scrollbar-thumb: #374151;
-  --scrollbar-thumb-hover: #4b5563;
+  --scrollbar-track: #0a0e17;
+  --scrollbar-thumb: #1b263e;
+  --scrollbar-thumb-hover: #27375a;
 }
 
 /* Light theme (Sleek Gray) */
@@ -90,43 +90,7 @@
 }
 
 
-/* Nordic Frost Theme (Cyber Blue / Antarctic Polar) */
-.nordic-frost {
-  --bg-base: #0a0e17;
-  --bg-surface: #101626;
-  --bg-card: #101626;
-  --bg-card-solid: #101626;
-  --bg-hover: #1b263e;
-  --bg-input: #1b263e;
-  --bg-selected: rgba(6, 182, 212, 0.1);
 
-  --text-primary: #e2e8f0;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-dim: #475569;
-  --text-inverse: #0a0e17;
-
-  --border: #1b263e;
-  --border-hover: #27375a;
-  --border-strong: #27375a;
-
-  --accent: #06b6d4;
-  --accent-hover: #0891b2;
-  --accent-dark: #0e7490;
-  --accent-bg: rgba(6, 182, 212, 0.12);
-  --accent-border: rgba(6, 182, 212, 0.35);
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.25);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-
-  --card-blur: none;
-  --card-shadow: none;
-
-  --scrollbar-track: #0a0e17;
-  --scrollbar-thumb: #1b263e;
-  --scrollbar-thumb-hover: #27375a;
-}
 
 
 /* ═══════════════════════════════════════════════════════ */

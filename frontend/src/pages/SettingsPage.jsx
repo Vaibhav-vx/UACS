@@ -156,7 +156,6 @@ export default function SettingsPage() {
                        onChange={(e) => setTheme(e.target.value)}
                        className="px-4 py-2 bg-theme-hover border border-theme-border rounded-xl text-sm font-bold outline-none cursor-pointer"
                      >
-                       <option value="dark">🕶️ Dark Command (Default)</option>
                        <option value="light">⚙️ Sleek Tactical Gray (Light)</option>
                        <option value="nordic-frost">🥶 Nordic Frost (Cyber Blue)</option>
                      </select>

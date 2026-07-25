@@ -6,25 +6,20 @@ export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState(() => {
     // Check localStorage first, then system preference
     const stored = localStorage.getItem('uacs_theme');
-    if (stored === 'amber-ops') return 'dark';
+    if (stored === 'amber-ops' || stored === 'dark') return 'nordic-frost';
     if (stored) return stored;
-    if (window.matchMedia?.('(prefers-color-scheme: light)').matches) return 'light';
-    return 'dark';
+    return 'nordic-frost';
   });
 
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.remove('light', 'dark', 'nordic-frost');
+    root.classList.remove('light', 'nordic-frost');
     root.classList.add(theme);
     localStorage.setItem('uacs_theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setThemeState(prev => {
-      if (prev === 'dark') return 'light';
-      if (prev === 'light') return 'nordic-frost';
-      return 'dark';
-    });
+    setThemeState(prev => (prev === 'light' ? 'nordic-frost' : 'light'));
   };
 
   const setTheme = (newTheme) => {
