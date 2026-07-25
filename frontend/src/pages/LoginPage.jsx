@@ -434,7 +434,7 @@ export default function LoginPage() {
                 type="button"
                 onClick={() => setTab('register')}
                 className={`bg-transparent border-0 cursor-pointer font-bold text-xs p-0 hover:underline ${
-                  theme === 'light' ? 'text-zinc-950 font-black' : 'text-accent'
+                  theme === 'light' ? 'text-zinc-950 font-black' : 'text-white'
                 }`}
               >
                 {t('createOne') || 'Create one'}
@@ -649,7 +649,7 @@ export default function LoginPage() {
                     type="button"
                     onClick={() => setTab('login')}
                     className={`bg-transparent border-0 cursor-pointer font-bold text-xs p-0 hover:underline ${
-                      theme === 'light' ? 'text-zinc-950 font-black' : 'text-accent'
+                      theme === 'light' ? 'text-zinc-950 font-black' : 'text-white'
                     }`}
                   >
                     {t('loginButton') || 'Sign in'}
