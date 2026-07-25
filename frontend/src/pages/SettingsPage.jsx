@@ -157,8 +157,7 @@ export default function SettingsPage() {
                        className="px-4 py-2 bg-theme-hover border border-theme-border rounded-xl text-sm font-bold outline-none cursor-pointer"
                      >
                        <option value="dark">🕶️ Dark Command (Default)</option>
-                       <option value="light">☀️ Voyager Light (Standard)</option>
-                       <option value="amber-ops">🏜️ Amber Operations (Desert)</option>
+                       <option value="light">⚙️ Sleek Tactical Gray (Light)</option>
                        <option value="nordic-frost">🥶 Nordic Frost (Cyber Blue)</option>
                      </select>
                   </div>
