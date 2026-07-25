@@ -265,7 +265,7 @@ export default function LoginPage() {
               className="absolute inset-0 w-full h-full"
               style={{
                 background: 'linear-gradient(135deg, #815ac0 0%, #9163cb 15%, #a06cd5 30%, #b185db 45%, #c19ee0 60%, #d2b7e5 75%, #dac3e8 90%, #dec9e9 100%)',
-                clipPath: 'polygon(0 0, 100% 0, 0 100%)'
+                clipPath: 'polygon(0 0, 60% 0, 40% 100%, 0 100%)'
               }}
             />
             {/* Right Side: Maple Sunset Gradient */}
@@ -273,7 +273,7 @@ export default function LoginPage() {
               className="absolute inset-0 w-full h-full"
               style={{
                 background: 'linear-gradient(315deg, #ca2851 0%, #ff6766 40%, #ffb173 80%, #ffe3b3 100%)',
-                clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
+                clipPath: 'polygon(60% 0, 100% 0, 100% 100%, 40% 100%)'
               }}
             />
             {/* Subtle edge vignette */}
