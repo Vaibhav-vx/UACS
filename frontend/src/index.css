@@ -89,6 +89,20 @@
   --scrollbar-thumb-hover: #94a3b8;
 }
 
+/* Strict light-mode color overrides for inputs and forms to ensure high-contrast black text */
+.light input, 
+.light select, 
+.light textarea {
+  color: #000000 !important;
+}
+.light input::placeholder, 
+.light textarea::placeholder {
+  color: #52525b !important;
+}
+.light label {
+  color: #18181b !important;
+}
+
 
 
 
