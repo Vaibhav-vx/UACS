@@ -281,11 +281,11 @@ export default function LoginPage() {
           </>
         ) : (
           <>
-            {/* Left Side: Emerald Abyss Gradient */}
+            {/* Left Side: Titanium Gunmetal Gradient */}
             <div 
               className="absolute inset-0 w-full h-full"
               style={{
-                background: 'linear-gradient(135deg, #021a16 0%, #03241e 15%, #043229 30%, #064035 45%, #074e40 60%, #0a5c4c 75%, #0d6b59 90%, #117b67 100%)',
+                background: 'linear-gradient(135deg, #07080a 0%, #0f1115 15%, #181b22 30%, #212630 45%, #2b313e 60%, #363e4e 75%, #424b5e 90%, #4f5970 100%)',
                 clipPath: 'polygon(0 0, 60% 0, 40% 100%, 0 100%)'
               }}
             />
