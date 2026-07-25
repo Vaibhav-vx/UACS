@@ -260,19 +260,19 @@ export default function LoginPage() {
       <div className="fixed inset-0 z-0 pointer-events-none select-none overflow-hidden">
         {theme === 'light' ? (
           <>
-            {/* Left Side: Deep Emerald Gradient */}
+            {/* Left Side: Violet Dusk Gradient */}
             <div 
               className="absolute inset-0 w-full h-full"
               style={{
-                background: 'linear-gradient(135deg, #022c22 0%, #064e3b 45%, #0f172a 100%)',
+                background: 'linear-gradient(135deg, #815ac0 0%, #9163cb 15%, #a06cd5 30%, #b185db 45%, #c19ee0 60%, #d2b7e5 75%, #dac3e8 90%, #dec9e9 100%)',
                 clipPath: 'polygon(0 0, 100% 0, 0 100%)'
               }}
             />
-            {/* Right Side: Amethyst Dusk Gradient */}
+            {/* Right Side: Maple Sunset Gradient */}
             <div 
               className="absolute inset-0 w-full h-full"
               style={{
-                background: 'linear-gradient(315deg, #2e1065 0%, #1e1b4b 45%, #020617 100%)',
+                background: 'linear-gradient(315deg, #ca2851 0%, #ff6766 40%, #ffb173 80%, #ffe3b3 100%)',
                 clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
               }}
             />
