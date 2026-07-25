@@ -350,7 +350,7 @@ export default function LoginPage() {
                 tab === key 
                   ? theme === 'light'
                     ? 'bg-[#a61b3c] text-white shadow-lg shadow-[#a61b3c]/20'
-                    : 'bg-[#2b313e] text-white shadow-lg shadow-black/40'
+                    : 'bg-white text-black shadow-lg shadow-white/5'
                   : theme === 'light'
                     ? 'bg-transparent text-zinc-500 hover:text-zinc-800'
                     : 'bg-transparent text-theme-muted hover:text-theme-primary'
@@ -415,10 +415,10 @@ export default function LoginPage() {
               type="submit"
               id="login-submit-btn"
               disabled={loginLoading}
-              className={`w-full py-3.5 disabled:opacity-50 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-0 cursor-pointer shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all ${
+              className={`w-full py-3.5 disabled:opacity-50 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-0 cursor-pointer shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all ${
                 theme === 'light' 
-                  ? 'bg-[#a61b3c] hover:bg-[#8f1430] shadow-[#a61b3c]/20' 
-                  : 'bg-[#2b313e] hover:bg-[#363e4e] shadow-black/35'
+                  ? 'bg-[#a61b3c] hover:bg-[#8f1430] text-white shadow-[#a61b3c]/20' 
+                  : 'bg-white hover:bg-zinc-100 text-black font-black shadow-white/5'
               }`}
             >
               {loginLoading ? (
@@ -610,10 +610,10 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={regLoading || !canSubmitReg}
-                    className={`w-full py-3.5 disabled:opacity-50 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-0 cursor-pointer shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all ${
+                    className={`w-full py-3.5 disabled:opacity-50 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-0 cursor-pointer shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all ${
                       theme === 'light' 
-                        ? 'bg-[#a61b3c] hover:bg-[#8f1430] shadow-[#a61b3c]/20' 
-                        : 'bg-[#2b313e] hover:bg-[#363e4e] shadow-black/35'
+                        ? 'bg-[#a61b3c] hover:bg-[#8f1430] text-white shadow-[#a61b3c]/20' 
+                        : 'bg-white hover:bg-zinc-100 text-black font-black shadow-white/5'
                     }`}
                   >
                     {regLoading ? (
