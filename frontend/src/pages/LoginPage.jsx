@@ -272,7 +272,7 @@ export default function LoginPage() {
             <div 
               className="absolute inset-0 w-full h-full"
               style={{
-                background: 'linear-gradient(315deg, #ca2851 0%, #ff6766 40%, #ffb173 80%, #ffe3b3 100%)',
+                background: 'linear-gradient(315deg, #a61b3c 0%, #ca2851 15%, #e04b5b 30%, #ff6766 45%, #ff9166 60%, #ffb173 75%, #ffd2a1 90%, #ffe3b3 100%)',
                 clipPath: 'polygon(60% 0, 100% 0, 100% 100%, 40% 100%)'
               }}
             />
