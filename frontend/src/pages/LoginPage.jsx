@@ -252,7 +252,7 @@ export default function LoginPage() {
       style={{ 
         background: theme === 'light' 
           ? '#f8f4e9'
-          : 'radial-gradient(circle at 50% 50%, var(--bg-surface) 0%, var(--bg-base) 100%)'
+          : '#0b0914'
       }}
     >
       
@@ -260,19 +260,19 @@ export default function LoginPage() {
       <div className="fixed inset-0 z-0 pointer-events-none select-none overflow-hidden">
         {theme === 'light' ? (
           <>
-            {/* Left Side: Maroon Shading Gradient */}
+            {/* Left Side: Violet Dusk Gradient */}
             <div 
               className="absolute inset-0 w-full h-full"
               style={{
-                background: 'linear-gradient(135deg, #a61b3c 0%, #ca2851 15%, #e04b5b 30%, #ff6766 45%, #ff9166 60%, #ffb173 75%, #ffd2a1 90%, #ffe3b3 100%)',
+                background: 'linear-gradient(135deg, #815ac0 0%, #9163cb 15%, #a06cd5 30%, #b185db 45%, #c19ee0 60%, #d2b7e5 75%, #dac3e8 90%, #dec9e9 100%)',
                 clipPath: 'polygon(0 0, 60% 0, 40% 100%, 0 100%)'
               }}
             />
-            {/* Right Side: Beige Shading Gradient */}
+            {/* Right Side: Maple Sunset Gradient */}
             <div 
               className="absolute inset-0 w-full h-full"
               style={{
-                background: 'linear-gradient(315deg, #4a3b32 0%, #6b5b52 15%, #8c7b70 30%, #ad9c91 45%, #cbbcb2 60%, #e5dcd3 75%, #f4eee8 90%, #faf6f0 100%)',
+                background: 'linear-gradient(315deg, #a61b3c 0%, #ca2851 15%, #e04b5b 30%, #ff6766 45%, #ff9166 60%, #ffb173 75%, #ffd2a1 90%, #ffe3b3 100%)',
                 clipPath: 'polygon(60% 0, 100% 0, 100% 100%, 40% 100%)'
               }}
             />
@@ -280,32 +280,25 @@ export default function LoginPage() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,transparent_50%,rgba(0,0,0,0.12)_100%)]" />
           </>
         ) : (
-          /* Dark theme: floating glassmorphic orbs */
           <>
-            {/* Glow shape 1: Accent top-left */}
+            {/* Left Side: Emerald Abyss Gradient */}
             <div 
-              className="absolute -top-[15%] -left-[10%] w-[55%] h-[55%] rounded-full blur-[130px] animate-float-orb-1" 
-              style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.40 }}
+              className="absolute inset-0 w-full h-full"
+              style={{
+                background: 'linear-gradient(135deg, #021a16 0%, #03241e 15%, #043229 30%, #064035 45%, #074e40 60%, #0a5c4c 75%, #0d6b59 90%, #117b67 100%)',
+                clipPath: 'polygon(0 0, 60% 0, 40% 100%, 0 100%)'
+              }}
             />
-            {/* Glow shape 2: Accent bottom-right */}
+            {/* Right Side: Midnight Velvet Gradient */}
             <div 
-              className="absolute -bottom-[15%] -right-[10%] w-[55%] h-[55%] rounded-full blur-[130px] animate-float-orb-2" 
-              style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.40 }}
+              className="absolute inset-0 w-full h-full"
+              style={{
+                background: 'linear-gradient(315deg, #0b0914 0%, #120e24 15%, #1a1334 30%, #221944 45%, #2b1f54 60%, #352664 75%, #402c74 90%, #4c3384 100%)',
+                clipPath: 'polygon(60% 0, 100% 0, 100% 100%, 40% 100%)'
+              }}
             />
-            {/* Glow shape 3: Hue-shifted secondary */}
-            <div 
-              className="absolute top-[25%] left-[15%] w-[50%] h-[50%] rounded-full blur-[120px] animate-float-orb-3" 
-              style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.30, filter: 'hue-rotate(70deg)' }}
-            />
-            {/* Glow shape 4: Counter-hue orb */}
-            <div 
-              className="absolute bottom-[30%] right-[10%] w-[45%] h-[45%] rounded-full blur-[120px] animate-float-orb-1" 
-              style={{ background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)', opacity: 0.26, filter: 'hue-rotate(-65deg)' }}
-            />
-            {/* Frost overlay */}
-            <div className="absolute inset-0 bg-theme-base/20 backdrop-blur-[80px]" />
-            {/* Vignette */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--bg-base)_100%)] opacity-40" />
+            {/* Subtle edge vignette */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,transparent_50%,rgba(0,0,0,0.40)_100%)]" />
           </>
         )}
       </div>
