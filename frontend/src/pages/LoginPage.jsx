@@ -289,11 +289,11 @@ export default function LoginPage() {
                 clipPath: 'polygon(0 0, 60% 0, 40% 100%, 0 100%)'
               }}
             />
-            {/* Right Side: Pure Obsidian Black Shading Gradient */}
+            {/* Right Side: Black-to-Gray Shading Gradient */}
             <div 
               className="absolute inset-0 w-full h-full"
               style={{
-                background: 'linear-gradient(315deg, #020203 0%, #09090b 15%, #121214 30%, #1a1a1e 45%, #242429 60%, #2e2e34 75%, #3a3a41 90%, #46464e 100%)',
+                background: 'linear-gradient(315deg, #000000 0%, #09090b 15%, #18181b 30%, #27272a 45%, #3f3f46 60%, #52525b 75%, #71717a 90%, #8e8e93 100%)',
                 clipPath: 'polygon(60% 0, 100% 0, 100% 100%, 40% 100%)'
               }}
             />
