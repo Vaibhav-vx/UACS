@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════
-// UACS — Frontend Zone Detection Utility
+// Platform — Frontend Zone Detection Utility
 // Mirrors backend/utils/zoneMapper.js
 // ═══════════════════════════════════════
 

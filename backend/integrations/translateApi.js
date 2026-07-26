@@ -1,11 +1,11 @@
 // ═══════════════════════════════════════
-// UACS Translation Integration
+// Portal Translation Integration
 // Uses Google Translate and MyMemory API with fallback
 // ═══════════════════════════════════════
 
 import axios from 'axios';
 
-// Language code mapping (UACS names → ISO codes)
+// Language code mapping (Portal names → ISO codes)
 const LANG_CODES = {
   en:      'en',
   hindi:   'hi',
@@ -62,19 +62,19 @@ export async function translateText(text, source = 'en', target = 'hi') {
   // 1. Try Google Translate first
   try {
     const result = await translateViaGoogle(text, srcCode, tgtCode);
-    console.log(`[UACS TRANSLATE] ✅ Google: ${source} → ${target}`);
+    console.log(`[Portal TRANSLATE] ✅ Google: ${source} → ${target}`);
     return result;
   } catch (e) {
-    console.warn(`[UACS TRANSLATE] Google failed (${e.message}), trying MyMemory...`);
+    console.warn(`[Portal TRANSLATE] Google failed (${e.message}), trying MyMemory...`);
   }
 
   // 2. Fall back to MyMemory
   try {
     const result = await translateViaMyMemory(text, srcCode, tgtCode);
-    console.log(`[UACS TRANSLATE] ✅ MyMemory: ${source} → ${target}`);
+    console.log(`[Portal TRANSLATE] ✅ MyMemory: ${source} → ${target}`);
     return result;
   } catch (e) {
-    console.warn(`[UACS TRANSLATE] MyMemory failed (${e.message}). Using prefixed fallback.`);
+    console.warn(`[Portal TRANSLATE] MyMemory failed (${e.message}). Using prefixed fallback.`);
   }
 
   // Last resort: prefix with language name
@@ -96,7 +96,7 @@ export async function translateToMultiple(text, targetLangs) {
         const translated = await translateText(text, 'en', code);
         return { lang, text: translated };
       } catch (err) {
-        console.error(`[UACS TRANSLATE] ${lang} failed: ${err.message}`);
+        console.error(`[Portal TRANSLATE] ${lang} failed: ${err.message}`);
         return { lang, text: `[${LANG_NAMES[code] || lang}] ${text}` };
       }
     })

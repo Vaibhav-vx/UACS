@@ -25,9 +25,9 @@ export default function SimulationPage() {
       duration: 4000, 
       content: (
         <div className="flex flex-col items-center justify-center text-center space-y-6 animate-fade-in">
-          <div className="text-6xl font-black tracking-[0.2em] text-white opacity-20 mb-8">UACS</div>
+          <div className="text-6xl font-black tracking-[0.2em] text-white opacity-20 mb-8">Platform</div>
           <h2 className="text-3xl font-light text-white/80 max-w-2xl leading-relaxed">
-            "Before UACS, manual communication systems caused critical delays during emergencies."
+            "Before Platform, manual communication systems caused critical delays during emergencies."
           </h2>
         </div>
       )
@@ -194,9 +194,9 @@ export default function SimulationPage() {
       duration: 3000,
       content: (
         <div className="flex flex-col items-center justify-center text-center space-y-6">
-           <div className="text-6xl font-black text-white animate-assemble">UACS</div>
+           <div className="text-6xl font-black text-white animate-assemble">Platform</div>
            <div className="text-2xl text-white/60 animate-fade-in" style={{ animationDelay: '1.5s' }}>Automated alert dispatch.</div>
-           <div className="text-4xl font-black text-accent animate-fade-in" style={{ animationDelay: '2s' }}>The UACS Solution.</div>
+           <div className="text-4xl font-black text-accent animate-fade-in" style={{ animationDelay: '2s' }}>The Modern Platform Solution.</div>
         </div>
       )
     },
@@ -214,7 +214,7 @@ export default function SimulationPage() {
           </div>
           <div className="space-y-4">
              <p className="text-2xl text-white/90">Same disaster. Zone 4. 3.2 million citizens.</p>
-             <p className="text-5xl font-black text-accent animate-assemble" style={{ animationDelay: '1s' }}>WITH UACS...</p>
+             <p className="text-5xl font-black text-accent animate-assemble" style={{ animationDelay: '1s' }}>WITH THE PLATFORM...</p>
           </div>
         </div>
       )
@@ -231,7 +231,7 @@ export default function SimulationPage() {
              </div>
              <div className="flex items-center gap-3 mb-6 border-b border-white/10 pb-4">
                 <Globe className="w-6 h-6 text-accent" />
-                <span className="text-xs font-bold tracking-widest text-white/40 uppercase">UACS Unified Dashboard</span>
+                <span className="text-xs font-bold tracking-widest text-white/40 uppercase">Unified Dashboard</span>
              </div>
              <div className="space-y-4">
                 <div className="text-sm font-medium text-white/80 typewriter-cursor">
@@ -420,7 +420,7 @@ export default function SimulationPage() {
            <div className="grid grid-cols-[1fr_120px_120px] gap-8 px-8 items-end mb-4 text-[10px] uppercase font-black tracking-widest text-white/40">
               <div>METRIC</div>
               <div className="text-center">OLD WAY</div>
-              <div className="text-center text-accent">UACS</div>
+              <div className="text-center text-accent">Platform</div>
            </div>
 
            <div className="space-y-4">
@@ -485,7 +485,7 @@ export default function SimulationPage() {
     return (
       <div className="fixed inset-0 z-[9999] bg-[#0a0a0f] flex flex-col items-center justify-center p-8 cinematic-bg animate-fade-in">
         <div className="text-center space-y-12">
-          <div className="text-8xl font-black text-white opacity-20 mb-12">UACS</div>
+          <div className="text-8xl font-black text-white opacity-20 mb-12">Platform</div>
           <div className="space-y-4">
             <h2 className="text-4xl font-bold text-white">One Message. Every Channel.</h2>
             <h2 className="text-4xl font-bold text-accent">Every Language. Every Citizen.</h2>
@@ -496,11 +496,11 @@ export default function SimulationPage() {
                <RotateCcw className="w-5 h-5" /> WATCH AGAIN
             </button>
             <button onClick={() => navigate('/compose')} className="flex items-center gap-2 px-8 py-4 rounded-full bg-accent hover:scale-105 text-white font-black transition-all shadow-2xl shadow-accent/40">
-               TRY UACS LIVE <ChevronRight className="w-5 h-5" />
+               TRY DEMO LIVE <ChevronRight className="w-5 h-5" />
             </button>
           </div>
           
-          <p className="text-white/40 text-sm pt-8 italic">You just watched a 3 minute simulation of what UACS solves.</p>
+          <p className="text-white/40 text-sm pt-8 italic">You just watched a 3 minute simulation of what the platform solves.</p>
         </div>
       </div>
     );
@@ -515,7 +515,7 @@ export default function SimulationPage() {
                <Activity className="w-6 h-6" />
             </div>
             <div>
-               <h1 className="text-lg font-black tracking-tighter uppercase">UACS <span className="text-accent">SIMULATION</span></h1>
+               <h1 className="text-lg font-black tracking-tighter uppercase">Platform <span className="text-accent">SIMULATION</span></h1>
                <div className="flex items-center gap-2 text-[10px] font-bold text-white/40 uppercase tracking-widest">
                   Chapter {activeScene.chapter} of 4 • {activeScene.id}
                </div>

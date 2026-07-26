@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════
-// UACS API Service Layer
+// Platform API Service Layer
 // JWT-authenticated axios instance
 // All 12 disaster/weather API categories
 // ═══════════════════════════════════════
@@ -16,7 +16,7 @@ const api = axios.create({
 
 // Attach JWT Bearer token to every request
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('uacs_token');
+  const token = localStorage.getItem('portal_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -30,8 +30,8 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       const code = error.response?.data?.code;
       if (!error.config?.url?.includes('/auth/login')) {
-        localStorage.removeItem('uacs_token');
-        localStorage.removeItem('uacs_user');
+        localStorage.removeItem('portal_token');
+        localStorage.removeItem('portal_user');
         const msg = code === 'TOKEN_EXPIRED' ? '?expired=1' : '';
         window.location.href = `/login${msg}`;
       }
@@ -237,12 +237,12 @@ export const geocodeApi = {
   reverse: (lat, lng) =>
     axios.get('https://nominatim.openstreetmap.org/reverse', {
       params: { format: 'json', lat, lon: lng },
-      headers: { 'User-Agent': 'UACS-Platform/1.0' },
+      headers: { 'User-Agent': 'Platform-Platform/1.0' },
     }),
   search: (query) =>
     axios.get('https://nominatim.openstreetmap.org/search', {
       params: { format: 'json', q: query, limit: 5 },
-      headers: { 'User-Agent': 'UACS-Platform/1.0' },
+      headers: { 'User-Agent': 'Platform-Platform/1.0' },
     }),
 };
 

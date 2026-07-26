@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════
-// UACS — Zone Detection Utility
+// Portal — Zone Detection Utility
 // Priority 1: GPS coordinates
 // Priority 2: Text-based keyword matching
 // ═══════════════════════════════════════

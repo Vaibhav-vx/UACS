@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════
-// UACS Dispatch Routes
+// Portal Dispatch Routes
 // Uses universal db adapter (SQLite or Supabase)
 // ═══════════════════════════════════════
 
@@ -14,11 +14,11 @@ router.use(requireAdmin);
 
 // ── Simulated channel dispatchers ────────────────────────
 async function dispatchToRadio(msg) {
-  console.log(`[UACS DISPATCH] Radio: Broadcasting "${msg.title}"`);
+  console.log(`[Portal DISPATCH] Radio: Broadcasting "${msg.title}"`);
   return { success: true, channel: 'radio', message: 'Broadcast queued' };
 }
 async function dispatchToTV(msg) {
-  console.log(`[UACS DISPATCH] TV: Crawl submitted for "${msg.title}"`);
+  console.log(`[Portal DISPATCH] TV: Crawl submitted for "${msg.title}"`);
   return { success: true, channel: 'tv', message: 'TV crawl submitted' };
 }
 async function dispatchToWebsite(msg) {
@@ -38,7 +38,7 @@ async function dispatchToWebsite(msg) {
       return { success: false, channel: 'website', message: err.message };
     }
   }
-  console.log(`[UACS DISPATCH] Website: Published "${msg.title}" to CMS (mock)`);
+  console.log(`[Portal DISPATCH] Website: Published "${msg.title}" to CMS (mock)`);
   return { success: true, channel: 'website', message: 'Published to CMS (mock)' };
 }
 
@@ -71,7 +71,7 @@ router.post('/:id', async (req, res) => {
     if (msg.channels.length === 0)
       return res.status(400).json({ error: 'No channels selected for dispatch' });
 
-    console.log(`[UACS DISPATCH] Message ${msg.id} → ${msg.channels.join(', ')}`);
+    console.log(`[Portal DISPATCH] Message ${msg.id} → ${msg.channels.join(', ')}`);
 
     const results = await Promise.all(msg.channels.map(async (channel) => {
       try {
@@ -143,7 +143,7 @@ router.post('/:id', async (req, res) => {
             if (zoneFiltered.length === 0) {
               result = { success: true, channel: 'sms', message: '0 recipients — no SMS sent', sent: 0, failed: 0 };
             } else {
-              console.log(`[UACS DISPATCH] SMS → ${zoneFiltered.length} recipient(s)`);
+              console.log(`[Portal DISPATCH] SMS → ${zoneFiltered.length} recipient(s)`);
               // Pass the parsed message object (translations already parsed as object above)
               const report = await withRetry(() => sendBulkSMS(zoneFiltered, msg));
               result = {
@@ -172,7 +172,7 @@ router.post('/:id', async (req, res) => {
 
         return { channel, status: result.success ? 'sent' : 'failed', detail: result.message };
       } catch (err) {
-        console.error(`[UACS DISPATCH] ${channel} FAILED:`, err.message);
+        console.error(`[Portal DISPATCH] ${channel} FAILED:`, err.message);
         await dbInsert('audit_log', {
           message_id:   msg.id,
           action:       'dispatched',
@@ -193,10 +193,10 @@ router.post('/:id', async (req, res) => {
     const report = {};
     results.forEach(r => { report[r.channel] = r.status; });
 
-    console.log('[UACS DISPATCH] Done:', JSON.stringify(report));
+    console.log('[Portal DISPATCH] Done:', JSON.stringify(report));
     res.json({ success: true, messageId: msg.id, report, details: results });
   } catch (err) {
-    console.error('[UACS DISPATCH] Error:', err.message);
+    console.error('[Portal DISPATCH] Error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

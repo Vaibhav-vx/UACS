@@ -4,7 +4,7 @@ const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState(() => {
-    const stored = localStorage.getItem('uacs_theme');
+    const stored = localStorage.getItem('portal_theme');
     if (stored === 'amber-ops' || stored === 'nordic-frost') return 'dark';
     if (stored) return stored;
     return 'dark';
@@ -14,7 +14,7 @@ export function ThemeProvider({ children }) {
     const root = document.documentElement;
     root.classList.remove('light', 'dark');
     root.classList.add(theme);
-    localStorage.setItem('uacs_theme', theme);
+    localStorage.setItem('portal_theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {

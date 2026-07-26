@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// UACS — Security Middleware
+// Portal — Security Middleware
 // Rate limiting, input sanitization, payload guards
 // ═══════════════════════════════════════════════════════════════
 

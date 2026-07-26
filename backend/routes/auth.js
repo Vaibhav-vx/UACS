@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════
-// UACS Auth Routes — Login / Register / Logout / Me
+// Portal Auth Routes — Login / Register / Logout / Me
 // FIXED: Real zone detection, no hardcoded zones
 // ═══════════════════════════════════════
 
@@ -87,7 +87,7 @@ router.post('/login', async (req, res) => {
       { expiresIn: JWT_EXPIRES_IN }
     );
 
-    console.log(`[UACS AUTH] User "${user.name}" (${user.role}) logged in — Zone: ${userZone}`);
+    console.log(`[Portal AUTH] User "${user.name}" (${user.role}) logged in — Zone: ${userZone}`);
 
     res.json({
       token,
@@ -105,7 +105,7 @@ router.post('/login', async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('[UACS AUTH] Login error:', err.message);
+    console.error('[Portal AUTH] Login error:', err.message);
     res.status(500).json({ error: 'Server error during login' });
   }
 });
@@ -125,10 +125,10 @@ router.post('/logout', authenticate, async (req, res) => {
         });
       }
     }
-    console.log(`[UACS AUTH] User ${req.user?.name || 'Unknown'} logged out (token revoked)`);
+    console.log(`[Portal AUTH] User ${req.user?.name || 'Unknown'} logged out (token revoked)`);
     res.json({ success: true, message: 'Logged out successfully' });
   } catch (err) {
-    console.error('[UACS AUTH] Logout error:', err.message);
+    console.error('[Portal AUTH] Logout error:', err.message);
     res.status(500).json({ error: 'Server error during logout' });
   }
 });
@@ -151,7 +151,7 @@ router.post('/demo', async (req, res) => {
         zone: 'Zone 2 — Mumbai',
         language: 'en',
       });
-      console.log('[UACS AUTH] Created new Demo User');
+      console.log('[Portal AUTH] Created new Demo User');
     }
 
     const detected = detectZone(demoUser.location, demoUser.lat, demoUser.lng);
@@ -162,7 +162,7 @@ router.post('/demo', async (req, res) => {
       { expiresIn: JWT_EXPIRES_IN }
     );
 
-    console.log(`[UACS AUTH] Demo User logged in`);
+    console.log(`[Portal AUTH] Demo User logged in`);
 
     res.json({
       token,
@@ -178,7 +178,7 @@ router.post('/demo', async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('[UACS AUTH] Demo login error:', err.message);
+    console.error('[Portal AUTH] Demo login error:', err.message);
     res.status(500).json({ error: 'Server error during demo login' });
   }
 });
@@ -201,15 +201,15 @@ router.post('/otp/send', async (req, res) => {
 
     // Send via Twilio
     await twilioClient.messages.create({
-      body: `Your UACS registration code is: ${code}. Valid for 5 minutes.`,
+      body: `Your Portal registration code is: ${code}. Valid for 5 minutes.`,
       from: process.env.TWILIO_PHONE_NUMBER,
       to: twilioPhone,
     });
 
-    console.log(`[UACS OTP] Code ${code} sent to ${phone}`);
+    console.log(`[Portal OTP] Code ${code} sent to ${phone}`);
     res.json({ success: true, message: 'Verification code sent' });
   } catch (err) {
-    console.error('[UACS OTP] Send error:', err.message);
+    console.error('[Portal OTP] Send error:', err.message);
     res.status(500).json({ error: 'Failed to send SMS. Please check the mobile number format.' });
   }
 });
@@ -268,7 +268,7 @@ router.post('/register', async (req, res) => {
         lat:        latitude || null,
         lng:        longitude || null,
       });
-      console.log(`[UACS AUTH] Auto-added ${normalizedPhone} to Recipients list — ${detected.fullZone}`);
+      console.log(`[Portal AUTH] Auto-added ${normalizedPhone} to Recipients list — ${detected.fullZone}`);
     } else {
       // Update existing recipient with new zone data
       await dbUpdate('recipients', existingRecipient.id, {
@@ -285,7 +285,7 @@ router.post('/register', async (req, res) => {
       { expiresIn: JWT_EXPIRES_IN }
     );
 
-    console.log(`[UACS AUTH] New user registered: "${newUser.name}" — ${detected.fullZone}`);
+    console.log(`[Portal AUTH] New user registered: "${newUser.name}" — ${detected.fullZone}`);
 
     res.status(201).json({
       token,
@@ -303,7 +303,7 @@ router.post('/register', async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('[UACS AUTH] Register error:', err.message);
+    console.error('[Portal AUTH] Register error:', err.message);
     res.status(500).json({ error: 'Server error during registration' });
   }
 });
@@ -357,7 +357,7 @@ router.get('/me', async (req, res) => {
   } catch (err) {
     if (err.name === 'TokenExpiredError') return res.status(401).json({ error: 'Token expired', code: 'TOKEN_EXPIRED' });
     if (err.name === 'JsonWebTokenError')  return res.status(401).json({ error: 'Invalid token',  code: 'INVALID_TOKEN' });
-    console.error('[UACS AUTH] Me error:', err.message);
+    console.error('[Portal AUTH] Me error:', err.message);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -407,7 +407,7 @@ router.put('/profile', async (req, res) => {
     const { password: _, ...safe } = updated;
     res.json({ success: true, user: { ...safe, city: detected.city } });
   } catch (err) {
-    console.error('[UACS AUTH] Profile update error:', err.message);
+    console.error('[Portal AUTH] Profile update error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -430,7 +430,7 @@ router.put('/password', async (req, res) => {
     await dbUpdate('users', decoded.id, { password: bcrypt.hashSync(newPassword, 10) });
     res.json({ success: true, message: 'Password changed successfully' });
   } catch (err) {
-    console.error('[UACS AUTH] Password error:', err.message);
+    console.error('[Portal AUTH] Password error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -455,7 +455,7 @@ router.get('/preferences', async (req, res) => {
       active: true
     });
   } catch (err) {
-    console.error('[UACS AUTH] Get preferences error:', err.message);
+    console.error('[Portal AUTH] Get preferences error:', err.message);
     res.status(500).json({ error: 'Server error fetching preferences' });
   }
 });
@@ -504,7 +504,7 @@ router.put('/preferences', async (req, res) => {
     
     res.json({ success: true, message: 'Preferences updated and synced' });
   } catch (err) {
-    console.error('[UACS AUTH] Update preferences error:', err.message);
+    console.error('[Portal AUTH] Update preferences error:', err.message);
     res.status(500).json({ error: 'Server error updating preferences' });
   }
 });
@@ -538,10 +538,10 @@ router.post('/emergency-contact', async (req, res) => {
       active: true
     });
     
-    console.log(`[UACS AUTH] Emergency contact ${normalizedPhone} added by ${user.name}`);
+    console.log(`[Portal AUTH] Emergency contact ${normalizedPhone} added by ${user.name}`);
     res.json({ success: true });
   } catch (err) {
-    console.error('[UACS AUTH] Add emergency contact error:', err.message);
+    console.error('[Portal AUTH] Add emergency contact error:', err.message);
     res.status(500).json({ error: 'Server error adding emergency contact' });
   }
 });
@@ -582,10 +582,10 @@ router.post('/migrate-zones', async (req, res) => {
       }
     }
 
-    console.log(`[UACS MIGRATION] Fixed ${fixedUsers} users and ${fixedRecipients} recipients`);
+    console.log(`[Portal MIGRATION] Fixed ${fixedUsers} users and ${fixedRecipients} recipients`);
     res.json({ success: true, fixedUsers, fixedRecipients });
   } catch (err) {
-    console.error('[UACS MIGRATION] Error:', err.message);
+    console.error('[Portal MIGRATION] Error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

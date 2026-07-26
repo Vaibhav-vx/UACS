@@ -8,7 +8,7 @@ import { messagesApi, recipientsApi } from '../api';
 
 export default function StatsPage() {
   const { t } = useLanguage();
-  const [user] = useState(() => JSON.parse(localStorage.getItem('uacs_user') || '{}'));
+  const [user] = useState(() => JSON.parse(localStorage.getItem('portal_user') || '{}'));
   const userZone = user.zone || 'General';
   const [stats, setStats] = useState({ citizenCount: 0, safetyRate: 0, activeAlerts: 0, alertHistory: [] });
   const [loading, setLoading] = useState(true);

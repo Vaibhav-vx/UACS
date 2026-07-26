@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════
-// UACS Auth Middleware — JWT verification
+// Portal Auth Middleware — JWT verification
 // Supabase edition — no SQLite
 // ═══════════════════════════════════════
 
@@ -25,7 +25,7 @@ export function authenticate(req, res, next) {
     getSupabase().from('token_blocklist').select('jti').eq('jti', decoded.jti).single()
       .then(({ data: blockedToken }) => {
         if (blockedToken) {
-          console.warn(`[UACS AUTH] Attempted use of revoked token (jti: ${decoded.jti})`);
+          console.warn(`[Portal AUTH] Attempted use of revoked token (jti: ${decoded.jti})`);
           return res.status(401).json({ error: 'Session revoked. Please login again.', code: 'TOKEN_REVOKED' });
         }
 
@@ -35,7 +35,7 @@ export function authenticate(req, res, next) {
         dbGetOne('users', { id: userId })
           .then(user => {
             if (!user) {
-              console.warn(`[UACS AUTH] Token verified for ID ${userId}, but user not found in database.`);
+              console.warn(`[Portal AUTH] Token verified for ID ${userId}, but user not found in database.`);
               return res.status(401).json({ error: 'User no longer exists', code: 'USER_NOT_FOUND' });
             }
             const { password: _, ...safe } = user;
@@ -43,19 +43,19 @@ export function authenticate(req, res, next) {
             next();
           })
           .catch(err => {
-            console.error('[UACS AUTH] Middleware DB error:', err.message);
+            console.error('[Portal AUTH] Middleware DB error:', err.message);
             res.status(500).json({ error: 'Database authentication error' });
           });
       })
       .catch(err => {
-        console.error('[UACS AUTH] Blocklist check error:', err.message);
+        console.error('[Portal AUTH] Blocklist check error:', err.message);
         res.status(500).json({ error: 'Authentication check failed' });
       });
 
   } catch (err) {
     if (err.name === 'TokenExpiredError') return res.status(401).json({ error: 'Session expired. Please login again.', code: 'TOKEN_EXPIRED' });
     if (err.name === 'JsonWebTokenError')  return res.status(401).json({ error: 'Invalid token signature', code: 'INVALID_TOKEN' });
-    console.error('[UACS AUTH] Middleware error:', err.message);
+    console.error('[Portal AUTH] Middleware error:', err.message);
     res.status(500).json({ error: 'Authentication internal error' });
   }
 }

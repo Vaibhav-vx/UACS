@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════
-// UACS Expiry Cron Job — Supabase version
+// Portal Expiry Cron Job — Supabase version
 // Runs every 60 seconds to expire active messages
 // ═══════════════════════════════════════
 
@@ -22,10 +22,10 @@ async function processExpiredMessages() {
     if (error) throw new Error(error.message);
     if (!expiredMessages || expiredMessages.length === 0) return;
 
-    console.log(`[UACS EXPIRY] Found ${expiredMessages.length} expired message(s)`);
+    console.log(`[Portal EXPIRY] Found ${expiredMessages.length} expired message(s)`);
 
     for (const msg of expiredMessages) {
-      console.log(`[UACS EXPIRY] Message ID ${msg.id} — action: ${msg.expiry_action?.toUpperCase() || 'FLAG'}`);
+      console.log(`[Portal EXPIRY] Message ID ${msg.id} — action: ${msg.expiry_action?.toUpperCase() || 'FLAG'}`);
 
       // Mark as expired
       await dbUpdate('messages', msg.id, { status: 'expired' });
@@ -54,16 +54,16 @@ async function processExpiredMessages() {
       .lte('expires_at', now);
       
     if (blocklistError) {
-      console.error('[UACS EXPIRY] Error cleaning blocklist:', blocklistError.message);
+      console.error('[Portal EXPIRY] Error cleaning blocklist:', blocklistError.message);
     }
   } catch (err) {
-    console.error('[UACS EXPIRY] Error:', err.message);
+    console.error('[Portal EXPIRY] Error:', err.message);
   }
 }
 
 export function startExpiryJob() {
   cron.schedule('* * * * *', processExpiredMessages);
-  console.log('[UACS EXPIRY] ✅ Cron job started — checking every 60 seconds');
+  console.log('[Portal EXPIRY] ✅ Cron job started — checking every 60 seconds');
   
   // Delay run once on startup to prevent immediate network connection timeout issues
   setTimeout(processExpiredMessages, 3000);

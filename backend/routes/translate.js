@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════
-// UACS Translation Routes
+// Portal Translation Routes
 // ═══════════════════════════════════════
 
 import { Router } from 'express';
@@ -28,7 +28,7 @@ router.post('/', async (req, res) => {
     if (!Array.isArray(languages) || languages.length === 0)
       return res.status(400).json({ error: 'languages array is required' });
 
-    console.log(`[UACS TRANSLATE] Translating to: ${languages.join(', ')}`);
+    console.log(`[Portal TRANSLATE] Translating to: ${languages.join(', ')}`);
     const startTime = Date.now();
 
     const translationPromises = languages.map(async (lang) => {
@@ -43,11 +43,11 @@ router.post('/', async (req, res) => {
       try {
         const translated = await translateText(text, 'en', langCode);
         const duration = Date.now() - langStart;
-        console.log(`[UACS TRANSLATE] ✅ ${lang} (${langCode}): "${translated.slice(0, 50)}..." (${duration}ms)`);
+        console.log(`[Portal TRANSLATE] ✅ ${lang} (${langCode}): "${translated.slice(0, 50)}..." (${duration}ms)`);
         return { language: lang, text: translated, code: langCode, duration, error: null };
       } catch (err) {
         const duration = Date.now() - langStart;
-        console.error(`[UACS TRANSLATE] ❌ ${lang} FAILED: ${err.message}`);
+        console.error(`[Portal TRANSLATE] ❌ ${lang} FAILED: ${err.message}`);
         return { language: lang, text, code: langCode, duration, error: err.message }; // fallback: original
       }
     });
@@ -62,10 +62,10 @@ router.post('/', async (req, res) => {
       if (r.error) errors[r.language] = r.error;
     });
 
-    console.log(`[UACS TRANSLATE] Done in ${totalDuration}ms`);
+    console.log(`[Portal TRANSLATE] Done in ${totalDuration}ms`);
     res.json({ translations, errors: Object.keys(errors).length > 0 ? errors : null, totalDuration, results });
   } catch (err) {
-    console.error('[UACS TRANSLATE] Error:', err.message);
+    console.error('[Portal TRANSLATE] Error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

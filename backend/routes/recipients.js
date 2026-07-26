@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════
-// UACS Recipients Routes — CRUD + Test SMS
+// Portal Recipients Routes — CRUD + Test SMS
 // Now uses universal db adapter (SQLite or Supabase)
 // ═══════════════════════════════════════
 
@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
     const recipients = await dbSelect('recipients', filters, { orderBy: 'created_at', ascending: false });
     res.json(recipients);
   } catch (err) {
-    console.error('[UACS RECIPIENTS] GET error:', err.message);
+    console.error('[Portal RECIPIENTS] GET error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -63,12 +63,12 @@ router.post('/', async (req, res) => {
         lat:        lat || null,
         lng:        lng || null
       });
-      console.log(`[UACS RECIPIENTS] Auto-created User account for ${name} (PWD: ${password})`);
+      console.log(`[Portal RECIPIENTS] Auto-created User account for ${name} (PWD: ${password})`);
     }
 
     res.status(201).json(newRecipient);
   } catch (err) {
-    console.error('[UACS RECIPIENTS] POST error:', err.message);
+    console.error('[Portal RECIPIENTS] POST error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -136,7 +136,7 @@ router.put('/:id', async (req, res) => {
 
     res.json(updated);
   } catch (err) {
-    console.error('[UACS RECIPIENTS] PUT error:', err.message);
+    console.error('[Portal RECIPIENTS] PUT error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -152,7 +152,7 @@ router.delete('/:id', async (req, res) => {
     await dbDelete('recipients', id);
     res.json({ success: true, message: `Recipient ${id} deleted` });
   } catch (err) {
-    console.error('[UACS RECIPIENTS] DELETE error:', err.message);
+    console.error('[Portal RECIPIENTS] DELETE error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -163,20 +163,20 @@ router.post('/:id/test', async (req, res) => {
     const recipient = await dbGetById('recipients', req.params.id);
     if (!recipient) return res.status(404).json({ error: 'Recipient not found' });
 
-    console.log(`[UACS SMS TEST] Sending test SMS to ${recipient.name} (${recipient.phone})`);
+    console.log(`[Portal SMS TEST] Sending test SMS to ${recipient.name} (${recipient.phone})`);
 
-    const testMessage = `UACS Test: This is a test alert from the Unified Authority Communication System. If you received this, SMS delivery is working correctly. - Government Authority`;
+    const testMessage = `Portal Test: This is a test alert from the Unified Authority Communication System. If you received this, SMS delivery is working correctly. - Official Authority`;
     const result = await sendSMS(recipient.phone, testMessage);
 
     if (result.success) {
-      console.log(`[UACS SMS TEST] ✅ Sent to ${recipient.phone}`);
+      console.log(`[Portal SMS TEST] ✅ Sent to ${recipient.phone}`);
       res.json({ success: true, message: `Test SMS sent to ${recipient.name}`, messageId: result.messageId });
     } else {
-      console.error(`[UACS SMS TEST] ❌ Failed:`, result.error);
+      console.error(`[Portal SMS TEST] ❌ Failed:`, result.error);
       res.status(500).json({ success: false, error: result.error });
     }
   } catch (err) {
-    console.error('[UACS SMS TEST] Error:', err.message);
+    console.error('[Portal SMS TEST] Error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

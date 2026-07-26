@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════
-// UACS — Unified Authority Communication System
+// Portal — Unified Authority Communication System
 // Express Server Entry Point — Supabase Edition
 // ═══════════════════════════════════════
 
@@ -59,7 +59,7 @@ app.use('/api/auth/otp',      otpLimiter);
 app.use('/api/auth', authRouter);
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', service: 'UACS Backend', db: 'supabase', timestamp: new Date().toISOString() });
+  res.json({ status: 'ok', service: 'Portal Backend', db: 'supabase', timestamp: new Date().toISOString() });
 });
 
 // Twilio Webhook (Must be public)
@@ -91,12 +91,12 @@ async function boot() {
   // CRITICAL: JWT_SECRET must be set — refuse to start with the insecure default
   const JWT_SECRET = process.env.JWT_SECRET;
   if (!JWT_SECRET || JWT_SECRET.length < 32) {
-    console.error('[UACS] ❌ FATAL: JWT_SECRET is missing or too short (must be ≥ 32 chars). Set it in .env');
+    console.error('[Portal] ❌ FATAL: JWT_SECRET is missing or too short (must be ≥ 32 chars). Set it in .env');
     process.exit(1);
   }
   try {
     getSupabase(); // will throw if creds are missing
-    console.log('[UACS] ✅ Supabase connection verified');
+    console.log('[Portal] ✅ Supabase connection verified');
   } catch (err) {
     console.error(err.message);
     process.exit(1);
@@ -107,13 +107,13 @@ async function boot() {
     const { startExpiryJob } = await import('./cron/expiryJob.js');
     startExpiryJob();
   } catch (err) {
-    console.warn('[UACS] Expiry job not started:', err.message);
+    console.warn('[Portal] Expiry job not started:', err.message);
   }
 
   app.listen(PORT, () => {
     console.log('');
     console.log('═══════════════════════════════════════');
-    console.log('  UACS Backend — Supabase Edition');
+    console.log('  Portal Backend — Supabase Edition');
     console.log(`  Running on http://localhost:${PORT}`);
     console.log('  Press Ctrl+C to stop');
     console.log('═══════════════════════════════════════');

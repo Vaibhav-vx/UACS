@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchUser = async () => {
-    const token = localStorage.getItem('uacs_token');
+    const token = localStorage.getItem('portal_token');
     if (token) {
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL || '/api'}/auth/me`, {
@@ -20,13 +20,13 @@ export const AuthProvider = ({ children }) => {
         
         if (response.ok && data) {
           setUser(data);
-          localStorage.setItem('uacs_user', JSON.stringify(data));
-          if (data.zone) localStorage.setItem('uacs_pref_zone', data.zone);
+          localStorage.setItem('portal_user', JSON.stringify(data));
+          if (data.zone) localStorage.setItem('portal_pref_zone', data.zone);
           if (data.language) localStorage.setItem('uacs_pref_lang', data.language);
         } else {
           // Token invalid or expired
-          localStorage.removeItem('uacs_token');
-          localStorage.removeItem('uacs_user');
+          localStorage.removeItem('portal_token');
+          localStorage.removeItem('portal_user');
           setUser(null);
         }
       } catch (err) {

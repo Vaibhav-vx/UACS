@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════
-// UACS Messages Routes
+// Portal Messages Routes
 // Uses universal db adapter (SQLite or Supabase)
 // ═══════════════════════════════════════
 
@@ -46,7 +46,7 @@ router.get('/stats', requireAdmin, async (req, res) => {
 
     res.json({ totalToday, active, expiringSoon, expired, draft, pending, history: all });
   } catch (err) {
-    console.error('[UACS MESSAGES] Stats error:', err.message);
+    console.error('[Portal MESSAGES] Stats error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -148,7 +148,7 @@ router.post('/emergency', requireAdmin, async (req, res) => {
         await sendBulkSMS(zoneFiltered, msgObj);
       }
     } catch (smsErr) {
-      console.error('[UACS MESSAGES] Emergency SMS dispatch error:', smsErr.message);
+      console.error('[Portal MESSAGES] Emergency SMS dispatch error:', smsErr.message);
     }
 
     // Mark active for instant dashboard update
@@ -160,7 +160,7 @@ router.post('/emergency', requireAdmin, async (req, res) => {
 
     res.status(201).json(msgObj);
   } catch (err) {
-    console.error('[UACS MESSAGES] Emergency error:', err.message);
+    console.error('[Portal MESSAGES] Emergency error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -186,7 +186,7 @@ router.post('/safety/direct', async (req, res) => {
     });
     res.json(report);
   } catch (err) {
-    console.error('[UACS SAFETY] Direct SOS error:', err.message);
+    console.error('[Portal SAFETY] Direct SOS error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -197,7 +197,7 @@ router.get('/safety/recent', requireAdmin, async (req, res) => {
     const reports = await dbSelect('safety_reports', {}, { orderBy: 'created_at', ascending: false, limit: 10 });
     res.json(reports);
   } catch (err) {
-    console.error('[UACS SAFETY] Recent error:', err.message);
+    console.error('[Portal SAFETY] Recent error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -212,7 +212,7 @@ router.get('/safety/stats', requireAdmin, async (req, res) => {
     };
     res.json(stats);
   } catch (err) {
-    console.error('[UACS SAFETY] Stats error:', err.message);
+    console.error('[Portal SAFETY] Stats error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -228,15 +228,15 @@ router.put('/safety/:id/assist', requireAdmin, async (req, res) => {
       try {
         const twilioPhone = '+91' + user.email.replace(/\D/g, '');
         await twilioClient.messages.create({
-          body: `UACS: A rescue team has been dispatched to assist you. Help is coming.`,
+          body: `Portal: A rescue team has been dispatched to assist you. Help is coming.`,
           from: process.env.TWILIO_PHONE_NUMBER,
           to: twilioPhone,
         });
-      } catch (smsErr) { console.error('[UACS SOS] SMS error:', smsErr.message); }
+      } catch (smsErr) { console.error('[Portal SOS] SMS error:', smsErr.message); }
     }
     res.json({ success: true, message: 'Citizen marked as assisted' });
   } catch (err) {
-    console.error('[UACS SAFETY] Assist error:', err.message);
+    console.error('[Portal SAFETY] Assist error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -249,7 +249,7 @@ router.get('/', async (req, res) => {
     const messages = await dbSelect('messages', filters, { orderBy: 'created_at', ascending: false, limit: Number(limit) });
     res.json(messages.map(parseMsg));
   } catch (err) {
-    console.error('[UACS MESSAGES] GET error:', err.message);
+    console.error('[Portal MESSAGES] GET error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -355,7 +355,7 @@ router.get('/:id', async (req, res) => {
     if (!msg) return res.status(404).json({ error: 'Message not found' });
     res.json(parseMsg(msg));
   } catch (err) {
-    console.error('[UACS MESSAGES] GET/:id error:', err.message);
+    console.error('[Portal MESSAGES] GET/:id error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

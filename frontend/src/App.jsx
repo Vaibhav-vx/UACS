@@ -29,7 +29,7 @@ import SurvivalGuidePage from './pages/SurvivalGuidePage';
 import SOSResponsePage from './pages/SOSResponsePage';
 import UserNotificationBar from './components/UserNotificationBar';
 
-const APP_BRAND = 'UACS';
+const APP_BRAND = 'Emergency Portal';
 
 const NAV_ITEMS = [
   { path: '/dashboard',  labelKey: 'dashboard',  icon: LayoutDashboard, roles: ['admin', 'user'] },
@@ -130,8 +130,8 @@ function AppLayout() {
   }, [user, navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('uacs_token');
-    localStorage.removeItem('uacs_user');
+    localStorage.removeItem('portal_token');
+    localStorage.removeItem('portal_user');
     setUser(null);
     navigate('/login');
   };

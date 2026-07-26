@@ -280,7 +280,7 @@ export default function ComposerPage() {
                  </div>
 
                  <div className="p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/20 text-[10px] text-indigo-300/70 leading-relaxed">
-                    Once dispatched, this message will be digitally signed by the UACS Central Authority and logged for public record.
+                    Once dispatched, this message will be digitally signed by the Central Alert Authority and logged for public record.
                  </div>
               </div>
             </div>

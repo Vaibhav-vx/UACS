@@ -65,7 +65,7 @@ function SMSPreview({ text }) {
         <div className="w-64 rounded-2xl overflow-hidden" style={{ border: '2px solid var(--border)', background: 'var(--bg-base)' }}>
           {/* Phone status bar */}
           <div className="px-4 py-2 flex items-center justify-between text-[10px] text-theme-dim" style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border)' }}>
-            <span className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>GOVT-UACS</span>
+            <span className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>OFFICIAL-ALERT</span>
             <span>{t('justNow') || "now"}</span>
           </div>
           {/* Chat area */}

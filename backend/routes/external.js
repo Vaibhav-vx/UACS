@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════
-// UACS — External API Proxy Route
+// Portal — External API Proxy Route
 // Handles all 12 disaster/weather API categories
 // Solves CORS + XML parsing for frontend
 // ═══════════════════════════════════════
@@ -45,7 +45,7 @@ async function safeFetch(url, options = {}) {
   const res = await axios.get(url, {
     timeout: 12000,
     headers: {
-      'User-Agent': 'UACS-DisasterResponse/1.0 (emergency-platform@uacs.in)',
+      'User-Agent': 'Portal-DisasterResponse/1.0 (emergency-platform@portal.in)',
       ...options.headers,
     },
     ...options,
@@ -112,7 +112,7 @@ function gdacsTypeName(code) {
 
 // ════════════════════════════════════════════════════════════════════════════
 // CAT 10 — NDMA SACHET (India-Official CAP Alerts)
-// National Disaster Management Authority — Government of India
+// National Disaster Management Authority — Official Authority
 // NO KEY — RSS/XML feed
 // ════════════════════════════════════════════════════════════════════════════
 router.get('/ndma', async (req, res) => {
@@ -128,7 +128,7 @@ router.get('/ndma', async (req, res) => {
     const list = Array.isArray(items) ? items : [items];
 
     const result = {
-      source: 'NDMA SACHET — Government of India',
+      source: 'NDMA SACHET — Official Authority',
       fetchedAt: new Date().toISOString(),
       alerts: list.map(e => ({
         id:        e?.guid?._ || e?.guid || '',
@@ -245,7 +245,7 @@ router.get('/reliefweb', async (req, res) => {
         'sort[]': 'date:desc',
         limit: 20,
         'fields[include][]': 'title,date,country,source,body-html,url',
-        'appname': 'uacs-platform',
+        'appname': 'portal-platform',
       },
     });
 

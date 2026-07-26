@@ -9,7 +9,7 @@ function getClient() {
   return client;
 }
 
-// Maps both ISO codes and UACS language names to a common lookup
+// Maps both ISO codes and Portal language names to a common lookup
 // e.g. recipient.language = 'en' or 'hi' or 'hindi'
 const LANG_KEY_MAP = {
   'en':      ['en', 'english'],
@@ -50,7 +50,7 @@ function normalizePhone(phone) {
 /**
  * Find the best translation for a recipient.
  * Looks up the recipient's language preference against
- * the translations object (which may use UACS names like 'hindi' or ISO codes like 'hi').
+ * the translations object (which may use Portal names like 'hindi' or ISO codes like 'hi').
  */
 function pickTranslation(recipientLang, translations, masterContent) {
   if (!translations || typeof translations !== 'object') return masterContent;
@@ -78,7 +78,7 @@ function pickTranslation(recipientLang, translations, masterContent) {
 export async function sendSMS(phoneNumber, messageBody) {
   const normalizedPhone = normalizePhone(phoneNumber);
   if (!normalizedPhone) {
-    console.error(`[UACS SMS] ❌ Invalid phone: ${phoneNumber}`);
+    console.error(`[Portal SMS] ❌ Invalid phone: ${phoneNumber}`);
     return { success: false, error: 'Invalid phone number' };
   }
 
@@ -96,10 +96,10 @@ export async function sendSMS(phoneNumber, messageBody) {
 
   try {
     const result = await getClient().messages.create(msgPayload);
-    console.log(`[UACS SMS] ✅ Sent to ${normalizedPhone} | SID: ${result.sid}`);
+    console.log(`[Portal SMS] ✅ Sent to ${normalizedPhone} | SID: ${result.sid}`);
     return { success: true, messageId: result.sid };
   } catch (error) {
-    console.error(`[UACS SMS] ❌ Failed to ${normalizedPhone}:`, error.message);
+    console.error(`[Portal SMS] ❌ Failed to ${normalizedPhone}:`, error.message);
     return { success: false, error: error.message };
   }
 }
@@ -113,8 +113,8 @@ async function processBatch(recipientsBatch, message, translations) {
       const translatedText = pickTranslation(recipient.language, translations, message.master_content);
       const formattedMessage =
         message.urgency === 'critical'
-          ? `🚨 EMERGENCY ALERT 🚨\n${translatedText}\n- Gov Alert`
-          : `[UACS ALERT]\n${translatedText}\n- Gov Alert`;
+          ? `🚨 EMERGENCY ALERT 🚨\n${translatedText}\n- Official Alert`
+          : `[Portal ALERT]\n${translatedText}\n- Official Alert`;
 
       return sendSMS(recipient.phone, formattedMessage);
     })
@@ -128,7 +128,7 @@ export async function sendBulkSMS(recipients, message) {
     try { translations = JSON.parse(translations); } catch { translations = {}; }
   }
 
-  console.log(`[UACS SMS] Starting bulk send to ${recipients.length} recipients...`);
+  console.log(`[Portal SMS] Starting bulk send to ${recipients.length} recipients...`);
 
   const report = { total: recipients.length, sent: 0, failed: 0, details: [] };
   const BATCH_SIZE = 10; // Send 10 at a time

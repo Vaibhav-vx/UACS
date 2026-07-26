@@ -90,7 +90,7 @@ export default function AuditLogPage() {
       const url = window.URL.createObjectURL(new Blob([r.data])); 
       const link = document.createElement('a'); 
       link.href = url; 
-      link.setAttribute('download', `uacs-audit-${new Date().toISOString().split('T')[0]}.csv`); 
+      link.setAttribute('download', `portal-audit-${new Date().toISOString().split('T')[0]}.csv`); 
       document.body.appendChild(link); 
       link.click(); 
       link.remove(); 

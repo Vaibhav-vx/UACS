@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════
-// UACS Audit Log Routes — Supabase edition
+// Portal Audit Log Routes — Supabase edition
 // ═══════════════════════════════════════
 
 import { Router } from 'express';
@@ -33,7 +33,7 @@ router.get('/', async (req, res) => {
 
     res.json(flattened);
   } catch (err) {
-    console.error('[UACS AUDIT] GET error:', err.message);
+    console.error('[Portal AUDIT] GET error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -67,10 +67,10 @@ router.get('/export', async (req, res) => {
     });
 
     res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename=uacs-audit-log.csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=portal-audit-log.csv');
     res.send(csvRows.join('\n'));
   } catch (err) {
-    console.error('[UACS AUDIT] Export error:', err.message);
+    console.error('[Portal AUDIT] Export error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -87,10 +87,10 @@ router.delete('/clear', async (req, res) => {
 
     if (error) throw new Error(error.message);
 
-    console.log(`[UACS AUDIT] Cleared ${count || 0} entries older than ${days} days`);
+    console.log(`[Portal AUDIT] Cleared ${count || 0} entries older than ${days} days`);
     res.json({ success: true, deleted: count || 0, days, cutoff });
   } catch (err) {
-    console.error('[UACS AUDIT] Clear error:', err.message);
+    console.error('[Portal AUDIT] Clear error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

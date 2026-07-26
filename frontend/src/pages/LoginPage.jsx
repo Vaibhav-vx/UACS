@@ -177,8 +177,8 @@ export default function LoginPage() {
     setLoginLoading(true);
     try {
       const res = await authApi.login(loginPhone.trim(), loginPassword);
-      localStorage.setItem('uacs_token', res.data.token);
-      localStorage.setItem('uacs_user', JSON.stringify(res.data.user));
+      localStorage.setItem('portal_token', res.data.token);
+      localStorage.setItem('portal_user', JSON.stringify(res.data.user));
       window.location.href = '/dashboard';
     } catch (err) {
       setLoginError(err.response?.data?.error || 'Invalid mobile or password');
@@ -208,8 +208,8 @@ export default function LoginPage() {
         language: regLanguage,
       });
       toast.success(t('regSuccess') || 'Registration successful!');
-      localStorage.setItem('uacs_token', res.data.token);
-      localStorage.setItem('uacs_user', JSON.stringify(res.data.user));
+      localStorage.setItem('portal_token', res.data.token);
+      localStorage.setItem('portal_user', JSON.stringify(res.data.user));
       setRegSuccess(true);
       setTimeout(() => { window.location.href = '/dashboard'; }, 1500);
     } catch (err) {
@@ -225,8 +225,8 @@ export default function LoginPage() {
     setRegLoading(true);
     try {
       const res = await authApi.demo();
-      localStorage.setItem('uacs_token', res.data.token);
-      localStorage.setItem('uacs_user', JSON.stringify(res.data.user));
+      localStorage.setItem('portal_token', res.data.token);
+      localStorage.setItem('portal_user', JSON.stringify(res.data.user));
       toast.success(t('demoLoginSuccess') || 'Welcome to Demo Portal');
       window.location.href = '/dashboard';
     } catch (err) {
@@ -377,7 +377,7 @@ export default function LoginPage() {
           >
             <div>
               <h2 className={`text-xl font-black tracking-tight ${theme === 'light' ? 'text-zinc-950' : 'text-theme-primary'}`}>{t('welcomeBack') || 'Welcome back'}</h2>
-              <p className={`text-xs mt-1 ${theme === 'light' ? 'text-zinc-600' : 'text-theme-muted'}`}>{t('signInToUacs') || 'Sign in to your UACS account'}</p>
+              <p className={`text-xs mt-1 ${theme === 'light' ? 'text-zinc-600' : 'text-theme-muted'}`}>{t('signInToUacs') || 'Sign in to your Platform account'}</p>
             </div>
 
             {loginError && (

@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════
-// UACS — Supabase Database Client
+// Portal — Supabase Database Client
 // Single source of truth — no SQLite
 // ═══════════════════════════════════════
 
@@ -15,13 +15,13 @@ export function getSupabase() {
 
   if (!url || !key) {
     throw new Error(
-      '\n[UACS] ❌ Missing Supabase credentials!\n' +
+      '\n[Portal] ❌ Missing Supabase credentials!\n' +
       '  Add SUPABASE_URL and SUPABASE_SERVICE_KEY to your .env file.\n'
     );
   }
 
   _sb = createClient(url, key, { auth: { persistSession: false } });
-  console.log('[UACS DB] ✅ Connected to Supabase (cloud PostgreSQL)');
+  console.log('[Portal DB] ✅ Connected to Supabase (cloud PostgreSQL)');
   return _sb;
 }
 

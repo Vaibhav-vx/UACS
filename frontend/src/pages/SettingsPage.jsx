@@ -15,11 +15,11 @@ export default function SettingsPage() {
   const { language, setLanguage, LANGUAGES } = useLanguage();
   const { theme, toggleTheme, setTheme } = useTheme();
   const { user: authUser, fetchUser } = useAuth();
-  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('uacs_user') || '{}'));
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('portal_user') || '{}'));
   
   const [profileForm, setProfileForm] = useState({
     name: user.name || '',
-    zone: user.zone || user.location || localStorage.getItem('uacs_pref_zone') || 'General',
+    zone: user.zone || user.location || localStorage.getItem('portal_pref_zone') || 'General',
     lat: user.lat || null,
     lng: user.lng || null
   });
@@ -50,7 +50,7 @@ export default function SettingsPage() {
         lat: profileForm.lat,
         lng: profileForm.lng
       });
-      localStorage.setItem('uacs_pref_zone', profileForm.zone);
+      localStorage.setItem('portal_pref_zone', profileForm.zone);
       if (fetchUser) await fetchUser();
       toast.success("Preferences updated successfully");
     } catch (e) {
@@ -148,7 +148,7 @@ export default function SettingsPage() {
                  </div>
                   <div className="flex items-center justify-between">
                      <div>
-                        <h4 className="text-sm font-bold">UACS Theme Skin</h4>
+                        <h4 className="text-sm font-bold">Portal Theme Skin</h4>
                         <p className="text-xs text-theme-muted">Personalize your emergency response command center.</p>
                      </div>
                      <select
@@ -174,7 +174,7 @@ export default function SettingsPage() {
               <div className="space-y-4">
                  {[
                    { id: 'sms', label: 'SMS Notifications', icon: Smartphone, desc: 'Critical alerts via direct text message' },
-                   { id: 'push', label: 'Browser Push', icon: Bell, desc: 'Real-time alerts while browsing UACS' },
+                   { id: 'push', label: 'Browser Push', icon: Bell, desc: 'Real-time alerts while browsing Platform' },
                    { id: 'email', label: 'Email Alerts', icon: Mail, desc: 'Detailed reports and weekly summaries' },
                  ].map(ch => (
                    <div key={ch.id} className="flex items-center justify-between p-4 rounded-2xl bg-theme-hover border border-theme-border">

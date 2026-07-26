@@ -10,14 +10,14 @@ router.post('/twilio', async (req, res) => {
     const { From, Body } = req.body;
     if (!From || !Body) return res.status(400).send('Missing data');
 
-    console.log(`[UACS WEBHOOK] Incoming SMS from ${From}: ${Body}`);
+    console.log(`[Portal WEBHOOK] Incoming SMS from ${From}: ${Body}`);
 
     // 1. Find user by phone number
     const phone = From.replace('+91', '');
     const user = await dbGetOne('users', { email: phone });
     
     if (!user) {
-      console.log(`[UACS WEBHOOK] No user found for phone ${phone}`);
+      console.log(`[Portal WEBHOOK] No user found for phone ${phone}`);
       return res.status(200).send('<Response></Response>'); // Silent ignore or generic reply
     }
 
@@ -46,12 +46,12 @@ router.post('/twilio', async (req, res) => {
           assisted: false
         });
 
-        console.log(`[UACS WEBHOOK] Recorded ${status} for ${user.name} via SMS`);
+        console.log(`[Portal WEBHOOK] Recorded ${status} for ${user.name} via SMS`);
 
         // 4. Send confirmation reply
         const reply = status === 'safe' 
-          ? `UACS: Your safety status recorded ✅ Stay safe. Follow official guidance.`
-          : `UACS: SOS recorded 🆘 Help is being coordinated. Stay where you are. Help is coming.`;
+          ? `Portal: Your safety status recorded ✅ Stay safe. Follow official guidance.`
+          : `Portal: SOS recorded 🆘 Help is being coordinated. Stay where you are. Help is coming.`;
         
         return res.status(200).send(`
           <Response>
@@ -64,11 +64,11 @@ router.post('/twilio', async (req, res) => {
     // Default reply for unknown commands
     res.status(200).send(`
       <Response>
-        <Message>UACS: Command not recognized. Reply SAFE if you are safe, or HELP if you need assistance.</Message>
+        <Message>Portal: Command not recognized. Reply SAFE if you are safe, or HELP if you need assistance.</Message>
       </Response>
     `);
   } catch (err) {
-    console.error('[UACS WEBHOOK] Error:', err.message);
+    console.error('[Portal WEBHOOK] Error:', err.message);
     res.status(200).send('<Response></Response>');
   }
 });

@@ -517,9 +517,9 @@ export default function DashboardPage() {
                   <div>PM10: <span className="text-theme-primary font-bold">{aqiData?.current?.pm10 ?? '--'} µg/m³</span></div>
                 </div>
               </div>
-              {/* NDMA India Alerts */}
+              {/* Regional Alerts */}
               <div className="glass-card p-4 rounded-2xl border-0 shadow-xl bg-linear-to-br from-green-500/10 to-green-500/5">
-                <div className="text-[10px] uppercase font-black tracking-widest text-theme-muted mb-1">NDMA India Alerts</div>
+                <div className="text-[10px] uppercase font-black tracking-widest text-theme-muted mb-1">Regional Alerts</div>
                 <div className={`text-3xl font-black ${ndmaCount > 0 ? 'text-orange-400' : 'text-green-400'}`}>
                   {ndmaCount}
                 </div>
@@ -527,7 +527,7 @@ export default function DashboardPage() {
                   {ndmaCount > 0 ? 'Active Alerts' : 'All Clear'}
                 </div>
                 <div className="text-[10px] text-theme-muted mt-2">
-                  Source: NDMA SACHET<br />Govt. of India
+                  Source: Public Alert Feed
                 </div>
               </div>
             </section>
@@ -672,7 +672,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-3">
               <Zap className={`w-5 h-5 animate-pulse ${theme === 'light' ? 'text-[#a61b3c]' : 'text-white'}`} />
               <div>
-                <div className="text-sm font-bold">UACS Live Simulation</div>
+                <div className="text-sm font-bold">Live Simulation</div>
                 <div className="text-[10px] text-theme-muted">Run side-by-side comparison</div>
               </div>
               <button className={`ml-auto text-xs font-black border-0 bg-transparent ${theme === 'light' ? 'text-[#a61b3c] hover:underline' : 'text-white hover:underline'}`}>Launch →</button>

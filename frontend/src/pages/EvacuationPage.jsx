@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 
 export default function EvacuationPage() {
   const [checklist, setChecklist] = useState(() => {
-    const saved = localStorage.getItem('uacs_go_bag');
+    const saved = localStorage.getItem('portal_go_bag');
     return saved ? JSON.parse(saved) : {
       identity: false, food: false, firstaid: false, charger: false,
       cash: false, medicine: false, clothes: false, flashlight: false,
@@ -18,11 +18,11 @@ export default function EvacuationPage() {
   });
 
   const [sharingLocation, setSharingLocation] = useState(false);
-  const user = JSON.parse(localStorage.getItem('uacs_user') || '{}');
+  const user = JSON.parse(localStorage.getItem('portal_user') || '{}');
   const userZone = user?.location || user?.zone || 'General';
 
   useEffect(() => {
-    localStorage.setItem('uacs_go_bag', JSON.stringify(checklist));
+    localStorage.setItem('portal_go_bag', JSON.stringify(checklist));
   }, [checklist]);
 
   const toggleItem = (id) => {

@@ -27,7 +27,7 @@ export default function UserNotificationBar({ user }) {
       const res = await messagesApi.getAll('active');
       setMessages(res.data || []);
     } catch (err) {
-      console.error('[UACS] Error fetching user notifications:', err);
+      console.error('[Platform] Error fetching user notifications:', err);
     } finally {
       setLoading(false);
     }

@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 export default function FamilyPage() {
   const [family, setFamily] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [user] = useState(() => JSON.parse(localStorage.getItem('uacs_user') || '{}'));
+  const [user] = useState(() => JSON.parse(localStorage.getItem('portal_user') || '{}'));
   const [isAdding, setIsAdding] = useState(false);
   const [newName, setNewName] = useState('');
   const [newPhone, setNewPhone] = useState('');
@@ -105,7 +105,7 @@ export default function FamilyPage() {
         <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
            <div className="glass-card max-w-md w-full p-8 rounded-3xl shadow-2xl border-accent/20">
               <h2 className="text-2xl font-bold mb-2">Connect Family</h2>
-              <p className="text-sm text-theme-muted mb-6">Enter their details to send a connection request. They must be registered on UACS.</p>
+              <p className="text-sm text-theme-muted mb-6">Enter their details to send a connection request. They must be registered on Platform.</p>
               <form onSubmit={handleAddMember} className="space-y-4">
                  <div>
                     <label className="block text-xs font-bold uppercase tracking-widest text-theme-muted mb-1.5">Member Name</label>

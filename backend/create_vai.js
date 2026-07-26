@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 async function addVaiUser() {
-  console.log('[UACS] Starting creation of user Vai...');
+  console.log('[Portal] Starting creation of user Vai...');
 
   const name = 'Vai';
   const phone = process.env.VAI_PHONE;
@@ -20,7 +20,7 @@ async function addVaiUser() {
   const password = process.env.VAI_PASSWORD;
 
   if (!phone || !password) {
-    console.error('[UACS] ❌ Error: VAI_PHONE and VAI_PASSWORD must be set in .env');
+    console.error('[Portal] ❌ Error: VAI_PHONE and VAI_PASSWORD must be set in .env');
     process.exit(1);
   }
 
@@ -31,7 +31,7 @@ async function addVaiUser() {
   try {
     const existing = await dbGetOne('users', { email: normalizedPhone });
     if (existing) {
-      console.log(`[UACS] User with phone number ${normalizedPhone} already exists. Updating to user account with new password.`);
+      console.log(`[Portal] User with phone number ${normalizedPhone} already exists. Updating to user account with new password.`);
       await dbUpdate('users', existing.id, {
         name: name,
         password: hash,
@@ -39,7 +39,7 @@ async function addVaiUser() {
         zone: location,
         role: 'user' // Explicitly set role to user!
       });
-      console.log(`[UACS] Updated existing user to 'user' role`);
+      console.log(`[Portal] Updated existing user to 'user' role`);
     } else {
       const newUser = await dbInsert('users', {
         name: name,
@@ -50,7 +50,7 @@ async function addVaiUser() {
         zone: location,
         language: 'en'
       });
-      console.log(`[UACS] Inserted user Vai successfully with ID: ${newUser.id}`);
+      console.log(`[Portal] Inserted user Vai successfully with ID: ${newUser.id}`);
     }
 
     // Auto-create/Update recipient
@@ -63,20 +63,20 @@ async function addVaiUser() {
         language: 'en',
         active: true
       });
-      console.log(`[UACS] Inserted recipient Vai successfully.`);
+      console.log(`[Portal] Inserted recipient Vai successfully.`);
     } else {
       await dbUpdate('recipients', existingRecipient.id, {
         name: name,
         zone: location,
         active: true
       });
-      console.log(`[UACS] Updated recipient Vai successfully.`);
+      console.log(`[Portal] Updated recipient Vai successfully.`);
     }
 
-    console.log('[UACS] User Vai completely updated as a user account.');
+    console.log('[Portal] User Vai completely updated as a user account.');
     process.exit(0);
   } catch (err) {
-    console.error('[UACS] Error creating user Vai:', err);
+    console.error('[Portal] Error creating user Vai:', err);
     process.exit(1);
   }
 }

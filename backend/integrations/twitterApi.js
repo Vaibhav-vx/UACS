@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════
-// UACS Twitter API Integration
+// Portal Twitter API Integration
 // Falls back to mock if bearer token is missing
 // ═══════════════════════════════════════
 
@@ -54,7 +54,7 @@ export async function postTweet(message) {
       }
     );
 
-    console.log(`[UACS TWITTER] Tweet posted: ${response.data?.data?.id}`);
+    console.log(`[Portal TWITTER] Tweet posted: ${response.data?.data?.id}`);
     
     return {
       success: true,
@@ -63,7 +63,7 @@ export async function postTweet(message) {
       tweetId: response.data?.data?.id,
     };
   } catch (err) {
-    console.error('[UACS TWITTER] API error:', err.message);
+    console.error('[Portal TWITTER] API error:', err.message);
     // Fall back to mock on failure
     return postTweetMock(message, tweetText);
   }
@@ -75,8 +75,8 @@ export async function postTweet(message) {
 async function postTweetMock(message, tweetText) {
   await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 300));
 
-  console.log(`[UACS TWITTER] (Mock) Tweet posted for "${message.title}"`);
-  console.log(`[UACS TWITTER] (Mock) Text (${tweetText.length}/280 chars): ${tweetText.substring(0, 80)}...`);
+  console.log(`[Portal TWITTER] (Mock) Tweet posted for "${message.title}"`);
+  console.log(`[Portal TWITTER] (Mock) Text (${tweetText.length}/280 chars): ${tweetText.substring(0, 80)}...`);
 
   return {
     success: true,

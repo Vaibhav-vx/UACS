@@ -124,7 +124,7 @@ export default function ProfilePage() {
     try {
       const res = await authApi.updateProfile({ name: name.trim(), location: dept.trim(), zone: dept.trim(), lat, lng });
       const updated = res.data.user;
-      localStorage.setItem('uacs_user', JSON.stringify({ ...JSON.parse(localStorage.getItem('uacs_user') || '{}'), ...updated }));
+      localStorage.setItem('portal_user', JSON.stringify({ ...JSON.parse(localStorage.getItem('portal_user') || '{}'), ...updated }));
       await fetchUser();
       setProfMsg({ type: 'success', text: 'Profile updated successfully' });
       toast.success('Profile saved');
