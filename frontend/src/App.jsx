@@ -257,7 +257,16 @@ function AppLayout() {
           </nav>
 
           {/* User footer */}
-          <div style={{ padding: '12px', borderTop: '1px solid var(--border)', flexShrink: 0 }}>
+          <div style={{ 
+            padding: '12px', 
+            borderTop: '1px solid var(--border)', 
+            flexShrink: 0, 
+            position: 'sticky', 
+            bottom: 0, 
+            background: theme === 'dark' ? 'rgba(7, 8, 10, 0.9)' : 'rgba(241, 245, 249, 0.9)', 
+            backdropFilter: 'blur(8px)',
+            zIndex: 10 
+          }}>
              <div
                className="profile-nav-card"
                onClick={() => { navigate('/profile'); setSidebarOpen(false); }}
