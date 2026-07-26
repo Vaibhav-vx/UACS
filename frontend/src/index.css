@@ -422,14 +422,17 @@ p, span, h1, h2, h3, h4, h5, h6, div, td, th {
   word-break: break-word;
 }
 
-/* Desktop: sidebar always visible, push main content */
+/* Desktop: sidebar always visible, flows and scrolls with content */
 @media (min-width: 1024px) {
   .lg-sidebar {
     transform: translateX(0) !important;
-    top: 0 !important;
-    position: sticky !important;
-    height: 100vh;
-    align-self: flex-start;
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    align-self: stretch;
+    flex-shrink: 0;
   }
 
   .main-with-sidebar {

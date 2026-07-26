@@ -180,7 +180,7 @@ function AppLayout() {
       </header>
       )}
 
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <div style={{ display: 'flex', flex: 1, overflow: 'visible' }}>
 
         {/* ── Sidebar ── */}
         {!isSimulation && (
@@ -311,8 +311,7 @@ function AppLayout() {
         <main
           style={{
             flex: 1,
-            overflowY: 'auto',
-            overflowX: 'hidden',
+            overflow: 'visible',
             /* On desktop, offset by sidebar width */
           }}
           className="main-with-sidebar"
