@@ -296,17 +296,26 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0.5rem;
+    border-radius: 12px;
     background: var(--bg-hover);
     border: 1px solid var(--border);
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s ease;
   }
-  .theme-toggle:hover {
+  .light .theme-toggle:hover {
     background: var(--bg-selected);
     color: var(--accent);
     border-color: var(--accent-border);
+  }
+  .dark .theme-toggle {
+    background: linear-gradient(315deg, #000000 0%, #09090b 15%, #18181b 30%, #27272a 45%, #3f3f46 60%, #52525b 75%, #71717a 90%, #8e8e93 100%) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+  .dark .theme-toggle:hover {
+    border-color: #ffffff !important;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
   }
 }
 
