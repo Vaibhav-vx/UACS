@@ -304,13 +304,13 @@
     transition: all 0.25s ease;
   }
   .light .theme-toggle {
-    background: linear-gradient(315deg, #a61b3c 0%, #ca2851 15%, #e04b5b 30%, #ff6766 45%, #ff9166 60%, #ffb173 75%, #ffd2a1 90%, #ffe3b3 100%) !important;
+    background: linear-gradient(315deg, #bfa580 0%, #ccb495 15%, #d9c3aa 30%, #e6d2bf 45%, #f0e1d2 60%, #f7ece2 75%, #faf3eb 90%, #fdfaf5 100%) !important;
     border-color: rgba(255, 255, 255, 0.15) !important;
-    color: #ffffff !important;
+    color: #3d0c1b !important;
   }
   .light .theme-toggle:hover {
     border-color: #ffffff !important;
-    color: #ffffff !important;
+    color: #3d0c1b !important;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
   }
   .dark .theme-toggle {
@@ -797,9 +797,9 @@ p, span, h1, h2, h3, h4, h5, h6, div, td, th {
 }
 
 .light .sidebar-nav-item.active {
-  background: linear-gradient(315deg, #502d55 0%, #723e64 25%, #935073 50%, #c4969a 75%, #f6dbc0 90%, #f8f4e9 100%) !important;
-  color: #000000 !important;
-  border-color: rgba(255, 255, 255, 0.25) !important;
+  background: linear-gradient(315deg, #bfa580 0%, #ccb495 15%, #d9c3aa 30%, #e6d2bf 45%, #f0e1d2 60%, #f7ece2 75%, #faf3eb 90%, #fdfaf5 100%) !important;
+  color: #3d0c1b !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -812,8 +812,8 @@ p, span, h1, h2, h3, h4, h5, h6, div, td, th {
 
 .light .sidebar-nav-item:hover {
   border-color: #ffffff !important;
-  background: linear-gradient(315deg, #502d55 0%, #723e64 25%, #935073 50%, #c4969a 75%, #f6dbc0 90%, #f8f4e9 100%) !important;
-  color: #000000 !important;
+  background: linear-gradient(315deg, #bfa580 0%, #ccb495 15%, #d9c3aa 30%, #e6d2bf 45%, #f0e1d2 60%, #f7ece2 75%, #faf3eb 90%, #fdfaf5 100%) !important;
+  color: #3d0c1b !important;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
@@ -838,9 +838,9 @@ p, span, h1, h2, h3, h4, h5, h6, div, td, th {
 }
 
 .light .profile-nav-card {
-  background: linear-gradient(315deg, #502d55 0%, #723e64 25%, #935073 50%, #c4969a 75%, #f6dbc0 90%, #f8f4e9 100%) !important;
-  border-color: rgba(255, 255, 255, 0.25) !important;
-  color: #000000 !important;
+  background: linear-gradient(315deg, #bfa580 0%, #ccb495 15%, #d9c3aa 30%, #e6d2bf 45%, #f0e1d2 60%, #f7ece2 75%, #faf3eb 90%, #fdfaf5 100%) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #3d0c1b !important;
 }
 
 .light .profile-nav-card:hover {
