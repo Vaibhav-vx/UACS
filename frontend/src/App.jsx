@@ -85,6 +85,8 @@ function LanguageSwitcher() {
             border: '1px solid var(--border)',
             boxShadow: 'var(--shadow-lg)',
             minWidth: '150px',
+            maxHeight: '160px',
+            overflowY: 'auto',
           }}
         >
           {LANGUAGES.map(l => (
