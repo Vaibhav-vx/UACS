@@ -301,7 +301,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Modern Synced Dashboard Profile Header */}
-        <div className="glass-card p-8 rounded-3xl relative overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-theme-surface to-accent/5">
+        <div className="glass-card p-8 rounded-3xl relative overflow-hidden border-0 shadow-2xl bg-linear-to-br from-theme-surface to-accent/5">
           <div style={{ position: 'absolute', top: 0, right: 0, width: '50%', height: '100%', background: 'linear-gradient(90deg, transparent, var(--accent-bg))', opacity: 0.3, pointerEvents: 'none' }} />
           
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
@@ -476,7 +476,7 @@ export default function DashboardPage() {
 
           <div className="space-y-8">
             {/* LIVE WEATHER WIDGET */}
-            <section className={`glass-card p-6 rounded-3xl border-0 shadow-xl relative overflow-hidden ${weatherAlert ? 'bg-gradient-to-br from-orange-500/10 to-orange-500/5 border-orange-500/20' : 'bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20'}`}>
+            <section className={`glass-card p-6 rounded-3xl border-0 shadow-xl relative overflow-hidden ${weatherAlert ? 'bg-linear-to-br from-orange-500/10 to-orange-500/5 border-orange-500/20' : 'bg-linear-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20'}`}>
                <div className="absolute top-0 right-0 p-2 opacity-20"><Globe className={`w-24 h-24 ${weatherAlert ? 'text-orange-500' : 'text-blue-500'}`} /></div>
                <div className="flex items-start gap-4 mb-4 relative z-10">
                   <div className={`text-4xl animate-pulse mt-1 drop-shadow-[0_0_10px_rgba(${weatherAlert ? '249,115,22' : '59,130,246'},0.5)]`}>{weatherEmoji}</div>
@@ -518,7 +518,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               {/* NDMA India Alerts */}
-              <div className="glass-card p-4 rounded-2xl border-0 shadow-xl bg-gradient-to-br from-green-500/10 to-green-500/5">
+              <div className="glass-card p-4 rounded-2xl border-0 shadow-xl bg-linear-to-br from-green-500/10 to-green-500/5">
                 <div className="text-[10px] uppercase font-black tracking-widest text-theme-muted mb-1">NDMA India Alerts</div>
                 <div className={`text-3xl font-black ${ndmaCount > 0 ? 'text-orange-400' : 'text-green-400'}`}>
                   {ndmaCount}
@@ -590,7 +590,7 @@ export default function DashboardPage() {
           ) : (
             <div 
               onClick={() => setShowMap(true)}
-              className="p-8 rounded-3xl border-2 border-dashed transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] cursor-pointer group flex flex-col items-center justify-center gap-4 min-h-[200px]"
+              className="p-8 rounded-3xl border-2 border-dashed transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] cursor-pointer group flex flex-col items-center justify-center gap-4 min-h-50"
               style={{
                 background: theme === 'light' ? '#faf8f5' : '#0d0e12',
                 borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.25)' : 'rgba(79, 89, 112, 0.35)',
@@ -617,7 +617,7 @@ export default function DashboardPage() {
           {isAdmin && (
             <button 
               onClick={() => navigate('/admin/simulation')}
-              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-bold text-sm shadow-lg hover:scale-105 transition-transform flex items-center gap-2"
+              className="px-4 py-2 bg-linear-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-bold text-sm shadow-lg hover:scale-105 transition-transform flex items-center gap-2 border-0 cursor-pointer"
             >
               <Zap className="w-4 h-4 fill-white" />
               Live Simulation
@@ -650,43 +650,16 @@ export default function DashboardPage() {
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
             <Activity className={`w-5 h-5 ${theme === 'light' ? 'text-[#a61b3c]' : 'text-white'}`} /> {t('safety Response Analytics') || 'Safety Response Analytics'}
           </h2>
-          {(() => {
-            const total = (safetyStats.safe || 0) + (safetyStats.assistance || 0);
-            const safePct = total > 0 ? Math.round((safetyStats.safe / total) * 100) : 100;
-            const assistPct = total > 0 ? Math.round((safetyStats.assistance / total) * 100) : 0;
-            return (
-              <div className="space-y-4 mb-5">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
-                     <div className="text-2xl font-black text-green-500">{safetyStats.safe}</div>
-                     <div className="text-[10px] font-bold uppercase tracking-wider text-green-600/70">{t('Marked Safe') || 'Marked Safe'}</div>
-                  </div>
-                  <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20">
-                     <div className="text-2xl font-black text-red-500">{safetyStats.assistance}</div>
-                     <div className="text-[10px] font-bold uppercase tracking-wider text-red-600/70">{t('Need Assistance') || 'Need Assistance'}</div>
-                  </div>
-                </div>
-
-                {/* Dual-color Progress Bar */}
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-[10px] font-black uppercase tracking-wider text-theme-muted">
-                    <span>Safe: {safePct}%</span>
-                    <span>Assistance: {assistPct}%</span>
-                  </div>
-                  <div className="w-full h-2 rounded-full overflow-hidden flex bg-zinc-200 dark:bg-zinc-800">
-                    {total > 0 ? (
-                      <>
-                        <div className="bg-green-500 transition-all duration-500" style={{ width: `${safePct}%` }} />
-                        <div className="bg-red-500 transition-all duration-500" style={{ width: `${assistPct}%` }} />
-                      </>
-                    ) : (
-                      <div className="w-full bg-zinc-400 dark:bg-zinc-700 opacity-30" />
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
+               <div className="text-2xl font-black text-green-500">{safetyStats.safe}</div>
+               <div className="text-[10px] font-bold uppercase tracking-wider text-green-600/70">{t('Marked Safe') || 'Marked Safe'}</div>
+            </div>
+            <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20">
+               <div className="text-2xl font-black text-red-500">{safetyStats.assistance}</div>
+               <div className="text-[10px] font-bold uppercase tracking-wider text-red-600/70">{t('Need Assistance') || 'Need Assistance'}</div>
+            </div>
+          </div>
           
           <div 
             onClick={() => navigate('/admin/simulation')}
@@ -1001,7 +974,7 @@ export default function DashboardPage() {
       {/* Floating Emergency Button (Admins only) */}
       {isAdmin && (
         <div 
-          className="fixed bottom-8 right-8 z-[9999] flex flex-col items-center gap-2 cursor-pointer group"
+          className="fixed bottom-8 right-8 z-9999 flex flex-col items-center gap-2 cursor-pointer group"
           onClick={() => setIsEmergencyModalOpen(true)}
         >
           <button 
@@ -1022,7 +995,7 @@ export default function DashboardPage() {
 
       {/* Emergency Modal */}
       {isEmergencyModalOpen && (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
+        <div className="fixed inset-0 z-10000 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
           <div 
             className="max-w-lg w-full rounded-3xl border overflow-hidden flex flex-col"
             style={{ 
@@ -1062,7 +1035,7 @@ export default function DashboardPage() {
               )}
               
               <div>
-                <label className="block text-sm font-medium mb-1.5 text-[var(--text-secondary)]">  
+                <label className="block text-sm font-medium mb-1.5 text-(--text-secondary)">  
                    {t('emergencyMessage') || 'Emergency Message'} <span className="text-red-500">*</span>
                 </label>
                 <textarea
@@ -1072,13 +1045,13 @@ export default function DashboardPage() {
                   onChange={e => setEmergencyText(e.target.value)}
                   maxLength={300}
                 />
-                <div className="text-right text-xs mt-1 text-[var(--text-muted)]">
+                <div className="text-right text-xs mt-1 text-(--text-muted)">
                   {emergencyText.length}/300
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1.5 text-[var(--text-secondary)]">
+                <label className="block text-sm font-medium mb-1.5 text-(--text-secondary)">
                   {t('targetLocation') || 'Target Location'} <span className="text-red-500">*</span>
                 </label>
                 <div className="flex gap-2">
@@ -1115,7 +1088,7 @@ export default function DashboardPage() {
               </div>
 
               <div className="mt-4">
-                <label className="block text-sm font-medium mb-1.5 text-[var(--text-secondary)] flex justify-between">
+                <label className="block text-sm font-medium mb-1.5 text-(--text-secondary) flex justify-between">
                   <span>{t('alertRadius') || 'Alert Radius'}</span>
                   <span className="text-accent font-bold">5 km</span>
                 </label>
@@ -1133,7 +1106,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="p-4 bg-[var(--bg-hover)] border border-[var(--border)] rounded-lg text-xs text-[var(--text-muted)] space-y-1 mt-2">
+              <div className="p-4 bg-(--bg-hover) border border-(--border) rounded-lg text-xs text-(--text-muted) space-y-1 mt-2">
                 <p><strong>{t('autoFilledSettings') || 'Auto-filled settings'}:</strong></p>
                 <p>• {t('urgencyLevel') || 'Urgency'}: <span className="text-red-500">{t('critical')}</span></p>
                 <p>• {t('selectChannels') || 'Channels'}: {t('allChannelsLabel') || 'All (SMS, Twitter, Radio, TV, Website)'}</p>
@@ -1183,8 +1156,8 @@ export default function DashboardPage() {
 
       {/* Expiry Reason Modal */}
       {isAdmin && expiryAlertId && (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="glass-card max-w-md w-full bg-[var(--bg-base)] border border-red-500/30 overflow-hidden shadow-2xl">
+        <div className="fixed inset-0 z-10000 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="glass-card max-w-md w-full bg-(--bg-base) border border-red-500/30 overflow-hidden shadow-2xl">
             <div className="p-6">
               <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
                 <AlertTriangle className="text-red-500" /> Expire This Alert
