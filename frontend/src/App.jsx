@@ -78,37 +78,15 @@ function LanguageSwitcher() {
       </button>
 
       {open && (
-        <div
-          className="absolute right-0 top-full mt-1 py-1 rounded-lg z-9999 animate-fade-in"
-          style={{
-            background: 'var(--bg-surface)',
-            border: '1px solid var(--border)',
-            boxShadow: 'var(--shadow-lg)',
-            minWidth: '150px',
-            maxHeight: '160px',
-            overflowY: 'auto',
-          }}
-        >
+        <div className="lang-dropdown-container">
           {LANGUAGES.map(l => (
             <button
               key={l.code}
               onClick={() => { setLanguage(l.code); setOpen(false); }}
-              style={{
-                width: '100%',
-                textAlign: 'left',
-                padding: '8px 14px',
-                fontSize: '13px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: language === l.code ? 'var(--accent-bg)' : 'transparent',
-                color: language === l.code ? 'var(--accent)' : 'var(--text-primary)',
-                border: 'none',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-              }}
+              className={`lang-dropdown-item ${language === l.code ? 'active' : ''}`}
             >
-              {l.flag} {l.label}
+              <span style={{ fontSize: '14px' }}>{l.flag}</span>
+              <span>{l.label}</span>
             </button>
           ))}
         </div>
