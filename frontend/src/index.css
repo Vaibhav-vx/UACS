@@ -304,7 +304,7 @@
     transition: all 0.25s ease;
   }
   .light .theme-toggle {
-    background: linear-gradient(135deg, #312e81 0%, #3730a3 15%, #4338ca 30%, #4f46e5 45%, #6366f1 60%, #7c3aed 75%, #8b5cf6 90%, #a78bfa 100%) !important;
+    background: linear-gradient(135deg, #240a25 0%, #311432 15%, #3e1b40 30%, #4c224e 45%, #59295b 60%, #673069 75%, #763c78 90%, #854887 100%) !important;
     border-color: rgba(255, 255, 255, 0.15) !important;
     color: #ffffff !important;
   }
@@ -797,7 +797,7 @@ p, span, h1, h2, h3, h4, h5, h6, div, td, th {
 }
 
 .light .sidebar-nav-item.active {
-  background: linear-gradient(135deg, #312e81 0%, #3730a3 15%, #4338ca 30%, #4f46e5 45%, #6366f1 60%, #7c3aed 75%, #8b5cf6 90%, #a78bfa 100%) !important;
+  background: linear-gradient(135deg, #240a25 0%, #311432 15%, #3e1b40 30%, #4c224e 45%, #59295b 60%, #673069 75%, #763c78 90%, #854887 100%) !important;
   color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.15) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -812,7 +812,7 @@ p, span, h1, h2, h3, h4, h5, h6, div, td, th {
 
 .light .sidebar-nav-item:hover {
   border-color: #ffffff !important;
-  background: linear-gradient(135deg, #312e81 0%, #3730a3 15%, #4338ca 30%, #4f46e5 45%, #6366f1 60%, #7c3aed 75%, #8b5cf6 90%, #a78bfa 100%) !important;
+  background: linear-gradient(135deg, #240a25 0%, #311432 15%, #3e1b40 30%, #4c224e 45%, #59295b 60%, #673069 75%, #763c78 90%, #854887 100%) !important;
   color: #ffffff !important;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
@@ -838,7 +838,7 @@ p, span, h1, h2, h3, h4, h5, h6, div, td, th {
 }
 
 .light .profile-nav-card {
-  background: linear-gradient(135deg, #312e81 0%, #3730a3 15%, #4338ca 30%, #4f46e5 45%, #6366f1 60%, #7c3aed 75%, #8b5cf6 90%, #a78bfa 100%) !important;
+  background: linear-gradient(135deg, #240a25 0%, #311432 15%, #3e1b40 30%, #4c224e 45%, #59295b 60%, #673069 75%, #763c78 90%, #854887 100%) !important;
   border-color: rgba(255, 255, 255, 0.15) !important;
   color: #ffffff !important;
 }
