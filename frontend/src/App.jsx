@@ -191,7 +191,7 @@ function AppLayout() {
             flexShrink: 0,
             background: theme === 'dark' 
               ? 'linear-gradient(135deg, #07080a 0%, #0f1115 15%, #181b22 30%, #212630 45%, #2b313e 60%, #363e4e 75%, #424b5e 90%, #4f5970 100%)'
-              : 'linear-gradient(135deg, #dec9e9 0%, #dac3e8 15%, #d2b7e5 30%, #c19ee0 45%, #b185db 60%, #a06cd5 75%, #9163cb 90%, #815ac0 100%)',
+              : 'linear-gradient(225deg, #815ac0 0%, #9163cb 15%, #a06cd5 30%, #b185db 45%, #c19ee0 60%, #d2b7e5 75%, #dac3e8 90%, #dec9e9 100%)',
             borderRight: '1px solid var(--border)',
             display: 'flex',
             flexDirection: 'column',
