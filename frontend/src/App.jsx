@@ -189,7 +189,9 @@ function AppLayout() {
           style={{
             width: '240px',
             flexShrink: 0,
-            background: 'var(--bg-surface)',
+            background: theme === 'dark' 
+              ? 'linear-gradient(135deg, #07080a 0%, #0f1115 15%, #181b22 30%, #212630 45%, #2b313e 60%, #363e4e 75%, #424b5e 90%, #4f5970 100%)'
+              : 'var(--bg-surface)',
             borderRight: '1px solid var(--border)',
             display: 'flex',
             flexDirection: 'column',
@@ -199,7 +201,7 @@ function AppLayout() {
             left: 0,
             zIndex: 200,
             transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
-            transition: 'transform 0.25s ease',
+            transition: 'transform 0.25s ease, background 0.3s ease',
             overflowY: 'auto',
           }}
           className="lg-sidebar"
@@ -246,23 +248,7 @@ function AppLayout() {
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                style={({ isActive }) => ({
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  padding: '9px 12px',
-                  borderRadius: '8px',
-                  fontSize: '13.5px',
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                  marginBottom: '2px',
-                  background: isActive ? 'var(--accent-bg)' : 'transparent',
-                  color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
-                  border: isActive ? '1px solid var(--accent-border)' : '1px solid transparent',
-                  transition: 'all 0.15s',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                })}
+                className="sidebar-nav-item"
               >
                 <item.icon style={{ width: '16px', height: '16px', flexShrink: 0 }} />
                 <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{t(item.labelKey)}</span>
