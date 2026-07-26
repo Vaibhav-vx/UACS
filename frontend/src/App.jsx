@@ -191,7 +191,7 @@ function AppLayout() {
             flexShrink: 0,
             background: theme === 'dark' 
               ? 'linear-gradient(135deg, #07080a 0%, #0f1115 15%, #181b22 30%, #212630 45%, #2b313e 60%, #363e4e 75%, #424b5e 90%, #4f5970 100%)'
-              : 'linear-gradient(135deg, #fbfaf7 0%, #f8f4e9 100%)',
+              : 'linear-gradient(135deg, #a61b3c 0%, #ca2851 15%, #e04b5b 30%, #ff6766 45%, #ff9166 60%, #ffb173 75%, #ffd2a1 90%, #ffe3b3 100%)',
             borderRight: '1px solid var(--border)',
             display: 'flex',
             flexDirection: 'column',
