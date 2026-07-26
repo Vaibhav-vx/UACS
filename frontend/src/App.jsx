@@ -180,7 +180,7 @@ function AppLayout() {
       </header>
       )}
 
-      <div style={{ display: 'flex', flex: 1, overflow: 'visible' }}>
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
         {/* ── Sidebar ── */}
         {!isSimulation && (
@@ -257,16 +257,7 @@ function AppLayout() {
           </nav>
 
           {/* User footer */}
-          <div style={{ 
-            padding: '12px', 
-            borderTop: '1px solid var(--border)', 
-            flexShrink: 0, 
-            position: 'sticky', 
-            bottom: 0, 
-            background: theme === 'dark' ? 'rgba(7, 8, 10, 0.9)' : 'rgba(241, 245, 249, 0.9)', 
-            backdropFilter: 'blur(8px)',
-            zIndex: 10 
-          }}>
+          <div style={{ padding: '12px', borderTop: '1px solid var(--border)', flexShrink: 0 }}>
              <div
                className="profile-nav-card"
                onClick={() => { navigate('/profile'); setSidebarOpen(false); }}
@@ -320,7 +311,8 @@ function AppLayout() {
         <main
           style={{
             flex: 1,
-            overflow: 'visible',
+            overflowY: 'auto',
+            overflowX: 'hidden',
             /* On desktop, offset by sidebar width */
           }}
           className="main-with-sidebar"
