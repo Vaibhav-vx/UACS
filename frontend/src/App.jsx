@@ -191,7 +191,7 @@ function AppLayout() {
             flexShrink: 0,
             background: theme === 'dark' 
               ? 'linear-gradient(135deg, #07080a 0%, #0f1115 15%, #181b22 30%, #212630 45%, #2b313e 60%, #363e4e 75%, #424b5e 90%, #4f5970 100%)'
-              : 'linear-gradient(135deg, #3d0c1b 0%, #5c1124 15%, #7a162e 30%, #991c39 45%, #b82345 60%, #ca2851 75%, #d63f64 90%, #e35a7b 100%)',
+              : 'linear-gradient(135deg, #c7c7f2 0%, #d2d2f5 15%, #ddddf8 30%, #e8e8fc 45%, #f0f0fd 60%, #f5f5fe 75%, #fafaff 90%, #fdfdff 100%)',
             borderRight: '1px solid var(--border)',
             display: 'flex',
             flexDirection: 'column',
@@ -222,8 +222,8 @@ function AppLayout() {
             {/* Logo block */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
               <div style={{ minWidth: 0, overflow: 'hidden' }}>
-                <div style={{ fontWeight: 700, fontSize: '16px', letterSpacing: '-0.02em', lineHeight: 1.2, whiteSpace: 'nowrap', color: '#ffffff' }}>{APP_BRAND}</div>
-                <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.7)', lineHeight: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontWeight: 700, fontSize: '16px', letterSpacing: '-0.02em', lineHeight: 1.2, whiteSpace: 'nowrap', color: theme === 'dark' ? '#ffffff' : '#1e293b' }}>{APP_BRAND}</div>
+                <div style={{ fontSize: '10px', color: theme === 'dark' ? 'rgba(255, 255, 255, 0.7)' : 'rgba(30, 41, 59, 0.7)', lineHeight: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {t('unifiedComms')}
                 </div>
               </div>
@@ -277,14 +277,14 @@ function AppLayout() {
                  {user.name?.charAt(0)?.toUpperCase()}
                </div>
                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: '13px', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#ffffff' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: theme === 'dark' ? '#ffffff' : '#1e293b' }}>
                     {user.name}
                   </div>
                   <span
                     style={{
                       fontSize: '10px', letterSpacing: '0.05em', fontWeight: 700,
                       textTransform: 'uppercase', background: 'transparent',
-                      color: '#ffffff', 
+                      color: theme === 'dark' ? '#ffffff' : '#1e293b', 
                       display: 'inline-block', opacity: 0.8
                     }}
                   >

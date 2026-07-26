@@ -793,7 +793,7 @@ p, span, h1, h2, h3, h4, h5, h6, div, td, th {
 }
 
 .light .sidebar-nav-item {
-  color: rgba(255, 255, 255, 0.8) !important;
+  color: #1e293b !important;
 }
 
 .light .sidebar-nav-item.active {
