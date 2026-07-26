@@ -139,7 +139,7 @@ function AppLayout() {
   if (!user) return null;
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: isSimulation ? 'hidden' : 'auto' }}>
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
       {/* ── Mobile top bar ── */}
       {!isSimulation && (
@@ -202,7 +202,7 @@ function AppLayout() {
             zIndex: 200,
             transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
             transition: 'transform 0.25s ease, background 0.3s ease',
-            overflowY: 'auto',
+            overflowY: 'hidden',
           }}
           className="lg-sidebar"
         >
