@@ -936,5 +936,23 @@ p, span, h1, h2, h3, h4, h5, h6, div, td, th {
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
 }
 
+/* ─── Premium Dark Mode Page & Block Gradients ─── */
+.dark body,
+.dark .bg-theme-base {
+  background: linear-gradient(135deg, #07080a 0%, #0f1115 15%, #181b22 30%, #212630 45%, #2b313e 60%, #363e4e 75%, #424b5e 90%, #4f5970 100%) !important;
+}
+
+.dark .glass-card,
+.dark .stat-card,
+.dark .bg-theme-card,
+.dark .bg-theme-surface,
+.dark .input-field,
+.dark .textarea-field,
+.dark select,
+.dark textarea {
+  background: linear-gradient(315deg, #000000 0%, #09090b 15%, #18181b 30%, #27272a 45%, #3f3f46 60%, #52525b 75%, #71717a 90%, #8e8e93 100%) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
 
 
