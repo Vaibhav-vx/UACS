@@ -115,7 +115,7 @@ const SVG_ICONS = {
 
 export default function MapPage() {
   const { t } = useLanguage();
-  const [user] = useState(() => JSON.parse(localStorage.getItem('portal_user') || '{}'));
+  const [user] = useState(() => JSON.parse(localStorage.getItem('uacs_user') || '{}'));
   const isAdmin = user.role === 'admin';
 
   const mapContainerRef = useRef(null);
@@ -343,7 +343,7 @@ export default function MapPage() {
       markersRef.current.push(marker);
     };
 
-    // 1. Platform Alerts Layer
+    // 1. UACS Alerts Layer
     if (layers.uacsAlerts) {
       filterAlerts.forEach(a => {
         const pos = a.lat && a.lng ? [a.lat, a.lng] : getZoneCoords(a.target_zone);
@@ -352,7 +352,7 @@ export default function MapPage() {
           'glow-marker-uacs',
           SVG_ICONS.uacs,
           `<div class="p-1">
-            <div class="font-black text-red-500 text-xs tracking-wider uppercase mb-1">🚨 Platform DISPATCH</div>
+            <div class="font-black text-red-500 text-xs tracking-wider uppercase mb-1">🚨 UACS DISPATCH</div>
             <div class="font-bold text-white text-sm">${a.title}</div>
             <div class="text-slate-300 mt-1">${a.body}</div>
             <div class="text-slate-400 mt-2 text-[10px]">Zone: ${a.target_zone} · Severity: ${a.urgency}</div>
@@ -520,7 +520,7 @@ export default function MapPage() {
           'glow-marker-ndma',
           SVG_ICONS.ndma,
           `<div class="p-1">
-            <div class="font-black text-green-500 text-xs tracking-wider uppercase mb-1">Regional CAP Alert</div>
+            <div class="font-black text-green-500 text-xs tracking-wider uppercase mb-1">🇮🇳 NDMA India CAP Alert</div>
             <div class="font-bold text-white text-sm">${alert.title}</div>
             <div class="text-slate-300 mt-1">${alert.summary}</div>
             <div class="text-slate-400 mt-1.5 text-[10px]">Area: ${alert.area} · Severity: ${alert.severity}</div>
@@ -634,7 +634,7 @@ export default function MapPage() {
             
             <div className="space-y-2">
               {[
-                { id: 'uacsAlerts',   label: 'Active Alerts',          color: 'bg-red-500' },
+                { id: 'uacsAlerts',   label: 'UACS Active Alerts',          color: 'bg-red-500' },
                 { id: 'earthquakes',  label: 'USGS Earthquakes',             color: 'bg-amber-500' },
                 { id: 'emsc',         label: 'EMSC Earthquakes (EU)',        color: 'bg-yellow-400' },
                 { id: 'gdacs',        label: 'GDACS Multi-Hazard (UN)',      color: 'bg-orange-500' },
@@ -643,7 +643,7 @@ export default function MapPage() {
                 { id: 'wildfires',    label: 'NASA FIRMS Wildfires',         color: 'bg-red-400' },
                 { id: 'floods',       label: 'GloFAS Flood Warnings',        color: 'bg-blue-400' },
                 { id: 'volcanoes',    label: 'Smithsonian Volcanoes',        color: 'bg-orange-400' },
-                { id: 'ndma',         label: 'Regional Alerts',            color: 'bg-green-500' },
+                { id: 'ndma',         label: 'NDMA India Alerts',            color: 'bg-green-500' },
                 { id: 'aqi',          label: 'Air Quality (AQI)',             color: 'bg-purple-400' },
                 { id: 'safetyPoints', label: 'Evacuation Points (EAPs)',     color: 'bg-emerald-500' },
               ].map(layer => (

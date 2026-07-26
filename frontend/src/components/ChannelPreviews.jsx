@@ -26,9 +26,9 @@ function TwitterPreview({ text }) {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 mb-1">
-              <span className="font-bold text-sm">{t('postedByGovt') || "Government Authority"}</span>
+              <span className="font-bold text-sm">{t('postedByGovt') || "Authority"}</span>
               <span style={{ color: '#1d9bf0' }}>✓</span>
-              <span className="text-xs text-theme-muted">@GovtAuthority</span>
+              <span className="text-xs text-theme-muted">@AlertCenter</span>
               <span className="text-xs text-theme-dim">· {t('justNow') || "Just now"}</span>
             </div>
             <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--text-primary)' }}>{truncated}</p>
@@ -65,7 +65,7 @@ function SMSPreview({ text }) {
         <div className="w-64 rounded-2xl overflow-hidden" style={{ border: '2px solid var(--border)', background: 'var(--bg-base)' }}>
           {/* Phone status bar */}
           <div className="px-4 py-2 flex items-center justify-between text-[10px] text-theme-dim" style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border)' }}>
-            <span className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>OFFICIAL-ALERT</span>
+            <span className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>ALERT</span>
             <span>{t('justNow') || "now"}</span>
           </div>
           {/* Chat area */}
@@ -144,7 +144,7 @@ function TVPreview({ text }) {
               <span className="text-white text-[10px] font-black uppercase tracking-wider animate-pulse">{t('breaking') || "BREAKING"}</span>
             </div>
             <div className="px-2 py-2 flex items-center shrink-0" style={{ background: '#1a1a1a', borderLeft: '2px solid #ef4444', borderRight: '1px solid #333' }}>
-              <span className="text-[10px] font-bold text-white uppercase tracking-wider whitespace-nowrap">{t('govtAlert') || "GOVT ALERT"}</span>
+              <span className="text-[10px] font-bold text-white uppercase tracking-wider whitespace-nowrap">{t('govtAlert') || "ALERT"}</span>
             </div>
             <div className="flex-1 overflow-hidden py-2 px-2 flex items-center">
               <div className="whitespace-nowrap text-white text-xs font-medium" style={{ animation: 'ticker-scroll 15s linear infinite' }}>
@@ -180,7 +180,7 @@ function WebsitePreview({ text, title, urgency, expiresAt }) {
                 <h4 className="font-bold text-base mb-1" style={{ color: bgColor }}>{title}</h4>
                 <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{text}</p>
                 <div className="flex flex-wrap items-center gap-3 mt-3 text-[11px] text-theme-dim">
-                  <span>{t('postedBy') || "Posted by"} {t('postedByGovt') || "Government Authority"}</span>
+                  <span>{t('postedBy') || "Posted by"} {t('postedByGovt') || "Authority"}</span>
                   <span>|</span>
                   <span>{t('justNow') || "Just now"}</span>
                   {expiresAt && (

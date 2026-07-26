@@ -130,8 +130,8 @@ function AppLayout() {
   }, [user, navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('portal_token');
-    localStorage.removeItem('portal_user');
+    localStorage.removeItem('uacs_token');
+    localStorage.removeItem('uacs_user');
     setUser(null);
     navigate('/login');
   };
