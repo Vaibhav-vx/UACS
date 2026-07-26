@@ -263,30 +263,33 @@ function AppLayout() {
                onClick={() => { navigate('/profile'); setSidebarOpen(false); }}
                title="My Profile & Settings"
              >
-              <div
-                style={{
-                  width: '32px', height: '32px', borderRadius: '50%',
-                  background: 'linear-gradient(135deg,#3b82f6,#8b5cf6)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '12px', fontWeight: 700, color: 'white', flexShrink: 0,
-                }}
-              >
-                {user.name?.charAt(0)}
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '13px', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {user.name}
-                </div>
-                <span
-                  style={{
-                    fontSize: '10px', letterSpacing: '0.05em', fontWeight: 700,
-                    textTransform: 'uppercase', background: 'rgba(59,130,246,0.2)',
-                    color: '#60a5fa', padding: '1px 6px', borderRadius: '999px', display: 'inline-block',
-                  }}
-                >
-                  {user.role || 'admin'}
-                </span>
-              </div>
+               <div
+                 style={{
+                   width: '32px', height: '32px', borderRadius: '50%',
+                   background: theme === 'dark' ? '#ffffff' : '#1f2937',
+                   display: 'flex', alignItems: 'center', justifyContent: 'center',
+                   fontSize: '14px', fontWeight: 800, 
+                   color: theme === 'dark' ? '#000000' : '#ffffff', 
+                   flexShrink: 0,
+                 }}
+               >
+                 {user.name?.charAt(0)?.toUpperCase()}
+               </div>
+               <div style={{ flex: 1, minWidth: 0 }}>
+                 <div style={{ fontSize: '13px', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                   {user.name}
+                 </div>
+                 <span
+                   style={{
+                     fontSize: '10px', letterSpacing: '0.05em', fontWeight: 700,
+                     textTransform: 'uppercase', background: 'transparent',
+                     color: theme === 'dark' ? '#ffffff' : '#1f2937', 
+                     display: 'inline-block', opacity: 0.8
+                   }}
+                 >
+                   {user.role || 'admin'}
+                 </span>
+               </div>
               <button onClick={(e) => { e.stopPropagation(); handleLogout(); }} className="theme-toggle" style={{ width: '30px', height: '30px', flexShrink: 0 }} title={t('logout')}>
                 <LogOut style={{ width: '14px', height: '14px' }} />
               </button>
