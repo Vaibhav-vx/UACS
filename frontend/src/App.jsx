@@ -277,14 +277,14 @@ function AppLayout() {
                  {user.name?.charAt(0)?.toUpperCase()}
                </div>
                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: '13px', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: theme === 'dark' ? '#ffffff' : '#1e293b' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#ffffff' }}>
                     {user.name}
                   </div>
                   <span
                     style={{
                       fontSize: '10px', letterSpacing: '0.05em', fontWeight: 700,
                       textTransform: 'uppercase', background: 'transparent',
-                      color: theme === 'dark' ? '#ffffff' : '#1e293b', 
+                      color: '#ffffff', 
                       display: 'inline-block', opacity: 0.8
                     }}
                   >
