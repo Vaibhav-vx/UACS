@@ -293,7 +293,9 @@ function AppLayout() {
             flex: 1,
             overflowY: 'auto',
             overflowX: 'hidden',
-            /* On desktop, offset by sidebar width */
+            background: theme === 'dark'
+              ? 'linear-gradient(135deg, #07080a 0%, #0f1115 15%, #181b22 30%, #212630 45%, #2b313e 60%, #363e4e 75%, #424b5e 90%, #4f5970 100%)'
+              : 'var(--bg-base)',
           }}
           className="main-with-sidebar"
         >
