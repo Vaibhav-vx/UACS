@@ -208,7 +208,7 @@ export default function DashboardPage() {
       <div 
         className="animate-slide-up p-5 rounded-2xl border transition-all duration-300 hover:scale-[1.02] shadow-sm flex flex-col justify-between"
         style={{
-          background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)',
+          background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #09090b 15%, #18181b 30%, #27272a 45%, #3f3f46 60%, #52525b 75%, #71717a 90%, #8e8e93 100%)',
           borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
           boxShadow: theme === 'light' 
             ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
@@ -640,7 +640,7 @@ export default function DashboardPage() {
         <div 
           className="p-6 rounded-3xl border relative overflow-hidden"
           style={{
-            background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)',
+            background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #09090b 15%, #18181b 30%, #27272a 45%, #3f3f46 60%, #52525b 75%, #71717a 90%, #8e8e93 100%)',
             borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
             boxShadow: theme === 'light' 
               ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
@@ -684,7 +684,7 @@ export default function DashboardPage() {
         <div 
           className="p-6 rounded-3xl border"
           style={{
-            background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)',
+            background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #09090b 15%, #18181b 30%, #27272a 45%, #3f3f46 60%, #52525b 75%, #71717a 90%, #8e8e93 100%)',
             borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
             boxShadow: theme === 'light' 
               ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
@@ -756,7 +756,7 @@ export default function DashboardPage() {
       <div 
         className="flex gap-1.5 p-1.5 rounded-2xl border w-fit" 
         style={{ 
-          background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)', 
+          background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #09090b 15%, #18181b 30%, #27272a 45%, #3f3f46 60%, #52525b 75%, #71717a 90%, #8e8e93 100%)', 
           borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.3)' 
         }}
       >
@@ -814,7 +814,7 @@ export default function DashboardPage() {
             className="p-5 rounded-2xl border transition-all duration-300 animate-slide-up hover:scale-[1.01]"
             style={{ 
               animationDelay: `${i*60}ms`,
-              background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)',
+              background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #09090b 15%, #18181b 30%, #27272a 45%, #3f3f46 60%, #52525b 75%, #71717a 90%, #8e8e93 100%)',
               borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
               boxShadow: theme === 'light' 
                 ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
@@ -874,7 +874,7 @@ export default function DashboardPage() {
             style={{ 
               animationDelay: `${i*60}ms`,
               borderLeftColor: theme === 'light' ? '#a61b3c' : '#ffffff',
-              background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)',
+              background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #09090b 15%, #18181b 30%, #27272a 45%, #3f3f46 60%, #52525b 75%, #71717a 90%, #8e8e93 100%)',
               borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
               boxShadow: theme === 'light' 
                 ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
@@ -931,7 +931,7 @@ export default function DashboardPage() {
             className="p-5 rounded-2xl border transition-all duration-300 opacity-75 animate-slide-up hover:scale-[1.01]"
             style={{ 
               animationDelay: `${i*60}ms`,
-              background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)',
+              background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #09090b 15%, #18181b 30%, #27272a 45%, #3f3f46 60%, #52525b 75%, #71717a 90%, #8e8e93 100%)',
               borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
               boxShadow: theme === 'light' 
                 ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
