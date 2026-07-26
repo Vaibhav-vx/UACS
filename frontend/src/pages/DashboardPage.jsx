@@ -233,8 +233,7 @@ export default function DashboardPage() {
 
   if (loading) return (<div className="space-y-6"><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">{[1,2,3,4].map(i=><div key={i} className="glass-card p-5 h-24 shimmer rounded-xl"/>)}</div><div className="space-y-3">{[1,2,3].map(i=><div key={i} className="glass-card p-6 h-32 shimmer rounded-xl"/>)}</div></div>);
 
-  const renderContent = () => {
-    if (!isAdmin) {
+  if (!isAdmin) {
     const getClean = (v) => v && v !== 'Field Ops' && v !== 'General' ? v : '';
     const userZone = getClean(user?.location) || getClean(user?.zone) || 'General';
     const userPhone = user?.phone || user?.email || 'Not Provided';
@@ -651,16 +650,43 @@ export default function DashboardPage() {
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
             <Activity className={`w-5 h-5 ${theme === 'light' ? 'text-[#a61b3c]' : 'text-white'}`} /> {t('safety Response Analytics') || 'Safety Response Analytics'}
           </h2>
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
-               <div className="text-2xl font-black text-green-500">{safetyStats.safe}</div>
-               <div className="text-[10px] font-bold uppercase tracking-wider text-green-600/70">{t('Marked Safe') || 'Marked Safe'}</div>
-            </div>
-            <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20">
-               <div className="text-2xl font-black text-red-500">{safetyStats.assistance}</div>
-               <div className="text-[10px] font-bold uppercase tracking-wider text-red-600/70">{t('Need Assistance') || 'Need Assistance'}</div>
-            </div>
-          </div>
+          {(() => {
+            const total = (safetyStats.safe || 0) + (safetyStats.assistance || 0);
+            const safePct = total > 0 ? Math.round((safetyStats.safe / total) * 100) : 100;
+            const assistPct = total > 0 ? Math.round((safetyStats.assistance / total) * 100) : 0;
+            return (
+              <div className="space-y-4 mb-5">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
+                     <div className="text-2xl font-black text-green-500">{safetyStats.safe}</div>
+                     <div className="text-[10px] font-bold uppercase tracking-wider text-green-600/70">{t('Marked Safe') || 'Marked Safe'}</div>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20">
+                     <div className="text-2xl font-black text-red-500">{safetyStats.assistance}</div>
+                     <div className="text-[10px] font-bold uppercase tracking-wider text-red-600/70">{t('Need Assistance') || 'Need Assistance'}</div>
+                  </div>
+                </div>
+
+                {/* Dual-color Progress Bar */}
+                <div className="space-y-1.5">
+                  <div className="flex justify-between text-[10px] font-black uppercase tracking-wider text-theme-muted">
+                    <span>Safe: {safePct}%</span>
+                    <span>Assistance: {assistPct}%</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full overflow-hidden flex bg-zinc-200 dark:bg-zinc-800">
+                    {total > 0 ? (
+                      <>
+                        <div className="bg-green-500 transition-all duration-500" style={{ width: `${safePct}%` }} />
+                        <div className="bg-red-500 transition-all duration-500" style={{ width: `${assistPct}%` }} />
+                      </>
+                    ) : (
+                      <div className="w-full bg-zinc-400 dark:bg-zinc-700 opacity-30" />
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
           
           <div 
             onClick={() => navigate('/admin/simulation')}
@@ -1194,63 +1220,6 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
-    </div>
-  );
-  };
-
-  return (
-    <div className="relative min-h-screen w-full transition-colors duration-500">
-      {/* Dynamic Background Layer — theme conditional */}
-      <div className="fixed inset-0 z-0 pointer-events-none select-none overflow-hidden">
-        {theme === 'light' ? (
-          <>
-            {/* Left Side: Violet Dusk Gradient */}
-            <div 
-              className="absolute inset-0 w-full h-full"
-              style={{
-                background: 'linear-gradient(135deg, #815ac0 0%, #9163cb 15%, #a06cd5 30%, #b185db 45%, #c19ee0 60%, #d2b7e5 75%, #dac3e8 90%, #dec9e9 100%)',
-                clipPath: 'polygon(0 0, 60% 0, 40% 100%, 0 100%)'
-              }}
-            />
-            {/* Right Side: Maple Sunset Gradient */}
-            <div 
-              className="absolute inset-0 w-full h-full"
-              style={{
-                background: 'linear-gradient(315deg, #a61b3c 0%, #ca2851 15%, #e04b5b 30%, #ff6766 45%, #ff9166 60%, #ffb173 75%, #ffd2a1 90%, #ffe3b3 100%)',
-                clipPath: 'polygon(60% 0, 100% 0, 100% 100%, 40% 100%)'
-              }}
-            />
-            {/* Subtle edge vignette */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,transparent_50%,rgba(0,0,0,0.12)_100%)]" />
-          </>
-        ) : (
-          <>
-            {/* Left Side: Titanium Gunmetal Gradient */}
-            <div 
-              className="absolute inset-0 w-full h-full"
-              style={{
-                background: 'linear-gradient(135deg, #07080a 0%, #0f1115 15%, #181b22 30%, #212630 45%, #2b313e 60%, #363e4e 75%, #424b5e 90%, #4f5970 100%)',
-                clipPath: 'polygon(0 0, 60% 0, 40% 100%, 0 100%)'
-              }}
-            />
-            {/* Right Side: Black-to-Gray Shading Gradient */}
-            <div 
-              className="absolute inset-0 w-full h-full"
-              style={{
-                background: 'linear-gradient(315deg, #000000 0%, #09090b 15%, #18181b 30%, #27272a 45%, #3f3f46 60%, #52525b 75%, #71717a 90%, #8e8e93 100%)',
-                clipPath: 'polygon(60% 0, 100% 0, 100% 100%, 40% 100%)'
-              }}
-            />
-            {/* Subtle edge vignette */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,transparent_50%,rgba(0,0,0,0.40)_100%)]" />
-          </>
-        )}
-      </div>
-
-      {/* Main dashboard content container */}
-      <div className="relative z-10">
-        {renderContent()}
-      </div>
     </div>
   );
 }

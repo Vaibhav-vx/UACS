@@ -139,7 +139,15 @@ function AppLayout() {
   if (!user) return null;
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: isSimulation ? 'hidden' : 'auto' }}>
+    <div 
+      style={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        overflow: isSimulation ? 'hidden' : 'auto',
+        background: theme === 'light' ? '#f8f4e9' : '#0b0914'
+      }}
+    >
 
       {/* ── Mobile top bar ── */}
       {!isSimulation && (
@@ -250,16 +258,29 @@ function AppLayout() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '10px',
-                  padding: '9px 12px',
-                  borderRadius: '8px',
-                  fontSize: '13.5px',
-                  fontWeight: 500,
+                  padding: '10px 14px',
+                  borderRadius: '12px',
+                  fontSize: '13px',
+                  fontWeight: 700,
                   textDecoration: 'none',
-                  marginBottom: '2px',
-                  background: isActive ? 'var(--accent-bg)' : 'transparent',
-                  color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
-                  border: isActive ? '1px solid var(--accent-border)' : '1px solid transparent',
-                  transition: 'all 0.15s',
+                  marginBottom: '3px',
+                  background: isActive 
+                    ? theme === 'light' 
+                      ? 'rgba(166, 27, 60, 0.08)' 
+                      : '#ffffff' 
+                    : 'transparent',
+                  color: isActive 
+                    ? theme === 'light' 
+                      ? '#a61b3c' 
+                      : '#000000' 
+                    : 'var(--text-secondary)',
+                  border: isActive 
+                    ? theme === 'light'
+                      ? '1px solid rgba(166, 27, 60, 0.15)'
+                      : '1px solid #ffffff'
+                    : '1px solid transparent',
+                  boxShadow: isActive && theme === 'dark' ? '0 4px 12px rgba(255,255,255,0.05)' : 'none',
+                  transition: 'all 0.2s ease',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                 })}
