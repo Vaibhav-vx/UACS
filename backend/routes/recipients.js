@@ -8,8 +8,10 @@ import bcrypt from 'bcryptjs';
 import { dbSelect, dbGetById, dbGetOne, dbInsert, dbUpdate, dbDelete } from '../database/db.js';
 import { sendSMS } from '../integrations/smsGateway.js';
 import { detectZoneFromLocation } from '../utils/zoneMapper.js';
+import { requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
+router.use(requireAdmin);
 
 // ─── GET /api/recipients ───────────────────────────────
 router.get('/', async (req, res) => {

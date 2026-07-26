@@ -8,6 +8,7 @@ import { dbSelect, dbGetById, dbGetOne, dbInsert, dbUpdate, dbDelete, dbCount } 
 import { translateToMultiple } from '../integrations/translateApi.js';
 import { sendBulkSMS } from '../integrations/smsGateway.js';
 import { postTweet } from '../integrations/twitterApi.js';
+import { requireAdmin } from '../middleware/auth.js';
 import twilio from 'twilio';
 
 const router = Router();
@@ -24,7 +25,7 @@ function parseMsg(msg) {
 }
 
 // ─── GET /api/messages/stats ───────────────────────────
-router.get('/stats', async (req, res) => {
+router.get('/stats', requireAdmin, async (req, res) => {
   try {
     const [active, expired, draft, pending, all] = await Promise.all([
       dbCount('messages', { status: 'active' }),
@@ -51,7 +52,7 @@ router.get('/stats', async (req, res) => {
 });
 
 // ─── POST /api/messages/emergency ──────────────────────
-router.post('/emergency', async (req, res) => {
+router.post('/emergency', requireAdmin, async (req, res) => {
   try {
     const { master_content, target_zone } = req.body;
     if (!master_content) return res.status(400).json({ error: 'master_content is required' });
@@ -191,7 +192,7 @@ router.post('/safety/direct', async (req, res) => {
 });
 
 // ─── GET /api/messages/safety/recent ───────────────────
-router.get('/safety/recent', async (req, res) => {
+router.get('/safety/recent', requireAdmin, async (req, res) => {
   try {
     const reports = await dbSelect('safety_reports', {}, { orderBy: 'created_at', ascending: false, limit: 10 });
     res.json(reports);
@@ -202,7 +203,7 @@ router.get('/safety/recent', async (req, res) => {
 });
 
 // ─── GET /api/messages/safety/stats ────────────────────
-router.get('/safety/stats', async (req, res) => {
+router.get('/safety/stats', requireAdmin, async (req, res) => {
   try {
     const reports = await dbSelect('safety_reports', {}, { limit: 5000 });
     const stats = {
@@ -217,7 +218,7 @@ router.get('/safety/stats', async (req, res) => {
 });
 
 // ─── PUT /api/messages/safety/:id/assist ───────────────
-router.put('/safety/:id/assist', async (req, res) => {
+router.put('/safety/:id/assist', requireAdmin, async (req, res) => {
   try {
     const report = await dbGetById('safety_reports', req.params.id);
     if (!report) return res.status(404).json({ error: 'Safety report not found' });
@@ -254,7 +255,7 @@ router.get('/', async (req, res) => {
 });
 
 // ─── POST /api/messages ────────────────────────────────
-router.post('/', async (req, res) => {
+router.post('/', requireAdmin, async (req, res) => {
   try {
     const { title, master_content, urgency, target_zone, channels, languages, expires_at, lat, lng, radius, status } = req.body;
     const newMsg = await dbInsert('messages', {
@@ -293,7 +294,7 @@ router.post('/:id/safety', async (req, res) => {
 });
 
 // ─── PUT /api/messages/:id/approve ─────────────────────
-router.put('/:id/approve', async (req, res) => {
+router.put('/:id/approve', requireAdmin, async (req, res) => {
   try {
     const updated = await dbUpdate('messages', req.params.id, { status: 'pending', approved_by: req.user?.name });
     res.json(parseMsg(updated));
@@ -303,7 +304,7 @@ router.put('/:id/approve', async (req, res) => {
 });
 
 // ─── PUT /api/messages/:id/expire ──────────────────────
-router.put('/:id/expire', async (req, res) => {
+router.put('/:id/expire', requireAdmin, async (req, res) => {
   try {
     const { reason } = req.body;
     const updated = await dbUpdate('messages', req.params.id, { 
@@ -317,7 +318,7 @@ router.put('/:id/expire', async (req, res) => {
 });
 
 // ─── PUT /api/messages/:id/extend ──────────────────────
-router.put('/:id/extend', async (req, res) => {
+router.put('/:id/extend', requireAdmin, async (req, res) => {
   try {
     const { expires_at } = req.body;
     const updated = await dbUpdate('messages', req.params.id, { expires_at });
@@ -328,7 +329,7 @@ router.put('/:id/extend', async (req, res) => {
 });
 
 // ─── GET /api/messages/:id/performance ──────────────────
-router.get('/:id/performance', async (req, res) => {
+router.get('/:id/performance', requireAdmin, async (req, res) => {
   try {
     const msg = await dbGetById('messages', req.params.id);
     if (!msg) return res.status(404).json({ error: 'Message not found' });
@@ -360,7 +361,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // ─── PUT /api/messages/:id ─────────────────────────────
-router.put('/:id', async (req, res) => {
+router.put('/:id', requireAdmin, async (req, res) => {
   try {
     const updated = await dbUpdate('messages', req.params.id, req.body);
     res.json(parseMsg(updated));
@@ -370,7 +371,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // ─── DELETE /api/messages/:id ──────────────────────────
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireAdmin, async (req, res) => {
   try {
     await dbDelete('messages', req.params.id);
     res.json({ success: true });

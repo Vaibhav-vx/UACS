@@ -59,3 +59,13 @@ export function authenticate(req, res, next) {
     res.status(500).json({ error: 'Authentication internal error' });
   }
 }
+
+export function requireAdmin(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Authentication required', code: 'NO_USER' });
+  }
+  if (req.user.role?.toLowerCase() !== 'admin') {
+    return res.status(403).json({ error: 'Forbidden: Admin access required', code: 'FORBIDDEN' });
+  }
+  next();
+}

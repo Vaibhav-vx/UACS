@@ -7,8 +7,10 @@ import { Router } from 'express';
 import { dbGetById, dbSelect, dbInsert, dbUpdate } from '../database/db.js';
 import { sendBulkSMS } from '../integrations/smsGateway.js';
 import { postTweet } from '../integrations/twitterApi.js';
+import { requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
+router.use(requireAdmin);
 
 // ── Simulated channel dispatchers ────────────────────────
 async function dispatchToRadio(msg) {

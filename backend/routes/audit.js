@@ -4,8 +4,10 @@
 
 import { Router } from 'express';
 import { dbSelect, getSupabase } from '../database/db.js';
+import { requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
+router.use(requireAdmin);
 // ─── GET /api/audit ────────────────────────────────────
 router.get('/', async (req, res) => {
   try {
