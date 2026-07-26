@@ -303,10 +303,15 @@
     cursor: pointer;
     transition: all 0.25s ease;
   }
+  .light .theme-toggle {
+    background: linear-gradient(315deg, #a61b3c 0%, #ca2851 15%, #e04b5b 30%, #ff6766 45%, #ff9166 60%, #ffb173 75%, #ffd2a1 90%, #ffe3b3 100%) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+  }
   .light .theme-toggle:hover {
-    background: var(--bg-selected);
-    color: var(--accent);
-    border-color: var(--accent-border);
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
   }
   .dark .theme-toggle {
     background: linear-gradient(315deg, #000000 0%, #09090b 15%, #18181b 30%, #27272a 45%, #3f3f46 60%, #52525b 75%, #71717a 90%, #8e8e93 100%) !important;
@@ -787,10 +792,15 @@ p, span, h1, h2, h3, h4, h5, h6, div, td, th {
   color: var(--text-secondary);
 }
 
+.light .sidebar-nav-item {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
 .light .sidebar-nav-item.active {
-  background: rgba(145, 99, 203, 0.12) !important;
-  color: #a61b3c !important;
-  border-color: rgba(145, 99, 203, 0.25) !important;
+  background: linear-gradient(315deg, #a61b3c 0%, #ca2851 15%, #e04b5b 30%, #ff6766 45%, #ff9166 60%, #ffb173 75%, #ffd2a1 90%, #ffe3b3 100%) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .dark .sidebar-nav-item.active {
@@ -801,8 +811,10 @@ p, span, h1, h2, h3, h4, h5, h6, div, td, th {
 }
 
 .light .sidebar-nav-item:hover {
-  border-color: rgba(145, 99, 203, 0.2);
-  background: rgba(145, 99, 203, 0.05);
+  border-color: #ffffff !important;
+  background: linear-gradient(315deg, #a61b3c 0%, #ca2851 15%, #e04b5b 30%, #ff6766 45%, #ff9166 60%, #ffb173 75%, #ffd2a1 90%, #ffe3b3 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 .dark .sidebar-nav-item:hover {
@@ -825,9 +837,15 @@ p, span, h1, h2, h3, h4, h5, h6, div, td, th {
   background: var(--bg-hover);
 }
 
+.light .profile-nav-card {
+  background: linear-gradient(315deg, #a61b3c 0%, #ca2851 15%, #e04b5b 30%, #ff6766 45%, #ff9166 60%, #ffb173 75%, #ffd2a1 90%, #ffe3b3 100%) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
 .light .profile-nav-card:hover {
-  background: var(--bg-selected);
-  border-color: var(--border-hover);
+  border-color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 .dark .profile-nav-card {

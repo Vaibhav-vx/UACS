@@ -191,7 +191,7 @@ function AppLayout() {
             flexShrink: 0,
             background: theme === 'dark' 
               ? 'linear-gradient(135deg, #07080a 0%, #0f1115 15%, #181b22 30%, #212630 45%, #2b313e 60%, #363e4e 75%, #424b5e 90%, #4f5970 100%)'
-              : 'var(--bg-surface)',
+              : 'linear-gradient(135deg, #815ac0 0%, #9163cb 15%, #a06cd5 30%, #b185db 45%, #c19ee0 60%, #d2b7e5 75%, #dac3e8 90%, #dec9e9 100%)',
             borderRight: '1px solid var(--border)',
             display: 'flex',
             flexDirection: 'column',
@@ -222,8 +222,8 @@ function AppLayout() {
             {/* Logo block */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
               <div style={{ minWidth: 0, overflow: 'hidden' }}>
-                <div style={{ fontWeight: 700, fontSize: '16px', letterSpacing: '-0.02em', lineHeight: 1.2, whiteSpace: 'nowrap' }}>{APP_BRAND}</div>
-                <div style={{ fontSize: '10px', color: 'var(--text-muted)', lineHeight: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontWeight: 700, fontSize: '16px', letterSpacing: '-0.02em', lineHeight: 1.2, whiteSpace: 'nowrap', color: '#ffffff' }}>{APP_BRAND}</div>
+                <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.7)', lineHeight: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {t('unifiedComms')}
                 </div>
               </div>
@@ -277,19 +277,19 @@ function AppLayout() {
                  {user.name?.charAt(0)?.toUpperCase()}
                </div>
                <div style={{ flex: 1, minWidth: 0 }}>
-                 <div style={{ fontSize: '13px', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                   {user.name}
-                 </div>
-                 <span
-                   style={{
-                     fontSize: '10px', letterSpacing: '0.05em', fontWeight: 700,
-                     textTransform: 'uppercase', background: 'transparent',
-                     color: theme === 'dark' ? '#ffffff' : '#1f2937', 
-                     display: 'inline-block', opacity: 0.8
-                   }}
-                 >
-                   {user.role || 'admin'}
-                 </span>
+                  <div style={{ fontSize: '13px', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#ffffff' }}>
+                    {user.name}
+                  </div>
+                  <span
+                    style={{
+                      fontSize: '10px', letterSpacing: '0.05em', fontWeight: 700,
+                      textTransform: 'uppercase', background: 'transparent',
+                      color: '#ffffff', 
+                      display: 'inline-block', opacity: 0.8
+                    }}
+                  >
+                    {user.role || 'admin'}
+                  </span>
                </div>
               <button onClick={(e) => { e.stopPropagation(); handleLogout(); }} className="theme-toggle" style={{ width: '30px', height: '30px', flexShrink: 0 }} title={t('logout')}>
                 <LogOut style={{ width: '14px', height: '14px' }} />
