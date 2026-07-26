@@ -949,9 +949,21 @@ p, span, h1, h2, h3, h4, h5, h6, div, td, th {
 .dark .input-field,
 .dark .textarea-field,
 .dark select,
-.dark textarea {
+.dark textarea,
+.dark .modal-content,
+.dark .dialog-content,
+.dark .overlay-content,
+.dark .language-card,
+.dark .alert-banner,
+.dark table {
   background: linear-gradient(315deg, #000000 0%, #09090b 15%, #18181b 30%, #27272a 45%, #3f3f46 60%, #52525b 75%, #71717a 90%, #8e8e93 100%) !important;
   border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark tr,
+.dark th,
+.dark td {
+  background: transparent !important;
 }
 
 
