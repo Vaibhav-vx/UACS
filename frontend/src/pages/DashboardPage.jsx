@@ -582,7 +582,7 @@ export default function DashboardPage() {
               <SituationMapCard />
               <button 
                 onClick={() => setShowMap(false)}
-                className="absolute top-4 right-4 z-[1000] px-4 py-2.5 bg-red-600 text-white rounded-xl shadow-xl hover:bg-red-700 transition-all flex items-center gap-2 font-black text-xs border-0 cursor-pointer"
+                className="absolute top-4 right-4 z-1000 px-4 py-2.5 bg-red-600 text-white rounded-xl shadow-xl hover:bg-red-700 transition-all flex items-center gap-2 font-black text-xs border-0 cursor-pointer"
               >
                 <X className="w-4 h-4" /> Close Map
               </button>
@@ -1088,7 +1088,7 @@ export default function DashboardPage() {
               </div>
 
               <div className="mt-4">
-                <label className="block text-sm font-medium mb-1.5 text-(--text-secondary) flex justify-between">
+                <label className="text-sm font-medium mb-1.5 text-(--text-secondary) flex justify-between">
                   <span>{t('alertRadius') || 'Alert Radius'}</span>
                   <span className="text-accent font-bold">5 km</span>
                 </label>
