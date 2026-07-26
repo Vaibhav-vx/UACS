@@ -258,11 +258,11 @@ function AppLayout() {
 
           {/* User footer */}
           <div style={{ padding: '12px', borderTop: '1px solid var(--border)', flexShrink: 0 }}>
-            <div
-              style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 10px', borderRadius: '8px', background: 'var(--bg-hover)', cursor: 'pointer' }}
-              onClick={() => { navigate('/profile'); setSidebarOpen(false); }}
-              title="My Profile & Settings"
-            >
+             <div
+               className="profile-nav-card"
+               onClick={() => { navigate('/profile'); setSidebarOpen(false); }}
+               title="My Profile & Settings"
+             >
               <div
                 style={{
                   width: '32px', height: '32px', borderRadius: '50%',
