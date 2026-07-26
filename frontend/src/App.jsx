@@ -29,7 +29,7 @@ import SurvivalGuidePage from './pages/SurvivalGuidePage';
 import SOSResponsePage from './pages/SOSResponsePage';
 import UserNotificationBar from './components/UserNotificationBar';
 
-const APP_BRAND = 'Emergency Portal';
+const APP_BRAND = ' ';
 
 const NAV_ITEMS = [
   { path: '/dashboard',  labelKey: 'dashboard',  icon: LayoutDashboard, roles: ['admin', 'user'] },
