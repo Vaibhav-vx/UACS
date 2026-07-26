@@ -266,10 +266,11 @@ function AppLayout() {
                <div
                  style={{
                    width: '32px', height: '32px', borderRadius: '50%',
-                   background: theme === 'dark' ? '#ffffff' : '#1f2937',
+                   background: '#000000',
+                   border: '1px solid rgba(255, 255, 255, 0.15)',
                    display: 'flex', alignItems: 'center', justifyContent: 'center',
                    fontSize: '14px', fontWeight: 800, 
-                   color: theme === 'dark' ? '#000000' : '#ffffff', 
+                   color: '#ffffff', 
                    flexShrink: 0,
                  }}
                >
