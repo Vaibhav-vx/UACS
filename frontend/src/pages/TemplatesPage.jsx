@@ -1,16 +1,21 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookTemplate, Search, Plus, Trash2, X, AlertTriangle, ShieldAlert, Heart, Activity } from 'lucide-react';
+import { BookTemplate, Search, Plus, Trash2, X, AlertTriangle, ShieldAlert } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useTheme } from '../ThemeContext';
 
 const DEFAULT_TEMPLATES = [
-  { id: 'tpl-1', icon: '🏢', name: 'Earthquake Alert', category: 'emergency', urgency: 'critical', message: 'A major earthquake has occurred. Strong aftershocks are expected. If indoors, drop, cover, and hold under sturdy furniture. If outdoors, move away from buildings, power lines, and trees. Do not use elevators.' },
-  { id: 'tpl-2', icon: '🌊', name: 'Flood Evacuation', category: 'emergency', urgency: 'critical', message: 'A severe flood warning has been issued. All residents in low-lying areas must evacuate immediately to the nearest relief camp. Carry essential documents, medicines, and 3 days of food supply. Do not attempt to cross flooded roads.' },
-  { id: 'tpl-3', icon: '☀️', name: 'Heatwave Advisory', category: 'health', urgency: 'high', message: 'An extreme heatwave warning is active. Avoid outdoor activity between 11:00 AM and 4:00 PM. Drink plenty of water. Keep vulnerable individuals, children, and pets indoors.' },
-  { id: 'tpl-4', icon: '☣️', name: 'Gas Leak Warning', category: 'emergency', urgency: 'critical', message: 'A hazardous gas leak has been reported. All individuals are urged to shelter-in-place immediately. Close all doors, windows, and ventilation inlets. Seal doors with wet towels. Evacuate only if directed by emergency responders.' },
-  { id: 'tpl-5', icon: '🔥', name: 'Fire Hazard Alert', category: 'emergency', urgency: 'critical', message: 'A major fire has been reported. Evacuate the vicinity immediately. Keep windows and doors closed. Avoid the area and allow emergency services to operate. Fire brigade and emergency teams are on-site.' }
+  { id: 'tpl-1', name: 'Earthquake Alert', category: 'emergency', urgency: 'critical', message: 'A major earthquake has occurred. Strong aftershocks are expected. If indoors, drop, cover, and hold under sturdy furniture. If outdoors, move away from buildings, power lines, and trees. Do not use elevators.' },
+  { id: 'tpl-2', name: 'Flood Evacuation', category: 'emergency', urgency: 'critical', message: 'A severe flood warning has been issued. All residents in low-lying areas must evacuate immediately to the nearest relief camp. Carry essential documents, medicines, and 3 days of food supply. Do not attempt to cross flooded roads.' },
+  { id: 'tpl-3', name: 'Heatwave Advisory', category: 'health', urgency: 'high', message: 'An extreme heatwave warning is active. Avoid outdoor activity between 11:00 AM and 4:00 PM. Drink plenty of water. Keep vulnerable individuals, children, and pets indoors.' },
+  { id: 'tpl-4', name: 'Gas Leak Warning', category: 'emergency', urgency: 'critical', message: 'A hazardous gas leak has been reported. All individuals are urged to shelter-in-place immediately. Close all doors, windows, and ventilation inlets. Seal doors with wet towels. Evacuate only if directed by emergency responders.' },
+  { id: 'tpl-5', name: 'Fire Hazard Alert', category: 'emergency', urgency: 'critical', message: 'A major fire has been reported. Evacuate the vicinity immediately. Keep windows and doors closed. Avoid the area and allow emergency services to operate. Fire brigade and emergency teams are on-site.' },
+  { id: 'tpl-6', name: 'Cyclone Warning', category: 'emergency', urgency: 'critical', message: 'A severe cyclone warning has been issued. Extremely high winds and torrential rain are expected. Secure loose outdoor objects, stay indoors away from windows, and remain in the strongest part of your shelter.' },
+  { id: 'tpl-7', name: 'Tsunami Evacuation', category: 'emergency', urgency: 'critical', message: 'A tsunami warning has been issued. Seek immediate high ground or move inland away from coastal areas. Do not return to coastal areas until official clearance is declared by emergency management.' },
+  { id: 'tpl-8', name: 'Heavy Rain & Landslide Alert', category: 'emergency', urgency: 'high', message: 'Continuous heavy rainfall is triggering landslide risks. Residents near steep slopes must relocate to safer zones immediately. Avoid all travel on mountain roads and stay alert for signs of slope movement.' },
+  { id: 'tpl-9', name: 'Severe Blizzard Alert', category: 'emergency', urgency: 'high', message: 'A severe winter weather warning is active. Extreme freezing conditions, heavy snow, and blocked roadways are expected. Avoid all non-essential travel and remain indoors with heating systems active.' },
+  { id: 'tpl-10', name: 'Thunderstorm & Lightning Alert', category: 'emergency', urgency: 'medium', message: 'Severe thunderstorms accompanied by frequent lightning are occurring. Shelter indoors immediately. Stay away from windows, electrical appliances, and avoid contact with running water.' }
 ];
 
 const CATEGORIES = [
@@ -47,8 +52,8 @@ export default function TemplatesPage() {
   const [templates, setTemplates] = useState(() => {
     const version = localStorage.getItem('uacs_templates_version');
     const saved = localStorage.getItem('uacs_custom_templates');
-    if (version !== 'v2') {
-      localStorage.setItem('uacs_templates_version', 'v2');
+    if (version !== 'v3') {
+      localStorage.setItem('uacs_templates_version', 'v3');
       localStorage.setItem('uacs_custom_templates', JSON.stringify(DEFAULT_TEMPLATES));
       return DEFAULT_TEMPLATES;
     }
@@ -60,7 +65,6 @@ export default function TemplatesPage() {
   const [isCreatorOpen, setIsCreatorOpen] = useState(false);
 
   // Form State
-  const [newIcon, setNewIcon] = useState('🚨');
   const [newName, setNewName] = useState('');
   const [newCategory, setNewCategory] = useState('emergency');
   const [newUrgency, setNewUrgency] = useState('critical');
@@ -79,7 +83,6 @@ export default function TemplatesPage() {
 
     const newTpl = {
       id: `tpl-${Date.now()}`,
-      icon: newIcon,
       name: newName,
       category: newCategory,
       urgency: newUrgency,
@@ -162,30 +165,7 @@ export default function TemplatesPage() {
             <Plus className="w-5 h-5 text-accent" /> Build New Custom Template
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-theme-muted mb-1.5">Icon / Emoji</label>
-              <select
-                value={newIcon}
-                onChange={e => setNewIcon(e.target.value)}
-                className="input-field w-full text-center"
-              >
-                <option value="🚨">🚨 Alert</option>
-                <option value="🏢">🏢 Building/Earthquake</option>
-                <option value="🌊">🌊 Flood/Water</option>
-                <option value="🌪️">🌪️ Cyclone</option>
-                <option value="🔥">🔥 Fire</option>
-                <option value="☀️">☀️ Heatwave</option>
-                <option value="☣️">☣️ Hazmat</option>
-                <option value="🌊">🌊 Coastal/Tsunami</option>
-                <option value="⛰️">⛰️ Hill/Landslide</option>
-                <option value="🏥">🏥 Medical</option>
-                <option value="🚧">🚧 Roadblock</option>
-                <option value="⚡">⚡ Power Outage</option>
-                <option value="🏫">🏫 School/Education</option>
-              </select>
-            </div>
-
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2">
               <label className="block text-xs font-bold uppercase tracking-wider text-theme-muted mb-1.5">Template Title</label>
               <input
@@ -229,7 +209,7 @@ export default function TemplatesPage() {
 
             <div className="md:col-span-3">
               <label className="block text-xs font-bold uppercase tracking-wider text-theme-muted mb-1.5">
-                Template Message Content (Use placeholders like [ZONE], [TIME], [MAGNITUDE])
+                Template Message Content
               </label>
               <textarea
                 placeholder="Write the emergency instructions clearly..."
@@ -318,7 +298,6 @@ export default function TemplatesPage() {
               }}
             >
               <div className="flex items-start gap-3 border-b border-theme-border pb-4 mb-4">
-                <div className="text-3xl p-2 rounded-2xl bg-black/10">{tpl.icon}</div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-base text-theme-primary truncate">{name}</h3>
                   <div className="flex flex-wrap gap-1.5 mt-1.5">
