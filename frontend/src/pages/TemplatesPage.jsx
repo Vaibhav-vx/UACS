@@ -6,7 +6,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { useTheme } from '../ThemeContext';
 
 const DEFAULT_TEMPLATES = [
-  // 🚨 CRITICAL URGENCY (10)
+  // 🚨 CRITICAL URGENCY (15)
   { id: 'tpl-1', name: 'Earthquake Alert', category: 'emergency', urgency: 'critical', message: 'EMERGENCY ALERT: A major earthquake has occurred. Dangerous aftershocks are expected. DROP, COVER, and HOLD ON immediately under a sturdy desk or table. Keep away from windows and outer walls. Do not use elevators. If outdoors, move to an open area away from structures and power lines.' },
   { id: 'tpl-2', name: 'Flood Evacuation', category: 'emergency', urgency: 'critical', message: 'IMMEDIATE EVACUATION ORDER: Severe flooding is imminent. All residents in low-lying areas must evacuate immediately to higher ground. Go to the nearest designated emergency shelter. Do not walk or drive through flood waters. Turn around, don\'t drown.' },
   { id: 'tpl-3', name: 'Gas Leak Emergency', category: 'emergency', urgency: 'critical', message: 'SHELTER-IN-PLACE ORDER: A hazardous gas leak has occurred. Go indoors immediately. Close and lock all windows and exterior doors. Turn off all heating, ventilation, and air conditioning systems. Seal gaps around doors with damp towels. Remain inside until further notice.' },
@@ -17,8 +17,13 @@ const DEFAULT_TEMPLATES = [
   { id: 'tpl-8', name: 'Active Threat Warning', category: 'law_order', urgency: 'critical', message: 'ACTIVE THREAT WARNING: Law enforcement is responding to an active safety threat. Avoid the area completely. If you are nearby, shelter in a secure room, lock all doors, silence devices, and remain hidden until officially cleared.' },
   { id: 'tpl-9', name: 'Cyclone Warning', category: 'emergency', urgency: 'critical', message: 'CRITICAL WEATHER WARNING: A severe cyclone is approaching. Secure loose outdoor objects, stay indoors away from windows, and remain in the strongest part of your building. Keep emergency kits ready.' },
   { id: 'tpl-10', name: 'Wildfire Evacuation Order', category: 'emergency', urgency: 'critical', message: 'EVACUATION ORDER: A fast-moving wildfire is threatening the area. All residents must evacuate immediately. Grab emergency kits, essential medications, and pets. Leave via designated escape routes. Do not delay evacuation to protect property.' },
+  { id: 'tpl-41', name: 'Active Terror Incident', category: 'law_order', urgency: 'critical', message: 'IMMEDIATE WARNING: An active hostile threat has been reported. Shelter-in-place immediately. Lock all doors, turn off lights, silence all mobile devices, and remain hidden. Avoid travel to the area.' },
+  { id: 'tpl-42', name: 'Dam Failure Evacuation', category: 'emergency', urgency: 'critical', message: 'IMMEDIATE EVACUATION ORDER: A structural compromise or imminent failure of the local dam has occurred. All downstream residents must evacuate to high ground immediately. Follow designated evacuation corridors.' },
+  { id: 'tpl-43', name: 'Industrial Explosion', category: 'emergency', urgency: 'critical', message: 'EVACUATION ORDER: A major industrial explosion has occurred. Residents within the surrounding perimeter must evacuate immediately. Stay clear of the smoke plume and follow responder directives.' },
+  { id: 'tpl-44', name: 'Severe Storm Surge Alert', category: 'emergency', urgency: 'critical', message: 'CRITICAL SAFETY WARNING: Imminent life-threatening storm surge flooding is expected along coastal areas. Evacuate immediately if ordered. Move inland away from the shore.' },
+  { id: 'tpl-45', name: 'Volcanic Eruption Emergency', category: 'emergency', urgency: 'critical', message: 'IMMEDIATE EVACUATION ORDER: A volcanic eruption has occurred. Residents in immediate flow pathways must evacuate now. Protect against ash inhalation and travel to designated evacuation hubs.' },
 
-  // ⚠️ HIGH URGENCY (10)
+  // ⚠️ HIGH URGENCY (15)
   { id: 'tpl-11', name: 'Wildfire Evacuation Watch', category: 'emergency', urgency: 'high', message: 'EVACUATION WATCH: A wildfire is active and threatening the area. All residents must prepare to evacuate at a moment\'s notice. Pack emergency kits, essential medications, and prepare pets. Follow instructions from emergency personnel.' },
   { id: 'tpl-12', name: 'Extreme Heat Warning', category: 'health', urgency: 'high', message: 'HEALTH ADVISORY: An extreme heatwave is active with dangerously high temperatures. Avoid strenuous outdoor activities between 11:00 AM and 4:00 PM. Stay in air-conditioned spaces, drink plenty of water, and check on elderly neighbors and pets.' },
   { id: 'tpl-13', name: 'Air Quality Emergency', category: 'health', urgency: 'high', message: 'HEALTH ADVISORY: Poor air quality index readings have reached unhealthy levels. Sensitive groups, including children, the elderly, and individuals with respiratory conditions, must limit outdoor exposure and avoid heavy exertion.' },
@@ -29,8 +34,13 @@ const DEFAULT_TEMPLATES = [
   { id: 'tpl-31', name: 'City Curfew Order', category: 'law_order', urgency: 'high', message: 'EMERGENCY CURFEW ORDER: A mandatory city-wide curfew has been declared by municipal authorities, effective from 8:00 PM tonight until 6:00 AM tomorrow. All residents must remain indoors.' },
   { id: 'tpl-33', name: 'Storm Drain Overflow', category: 'emergency', urgency: 'high', message: 'MUNICIPAL WARNING: Severe rainfall has overwhelmed the city storm drainage system. Major streets, intersections, and underpasses are flooded. Do not attempt to travel or drive through flooded roadways.' },
   { id: 'tpl-39', name: 'Urban Heat Island Advisory', category: 'health', urgency: 'high', message: 'HEALTH WARNING: High concrete temperatures have triggered an Urban Heat Island alert. Cool-down centers are open at municipal libraries and community hubs for all residents.' },
+  { id: 'tpl-46', name: 'Severe Water Contamination', category: 'health', urgency: 'high', message: 'HEALTH ADVISORY: Pathogenic bacteria have been detected in the public water supply. Do not consume tap water. Boil water vigorously for 3 minutes before any use, or use bottled water.' },
+  { id: 'tpl-47', name: 'Grid Collapse Alert', category: 'utilities', urgency: 'high', message: 'UTILITY ADVISORY: Extreme weather has placed the electrical grid under critical strain. Uncontrolled blackouts are expected. Conserve all energy, charge backup cells, and unplug major appliances.' },
+  { id: 'tpl-48', name: 'Extreme Heat Index Warning', category: 'health', urgency: 'high', message: 'HEALTH WARNING: Heat index values are expected to exceed dangerous levels. Hydrate frequently, wear lightweight clothing, and stay in cooled areas. Cool-down shelters are open.' },
+  { id: 'tpl-49', name: 'Gale Force Winds Warning', category: 'emergency', urgency: 'high', message: 'WEATHER WARNING: Severe gale-force winds are causing structural damage and falling trees. Avoid travel. Secure outdoor objects and remain indoors in lower levels.' },
+  { id: 'tpl-50', name: 'Hazmat Transport Spill', category: 'emergency', urgency: 'high', message: 'HAZMAT WARNING: A vehicle carrying toxic materials has overturned, causing a spill. Shelter indoors if you are in the immediate vicinity. Keep windows and vents closed.' },
 
-  // ⚡ MEDIUM URGENCY (10)
+  // ⚡ MEDIUM URGENCY (15)
   { id: 'tpl-18', name: 'Landslide Warning', category: 'emergency', urgency: 'medium', message: 'LANDSLIDE WATCH: Heavy rainfall has saturated slopes, creating a potential landslide hazard. If you are near steep hillsides or slopes, remain vigilant and be prepared to evacuate if slope movement is observed.' },
   { id: 'tpl-19', name: 'Severe Thunderstorm Warning', category: 'emergency', urgency: 'medium', message: 'SEVERE WEATHER WARNING: High winds, large hail, and frequent lightning strikes are occurring. Move indoors immediately. Stay away from windows, avoid using corded electrical appliances, and do not touch running water.' },
   { id: 'tpl-20', name: 'Roadway Closure', category: 'traffic', urgency: 'medium', message: 'TRAFFIC ADVISORY: A major traffic incident has blocked primary transit lanes. Major delays are expected. Commuters must seek alternate routes and follow local detours established by response personnel.' },
@@ -41,8 +51,13 @@ const DEFAULT_TEMPLATES = [
   { id: 'tpl-25', name: 'Marine Storm Warning', category: 'emergency', urgency: 'medium', message: 'MARINE WARNING: Severe storm conditions are causing dangerous coastal swells, high winds, and hazardous seas. All small vessels must return to port immediately. Recreational water activities are suspended.' },
   { id: 'tpl-32', name: 'Water Main Break', category: 'utilities', urgency: 'medium', message: 'MUNICIPAL ADVISORY: A major water main break has occurred, causing street flooding and pressure drops. Repair crews are on-site. Expect localized road closures and avoid the area.' },
   { id: 'tpl-34', name: 'Sanitation Service Suspension', category: 'utilities', urgency: 'medium', message: 'SANITATION ADVISORY: Due to severe weather conditions, all municipal waste and recycling collection routes are suspended today. Collection schedules will slide forward by one day.' },
+  { id: 'tpl-51', name: 'Gas Odor Investigation', category: 'utilities', urgency: 'medium', message: 'MUNICIPAL NOTICE: Crews are investigating reports of a gas odor. Emergency teams are active. No evacuation is required, but residents must report any direct indoor gas smells.' },
+  { id: 'tpl-52', name: 'Sinkhole Road Closure', category: 'traffic', urgency: 'medium', message: 'TRAFFIC ADVISORY: A major sinkhole has opened in the road, blocking traffic lanes. Roadways are closed. Drivers must follow detours and expect significant delays.' },
+  { id: 'tpl-53', name: 'Airport Operations Hold', category: 'traffic', urgency: 'medium', message: 'TRAVEL ADVISORY: Severe weather has suspended flight operations. Travelers must check flight status with airlines before heading to the airport. Expect terminal congestion.' },
+  { id: 'tpl-54', name: 'Transit Line Outage', category: 'traffic', urgency: 'medium', message: 'TRANSIT ADVISORY: Signal failures have suspended subway and light rail services. Alternate shuttle buses are operating. Plan for increased travel time.' },
+  { id: 'tpl-55', name: 'Vector Spraying Notice', category: 'health', urgency: 'medium', message: 'MUNICIPAL NOTICE: Environmental health crews are conducting vector mosquito control spraying tonight. Residents are advised to keep windows closed and bring pets indoors.' },
 
-  // 📢 LOW URGENCY (10)
+  // 📢 LOW URGENCY (15)
   { id: 'tpl-26', name: 'Water Disruption Advisory', category: 'utilities', urgency: 'low', message: 'PUBLIC ADVISORY: Maintenance of the water supply network is underway. Water service may experience low pressure or temporary disruption. Residents are advised to store water for basic needs.' },
   { id: 'tpl-27', name: 'Scheduled Grid Maintenance', category: 'utilities', urgency: 'low', message: 'UTILITY ADVISORY: Scheduled maintenance on communications systems is planned. Brief, intermittent network outages may occur during this timeframe.' },
   { id: 'tpl-28', name: 'School Closure Notice', category: 'education', urgency: 'low', message: 'SCHOOL CLOSURE NOTICE: All schools and educational facilities will remain closed today due to severe weather. Virtual classes will proceed where scheduled.' },
@@ -52,7 +67,12 @@ const DEFAULT_TEMPLATES = [
   { id: 'tpl-36', name: 'Water Hydrant Testing', category: 'utilities', urgency: 'low', message: 'MUNICIPAL NOTICE: Fire department crews are performing routine water hydrant testing. Residents may notice temporary water discoloration or slight pressure drops.' },
   { id: 'tpl-37', name: 'Street Sweep Relocation', category: 'traffic', urgency: 'low', message: 'MUNICIPAL NOTICE: Scheduled street sweeping is active. Vehicles parked on designated routes must be relocated to avoid ticketing and towing.' },
   { id: 'tpl-38', name: 'Town Hall Meeting', category: 'general', urgency: 'low', message: 'PUBLIC NOTICE: The monthly Town Hall Meeting will convene tonight at the City Council chambers. Residents are invited to participate in person or watch the live stream.' },
-  { id: 'tpl-40', name: 'Festival Traffic Detour', category: 'traffic', urgency: 'low', message: 'CITY ANNOUNCEMENT: The annual town festival is taking place this weekend. Expect major street closures, traffic detours, and high pedestrian activity in the downtown sector.' }
+  { id: 'tpl-40', name: 'Festival Traffic Detour', category: 'traffic', urgency: 'low', message: 'CITY ANNOUNCEMENT: The annual town festival is taking place this weekend. Expect major street closures, traffic detours, and high pedestrian activity in the downtown sector.' },
+  { id: 'tpl-56', name: 'Flu Vaccination Drive', category: 'health', urgency: 'low', message: 'HEALTH BULLETIN: Free seasonal flu vaccines are available at all municipal health clinics this week. Protect yourself and your family. Appointments can be booked online.' },
+  { id: 'tpl-57', name: 'Voluntary Water Restrict', category: 'utilities', urgency: 'low', message: 'UTILITY ADVISORY: Low reservoir levels have triggered voluntary water conservation measures. Please limit non-essential water usage, including lawn watering and vehicle washing.' },
+  { id: 'tpl-58', name: 'Audible Siren System Test', category: 'general', urgency: 'low', message: 'SYSTEM TEST: The annual emergency siren test will occur today at noon. This is only a test of the audible warning system. No action is required by the public.' },
+  { id: 'tpl-59', name: 'Hazardous Waste Recycling', category: 'general', urgency: 'low', message: 'COMMUNITY NOTICE: The annual electronic and hazardous waste recycling collection drive is open this weekend at the municipal depot. Safely discard old devices.' },
+  { id: 'tpl-60', name: 'Neighborhood Watch Meet', category: 'general', urgency: 'low', message: 'COMMUNITY NOTICE: The monthly Neighborhood Watch meeting will take place tomorrow evening at the local library. Join us to discuss community safety and watch programs.' }
 ];
 
 const CATEGORIES = [
@@ -91,8 +111,8 @@ export default function TemplatesPage() {
   const [templates, setTemplates] = useState(() => {
     const version = localStorage.getItem('uacs_templates_version');
     const saved = localStorage.getItem('uacs_custom_templates');
-    if (version !== 'v7') {
-      localStorage.setItem('uacs_templates_version', 'v7');
+    if (version !== 'v8') {
+      localStorage.setItem('uacs_templates_version', 'v8');
       localStorage.setItem('uacs_custom_templates', JSON.stringify(DEFAULT_TEMPLATES));
       return DEFAULT_TEMPLATES;
     }
