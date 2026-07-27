@@ -6,11 +6,11 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { useTheme } from '../ThemeContext';
 
 const DEFAULT_TEMPLATES = [
-  { id: 'tpl-1', icon: '🏢', name: 'Earthquake Alert', category: 'emergency', urgency: 'critical', message: 'A major earthquake has occurred in your area. Strong aftershocks are expected. If indoors, drop, cover, and hold under sturdy furniture. If outdoors, move away from buildings, power lines, and trees. Do not use elevators.' },
-  { id: 'tpl-2', icon: '🌊', name: 'Flood Evacuation', category: 'emergency', urgency: 'critical', message: 'A severe flood warning has been issued for your area. All residents in low-lying areas must evacuate immediately to the nearest relief camp. Carry essential documents, medicines, and 3 days of food supply. Do not attempt to cross flooded roads.' },
-  { id: 'tpl-3', icon: '☀️', name: 'Heatwave Advisory', category: 'health', urgency: 'high', message: 'An extreme heatwave warning is active for your area. Avoid outdoor activity between 11:00 AM and 4:00 PM. Drink plenty of water. Keep vulnerable individuals, children, and pets indoors.' },
-  { id: 'tpl-4', icon: '☣️', name: 'Gas Leak Warning', category: 'emergency', urgency: 'critical', message: 'A hazardous gas leak has been reported in your immediate vicinity. Residents are urged to shelter-in-place immediately. Close all doors, windows, and ventilation inlets. Seal doors with wet towels. Evacuate only if directed by emergency responders.' },
-  { id: 'tpl-5', icon: '🔥', name: 'Fire Hazard Alert', category: 'emergency', urgency: 'critical', message: 'A major fire has been reported in your area. Residents are advised to evacuate immediately. Keep windows and doors closed. Avoid the area and allow emergency services to operate. Fire brigade and emergency teams are on the way.' }
+  { id: 'tpl-1', icon: '🏢', name: 'Earthquake Alert', category: 'emergency', urgency: 'critical', message: 'A major earthquake has occurred. Strong aftershocks are expected. If indoors, drop, cover, and hold under sturdy furniture. If outdoors, move away from buildings, power lines, and trees. Do not use elevators.' },
+  { id: 'tpl-2', icon: '🌊', name: 'Flood Evacuation', category: 'emergency', urgency: 'critical', message: 'A severe flood warning has been issued. All residents in low-lying areas must evacuate immediately to the nearest relief camp. Carry essential documents, medicines, and 3 days of food supply. Do not attempt to cross flooded roads.' },
+  { id: 'tpl-3', icon: '☀️', name: 'Heatwave Advisory', category: 'health', urgency: 'high', message: 'An extreme heatwave warning is active. Avoid outdoor activity between 11:00 AM and 4:00 PM. Drink plenty of water. Keep vulnerable individuals, children, and pets indoors.' },
+  { id: 'tpl-4', icon: '☣️', name: 'Gas Leak Warning', category: 'emergency', urgency: 'critical', message: 'A hazardous gas leak has been reported. All individuals are urged to shelter-in-place immediately. Close all doors, windows, and ventilation inlets. Seal doors with wet towels. Evacuate only if directed by emergency responders.' },
+  { id: 'tpl-5', icon: '🔥', name: 'Fire Hazard Alert', category: 'emergency', urgency: 'critical', message: 'A major fire has been reported. Evacuate the vicinity immediately. Keep windows and doors closed. Avoid the area and allow emergency services to operate. Fire brigade and emergency teams are on-site.' }
 ];
 
 const CATEGORIES = [
@@ -223,7 +223,7 @@ export default function TemplatesPage() {
 
             <div className="md:col-span-3">
               <label className="block text-xs font-bold uppercase tracking-wider text-theme-muted mb-1.5">
-                Template Message Content
+                Template Message Content (Use placeholders like [ZONE], [TIME], [MAGNITUDE])
               </label>
               <textarea
                 placeholder="Write the emergency instructions clearly..."
