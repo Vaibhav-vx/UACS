@@ -6,18 +6,33 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { useTheme } from '../ThemeContext';
 
 const DEFAULT_TEMPLATES = [
+  // 🚨 CRITICAL URGENCY (5)
   { id: 'tpl-1', name: 'Earthquake Alert', category: 'emergency', urgency: 'critical', message: 'EMERGENCY ALERT: A major earthquake has occurred. Dangerous aftershocks are expected. DROP, COVER, and HOLD ON immediately under a sturdy desk or table. Keep away from windows and outer walls. Do not use elevators. If outdoors, move to an open area away from structures and power lines.' },
   { id: 'tpl-2', name: 'Flood Evacuation', category: 'emergency', urgency: 'critical', message: 'IMMEDIATE EVACUATION ORDER: Severe flooding is imminent. All residents in low-lying areas must evacuate immediately to higher ground. Go to the nearest designated emergency shelter. Do not walk or drive through flood waters. Turn around, don\'t drown.' },
-  { id: 'tpl-3', name: 'Extreme Heat Warning', category: 'health', urgency: 'high', message: 'HEALTH ADVISORY: An extreme heatwave is active with dangerously high temperatures. Avoid strenuous outdoor activities between 11:00 AM and 4:00 PM. Stay in air-conditioned spaces, drink plenty of water, and check on elderly neighbors and pets.' },
-  { id: 'tpl-4', name: 'Gas Leak Emergency', category: 'emergency', urgency: 'critical', message: 'SHELTER-IN-PLACE ORDER: A hazardous gas leak has occurred. Go indoors immediately. Close and lock all windows and exterior doors. Turn off all heating, ventilation, and air conditioning systems. Seal gaps around doors with damp towels. Remain inside until further notice.' },
-  { id: 'tpl-5', name: 'Wildfire Evacuation', category: 'emergency', urgency: 'critical', message: 'EVACUATION ORDER: A fast-moving wildfire is threatening the area. All residents must evacuate immediately. Grab emergency kits, essential medications, and pets. Leave via designated escape routes. Do not delay evacuation to protect property.' },
-  { id: 'tpl-6', name: 'Cyclone Warning', category: 'emergency', urgency: 'critical', message: 'CRITICAL WEATHER WARNING: A severe cyclone is making landfall. Extreme destructive winds and flooding are expected. Shelter indoors in an interior room on the lowest level, away from windows. Stay inside until the storm completely passes.' },
-  { id: 'tpl-7', name: 'Tsunami Evacuation', category: 'emergency', urgency: 'critical', message: 'TSUNAMI WARNING: A series of dangerous waves is approaching. If you are near coastal or low-lying beaches, move inland to high ground immediately. Do not stay to watch the waves. Follow evacuation routes away from the shore.' },
-  { id: 'tpl-8', name: 'Landslide Warning', category: 'emergency', urgency: 'high', message: 'LANDSLIDE WARNING: Heavy rainfall has saturated slopes, creating an imminent landslide hazard. If you are near steep hillsides or slopes, remain vigilant and evacuate to a safer location immediately. Avoid traveling on mountain roads.' },
-  { id: 'tpl-9', name: 'Severe Blizzard Alert', category: 'emergency', urgency: 'high', message: 'WINTER WEATHER EMERGENCY: A severe blizzard is causing zero visibility and freezing conditions. Stay indoors and avoid all travel. If heating fails, gather in a central room, wear multiple layers, and avoid using unvented indoor heaters.' },
-  { id: 'tpl-10', name: 'Tornado Warning', category: 'emergency', urgency: 'critical', message: 'TORNADO WARNING: A tornado has been detected. Take shelter immediately in a basement, cellar, or interior room on the lowest floor. Protect your head with blankets or helmets. Avoid windows and mobile structures.' },
-  { id: 'tpl-11', name: 'Severe Thunderstorm Alert', category: 'emergency', urgency: 'medium', message: 'SEVERE WEATHER WARNING: High winds, large hail, and frequent lightning strikes are occurring. Move indoors immediately. Stay away from windows, avoid using corded electrical appliances, and do not touch running water.' },
-  { id: 'tpl-12', name: 'Hazardous Spill Warning', category: 'emergency', urgency: 'medium', message: 'SAFETY ADVISORY: A chemical spill has occurred on a major transit route. Avoid the affected vicinity to allow emergency responders to secure the area. Keep vehicle windows closed if passing nearby. Follow all official detours.' }
+  { id: 'tpl-3', name: 'Gas Leak Emergency', category: 'emergency', urgency: 'critical', message: 'SHELTER-IN-PLACE ORDER: A hazardous gas leak has occurred. Go indoors immediately. Close and lock all windows and exterior doors. Turn off all heating, ventilation, and air conditioning systems. Seal gaps around doors with damp towels. Remain inside until further notice.' },
+  { id: 'tpl-4', name: 'Tsunami Evacuation', category: 'emergency', urgency: 'critical', message: 'TSUNAMI WARNING: A series of dangerous waves is approaching. If you are near coastal or low-lying beaches, move inland to high ground immediately. Do not stay to watch the waves. Follow evacuation routes away from the shore.' },
+  { id: 'tpl-5', name: 'Tornado Warning', category: 'emergency', urgency: 'critical', message: 'TORNADO WARNING: A tornado has been detected. Take shelter immediately in a basement, cellar, or interior room on the lowest floor. Protect your head with blankets or helmets. Avoid windows and mobile structures.' },
+
+  // ⚠️ HIGH URGENCY (5)
+  { id: 'tpl-6', name: 'Wildfire Evacuation Watch', category: 'emergency', urgency: 'high', message: 'EVACUATION WATCH: A wildfire is active and threatening the area. All residents must prepare to evacuate at a moment\'s notice. Pack emergency kits, essential medications, and prepare pets. Follow instructions from emergency personnel.' },
+  { id: 'tpl-7', name: 'Extreme Heat Warning', category: 'health', urgency: 'high', message: 'HEALTH ADVISORY: An extreme heatwave is active with dangerously high temperatures. Avoid strenuous outdoor activities between 11:00 AM and 4:00 PM. Stay in air-conditioned spaces, drink plenty of water, and check on elderly neighbors and pets.' },
+  { id: 'tpl-8', name: 'Air Quality Emergency', category: 'health', urgency: 'high', message: 'HEALTH ADVISORY: Poor air quality index readings have reached unhealthy levels. Sensitive groups, including children, the elderly, and individuals with respiratory conditions, must limit outdoor exposure and avoid heavy exertion.' },
+  { id: 'tpl-9', name: 'Cyclone Alert', category: 'emergency', urgency: 'high', message: 'CRITICAL WEATHER WARNING: A severe cyclone is approaching. Secure loose outdoor objects, stay indoors away from windows, and remain in the strongest part of your building. Keep emergency kits ready.' },
+  { id: 'tpl-10', name: 'Blizzard Warning', category: 'emergency', urgency: 'high', message: 'WINTER WEATHER EMERGENCY: A severe blizzard is causing zero visibility and freezing conditions. Stay indoors and avoid all travel. If heating fails, gather in a central room, wear multiple layers, and avoid using unvented indoor heaters.' },
+
+  // ⚡ MEDIUM URGENCY (5)
+  { id: 'tpl-11', name: 'Landslide Watch', category: 'emergency', urgency: 'medium', message: 'LANDSLIDE WATCH: Heavy rainfall has saturated slopes, creating a potential landslide hazard. If you are near steep hillsides or slopes, remain vigilant and be prepared to evacuate if slope movement is observed.' },
+  { id: 'tpl-12', name: 'Severe Thunderstorm Warning', category: 'emergency', urgency: 'medium', message: 'SEVERE WEATHER WARNING: High winds, large hail, and frequent lightning strikes are occurring. Move indoors immediately. Stay away from windows, avoid using corded electrical appliances, and do not touch running water.' },
+  { id: 'tpl-13', name: 'Roadway Closure', category: 'traffic', urgency: 'medium', message: 'TRAFFIC ADVISORY: A major traffic incident has blocked primary transit lanes. Major delays are expected. Commuters must seek alternate routes and follow local detours established by response personnel.' },
+  { id: 'tpl-14', name: 'Dense Fog Advisory', category: 'traffic', urgency: 'medium', message: 'DENSE FOG ADVISORY: Visibility is reduced to near-zero on major roadways. Drivers are urged to reduce speeds, maintain safe following distances, and use low-beam headlights.' },
+  { id: 'tpl-15', name: 'Localized Power Outage', category: 'utilities', urgency: 'medium', message: 'POWER GRID ADVISORY: Localized electrical outages are affecting parts of the area. Service restoration crews are active. Avoid contact with downed power lines.' },
+
+  // 📢 LOW URGENCY (5)
+  { id: 'tpl-16', name: 'Water Disruption Advisory', category: 'utilities', urgency: 'low', message: 'PUBLIC ADVISORY: Maintenance of the water supply network is underway. Water service may experience low pressure or temporary disruption. Residents are advised to store water for basic needs.' },
+  { id: 'tpl-17', name: 'Scheduled Grid Maintenance', category: 'utilities', urgency: 'low', message: 'UTILITY ADVISORY: Scheduled maintenance on communications systems is planned. Brief, intermittent network outages may occur during this timeframe.' },
+  { id: 'tpl-18', name: 'School Closure Notice', category: 'education', urgency: 'low', message: 'SCHOOL CLOSURE NOTICE: All schools and educational facilities will remain closed today due to severe weather. Virtual classes will proceed where scheduled.' },
+  { id: 'tpl-19', name: 'Public Briefing Announcement', category: 'general', urgency: 'low', message: 'INFORMATION BULLETIN: The municipal emergency preparedness briefing will be broadcast live. Residents are invited to watch the feed online or on local access channels.' },
+  { id: 'tpl-20', name: 'Community Preparedness Notice', category: 'general', urgency: 'low', message: 'COMMUNITY NOTICE: Help keep our community safe by winterizing homes, checking smoke alarms, and reviewing family emergency plans. Contact local offices for free guide booklets.' }
 ];
 
 const CATEGORIES = [
@@ -26,6 +41,7 @@ const CATEGORIES = [
   { id: 'health', labelKey: 'health', label: 'Health' },
   { id: 'traffic', labelKey: 'traffic', label: 'Traffic' },
   { id: 'utilities', labelKey: 'utilities', label: 'Utilities' },
+  { id: 'education', labelKey: 'education', label: 'Education' },
   { id: 'law_order', labelKey: 'lawOrder', label: 'Law & Order' },
   { id: 'general', labelKey: 'general', label: 'General' },
 ];
@@ -42,6 +58,7 @@ const CATEGORY_STYLES = {
   health:    { bg: 'rgba(59,130,246,0.1)', color: '#3b82f6' },
   traffic:   { bg: 'rgba(249,115,22,0.1)', color: '#f97316' },
   utilities: { bg: 'rgba(168,85,247,0.1)', color: '#a855f7' },
+  education: { bg: 'rgba(34,197,94,0.1)', color: '#22c55e' },
   law_order: { bg: 'rgba(71,85,105,0.1)', color: '#64748b' },
   general:   { bg: 'rgba(100,116,139,0.1)', color: '#475569' },
 };
@@ -54,8 +71,8 @@ export default function TemplatesPage() {
   const [templates, setTemplates] = useState(() => {
     const version = localStorage.getItem('uacs_templates_version');
     const saved = localStorage.getItem('uacs_custom_templates');
-    if (version !== 'v4') {
-      localStorage.setItem('uacs_templates_version', 'v4');
+    if (version !== 'v5') {
+      localStorage.setItem('uacs_templates_version', 'v5');
       localStorage.setItem('uacs_custom_templates', JSON.stringify(DEFAULT_TEMPLATES));
       return DEFAULT_TEMPLATES;
     }
