@@ -5,23 +5,7 @@ import toast from 'react-hot-toast';
 import { useLanguage } from '../i18n/LanguageContext';
 
 // All templates use translation keys for name and message
-const TEMPLATES = [
-  { id: 1, icon: '🌊', nameKey: 'tplFloodName', category: 'emergency', urgency: 'critical', msgKey: 'tplFloodMsg' },
-  { id: 2, icon: '🔥', nameKey: 'tplFireName', category: 'emergency', urgency: 'critical', msgKey: 'tplFireMsg' },
-  { id: 3, icon: '🏥', nameKey: 'tplHealthName', category: 'health', urgency: 'high', msgKey: 'tplHealthMsg' },
-  { id: 4, icon: '🚧', nameKey: 'tplRoadName', category: 'traffic', urgency: 'medium', msgKey: 'tplRoadMsg' },
-  { id: 5, icon: '⚡', nameKey: 'tplPowerName', category: 'utilities', urgency: 'medium', msgKey: 'tplPowerMsg' },
-  { id: 6, icon: '🌪️', nameKey: 'tplCycloneName', category: 'emergency', urgency: 'critical', msgKey: 'tplCycloneMsg' },
-  { id: 7, icon: '🏫', nameKey: 'tplSchoolName', category: 'education', urgency: 'low', msgKey: 'tplSchoolMsg' },
-  { id: 8, icon: '💧', nameKey: 'tplWaterName', category: 'utilities', urgency: 'medium', msgKey: 'tplWaterMsg' },
-  { id: 9, icon: '🚨', nameKey: 'tplCurfewName', category: 'law_order', urgency: 'high', msgKey: 'tplCurfewMsg' },
-  { id: 10, icon: '📢', nameKey: 'tplAnnounceName', category: 'general', urgency: 'low', msgKey: 'tplAnnounceMsg' },
-  { id: 11, icon: '🏢', nameKey: 'tplEarthquakeName', category: 'emergency', urgency: 'critical', msgKey: 'tplEarthquakeMsg' },
-  { id: 12, icon: '☀️', nameKey: 'tplHeatwaveName', category: 'health', urgency: 'high', msgKey: 'tplHeatwaveMsg' },
-  { id: 13, icon: '☣️', nameKey: 'tplChemicalName', category: 'emergency', urgency: 'critical', msgKey: 'tplChemicalMsg' },
-  { id: 14, icon: '🏄', nameKey: 'tplTsunamiName', category: 'emergency', urgency: 'critical', msgKey: 'tplTsunamiMsg' },
-  { id: 15, icon: '⛰️', nameKey: 'tplLandslideName', category: 'emergency', urgency: 'high', msgKey: 'tplLandslideMsg' },
-];
+const TEMPLATES = [];
 
 const CATEGORIES = [
   { id: 'all', labelKey: 'allCategories' },
