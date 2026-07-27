@@ -16,6 +16,11 @@ const TEMPLATES = [
   { id: 8, icon: '💧', nameKey: 'tplWaterName', category: 'utilities', urgency: 'medium', msgKey: 'tplWaterMsg' },
   { id: 9, icon: '🚨', nameKey: 'tplCurfewName', category: 'law_order', urgency: 'high', msgKey: 'tplCurfewMsg' },
   { id: 10, icon: '📢', nameKey: 'tplAnnounceName', category: 'general', urgency: 'low', msgKey: 'tplAnnounceMsg' },
+  { id: 11, icon: '🏢', nameKey: 'tplEarthquakeName', category: 'emergency', urgency: 'critical', msgKey: 'tplEarthquakeMsg' },
+  { id: 12, icon: '☀️', nameKey: 'tplHeatwaveName', category: 'health', urgency: 'high', msgKey: 'tplHeatwaveMsg' },
+  { id: 13, icon: '☣️', nameKey: 'tplChemicalName', category: 'emergency', urgency: 'critical', msgKey: 'tplChemicalMsg' },
+  { id: 14, icon: '🏄', nameKey: 'tplTsunamiName', category: 'emergency', urgency: 'critical', msgKey: 'tplTsunamiMsg' },
+  { id: 15, icon: '⛰️', nameKey: 'tplLandslideName', category: 'emergency', urgency: 'high', msgKey: 'tplLandslideMsg' },
 ];
 
 const CATEGORIES = [
@@ -200,5 +205,15 @@ const translations_en = {
   tplCurfewName: 'Curfew Notice',
   tplCurfewMsg: 'A curfew has been imposed in [ZONE] with immediate effect until further notice. All residents must remain indoors. Essential services are exempt. Strict action will be taken against violators. Stay calm and cooperate with authorities.',
   tplAnnounceName: 'General Announcement',
-  tplAnnounceMsg: 'This is an important announcement from the Government Authority for residents of [ZONE]. [ADD YOUR MESSAGE HERE]. For more information contact the helpline at 1800-XXX-XXXX.',
+  tplAnnounceMsg: 'This is an important announcement from the Authority for residents of [ZONE]. [ADD YOUR MESSAGE HERE]. For more information contact the helpline.',
+  tplEarthquakeName: 'Earthquake Alert',
+  tplEarthquakeMsg: 'A major earthquake of magnitude [MAGNITUDE] has occurred near [ZONE]. Strong aftershocks are expected. If indoors, drop, cover, and hold under sturdy furniture. If outdoors, move away from buildings, power lines, and trees. Do not use elevators.',
+  tplHeatwaveName: 'Heatwave Advisory',
+  tplHeatwaveMsg: 'An extreme heatwave warning is active for [ZONE] with temperatures expected to exceed [TEMP]°C. Avoid outdoor activity between 11:00 AM and 4:00 PM. Drink plenty of water. Keep vulnerable individuals, children, and pets indoors.',
+  tplChemicalName: 'Hazardous Gas Leak Alert',
+  tplChemicalMsg: 'A hazardous gas leak has been reported at [ZONE]. Residents are urged to shelter-in-place immediately. Close all doors, windows, and ventilation inlets. Seal doors with wet towels. Evacuate only if directed by emergency responders.',
+  tplTsunamiName: 'Tsunami Warning',
+  tplTsunamiMsg: 'A Tsunami warning has been issued following marine tectonic activity. All residents within coastal areas of [ZONE] must evacuate immediately to high ground. Do not return to the coast until official clearance is declared.',
+  tplLandslideName: 'Heavy Rain & Landslide Alert',
+  tplLandslideMsg: 'Continuous heavy rainfall is triggering landslide risks in the hilly areas of [ZONE]. Residents near steep slopes must relocate to safer zones immediately. Avoid all travel on mountain roads. Contact emergency helpline for rescue.',
 };
