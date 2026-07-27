@@ -4,7 +4,7 @@
 // ═══════════════════════════════════════
 
 import { Router } from 'express';
-import { dbSelect, dbGetById, dbGetOne, dbInsert, dbUpdate, dbDelete, dbCount } from '../database/db.js';
+import { dbSelect, dbGetById, dbGetOne, dbInsert, dbUpdate, dbDelete, dbCount, getSupabase } from '../database/db.js';
 import { translateToMultiple } from '../integrations/translateApi.js';
 import { sendBulkSMS } from '../integrations/smsGateway.js';
 import { postTweet } from '../integrations/twitterApi.js';
@@ -370,9 +370,37 @@ router.put('/:id', requireAdmin, async (req, res) => {
   }
 });
 
+// ─── PUT /api/messages/:id/reject ──────────────────────
+router.put('/:id/reject', requireAdmin, async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const updated = await dbUpdate('messages', req.params.id, { 
+      status: 'draft', 
+      expiry_reason: reason || 'Rejected by Admin'
+    });
+    
+    // Log to audit log
+    await dbInsert('audit_log', {
+      message_id: req.params.id,
+      action: 'rejected',
+      performed_by: req.user?.name || 'Admin',
+      notes: reason || 'Returned to draft'
+    });
+    
+    res.json(parseMsg(updated));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ─── DELETE /api/messages/:id ──────────────────────────
 router.delete('/:id', requireAdmin, async (req, res) => {
   try {
+    const sb = getSupabase();
+    // Clean up dependent tables first to bypass any foreign key constraints
+    await sb.from('safety_reports').delete().eq('message_id', req.params.id);
+    await sb.from('audit_log').delete().eq('message_id', req.params.id);
+    
     await dbDelete('messages', req.params.id);
     res.json({ success: true });
   } catch (err) {
