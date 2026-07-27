@@ -1,21 +1,23 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookTemplate, Search, Plus, Trash2, X, AlertTriangle, ShieldAlert } from 'lucide-react';
+import { BookTemplate, Search, Plus, Trash2, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useTheme } from '../ThemeContext';
 
 const DEFAULT_TEMPLATES = [
-  { id: 'tpl-1', name: 'Earthquake Alert', category: 'emergency', urgency: 'critical', message: 'A major earthquake has occurred. Strong aftershocks are expected. If indoors, drop, cover, and hold under sturdy furniture. If outdoors, move away from buildings, power lines, and trees. Do not use elevators.' },
-  { id: 'tpl-2', name: 'Flood Evacuation', category: 'emergency', urgency: 'critical', message: 'A severe flood warning has been issued. All residents in low-lying areas must evacuate immediately to the nearest relief camp. Carry essential documents, medicines, and 3 days of food supply. Do not attempt to cross flooded roads.' },
-  { id: 'tpl-3', name: 'Heatwave Advisory', category: 'health', urgency: 'high', message: 'An extreme heatwave warning is active. Avoid outdoor activity between 11:00 AM and 4:00 PM. Drink plenty of water. Keep vulnerable individuals, children, and pets indoors.' },
-  { id: 'tpl-4', name: 'Gas Leak Warning', category: 'emergency', urgency: 'critical', message: 'A hazardous gas leak has been reported. All individuals are urged to shelter-in-place immediately. Close all doors, windows, and ventilation inlets. Seal doors with wet towels. Evacuate only if directed by emergency responders.' },
-  { id: 'tpl-5', name: 'Fire Hazard Alert', category: 'emergency', urgency: 'critical', message: 'A major fire has been reported. Evacuate the vicinity immediately. Keep windows and doors closed. Avoid the area and allow emergency services to operate. Fire brigade and emergency teams are on-site.' },
-  { id: 'tpl-6', name: 'Cyclone Warning', category: 'emergency', urgency: 'critical', message: 'A severe cyclone warning has been issued. Extremely high winds and torrential rain are expected. Secure loose outdoor objects, stay indoors away from windows, and remain in the strongest part of your shelter.' },
-  { id: 'tpl-7', name: 'Tsunami Evacuation', category: 'emergency', urgency: 'critical', message: 'A tsunami warning has been issued. Seek immediate high ground or move inland away from coastal areas. Do not return to coastal areas until official clearance is declared by emergency management.' },
-  { id: 'tpl-8', name: 'Heavy Rain & Landslide Alert', category: 'emergency', urgency: 'high', message: 'Continuous heavy rainfall is triggering landslide risks. Residents near steep slopes must relocate to safer zones immediately. Avoid all travel on mountain roads and stay alert for signs of slope movement.' },
-  { id: 'tpl-9', name: 'Severe Blizzard Alert', category: 'emergency', urgency: 'high', message: 'A severe winter weather warning is active. Extreme freezing conditions, heavy snow, and blocked roadways are expected. Avoid all non-essential travel and remain indoors with heating systems active.' },
-  { id: 'tpl-10', name: 'Thunderstorm & Lightning Alert', category: 'emergency', urgency: 'medium', message: 'Severe thunderstorms accompanied by frequent lightning are occurring. Shelter indoors immediately. Stay away from windows, electrical appliances, and avoid contact with running water.' }
+  { id: 'tpl-1', name: 'Earthquake Alert', category: 'emergency', urgency: 'critical', message: 'EMERGENCY ALERT: A major earthquake has occurred. Dangerous aftershocks are expected. DROP, COVER, and HOLD ON immediately under a sturdy desk or table. Keep away from windows and outer walls. Do not use elevators. If outdoors, move to an open area away from structures and power lines.' },
+  { id: 'tpl-2', name: 'Flood Evacuation', category: 'emergency', urgency: 'critical', message: 'IMMEDIATE EVACUATION ORDER: Severe flooding is imminent. All residents in low-lying areas must evacuate immediately to higher ground. Go to the nearest designated emergency shelter. Do not walk or drive through flood waters. Turn around, don\'t drown.' },
+  { id: 'tpl-3', name: 'Extreme Heat Warning', category: 'health', urgency: 'high', message: 'HEALTH ADVISORY: An extreme heatwave is active with dangerously high temperatures. Avoid strenuous outdoor activities between 11:00 AM and 4:00 PM. Stay in air-conditioned spaces, drink plenty of water, and check on elderly neighbors and pets.' },
+  { id: 'tpl-4', name: 'Gas Leak Emergency', category: 'emergency', urgency: 'critical', message: 'SHELTER-IN-PLACE ORDER: A hazardous gas leak has occurred. Go indoors immediately. Close and lock all windows and exterior doors. Turn off all heating, ventilation, and air conditioning systems. Seal gaps around doors with damp towels. Remain inside until further notice.' },
+  { id: 'tpl-5', name: 'Wildfire Evacuation', category: 'emergency', urgency: 'critical', message: 'EVACUATION ORDER: A fast-moving wildfire is threatening the area. All residents must evacuate immediately. Grab emergency kits, essential medications, and pets. Leave via designated escape routes. Do not delay evacuation to protect property.' },
+  { id: 'tpl-6', name: 'Cyclone Warning', category: 'emergency', urgency: 'critical', message: 'CRITICAL WEATHER WARNING: A severe cyclone is making landfall. Extreme destructive winds and flooding are expected. Shelter indoors in an interior room on the lowest level, away from windows. Stay inside until the storm completely passes.' },
+  { id: 'tpl-7', name: 'Tsunami Evacuation', category: 'emergency', urgency: 'critical', message: 'TSUNAMI WARNING: A series of dangerous waves is approaching. If you are near coastal or low-lying beaches, move inland to high ground immediately. Do not stay to watch the waves. Follow evacuation routes away from the shore.' },
+  { id: 'tpl-8', name: 'Landslide Warning', category: 'emergency', urgency: 'high', message: 'LANDSLIDE WARNING: Heavy rainfall has saturated slopes, creating an imminent landslide hazard. If you are near steep hillsides or slopes, remain vigilant and evacuate to a safer location immediately. Avoid traveling on mountain roads.' },
+  { id: 'tpl-9', name: 'Severe Blizzard Alert', category: 'emergency', urgency: 'high', message: 'WINTER WEATHER EMERGENCY: A severe blizzard is causing zero visibility and freezing conditions. Stay indoors and avoid all travel. If heating fails, gather in a central room, wear multiple layers, and avoid using unvented indoor heaters.' },
+  { id: 'tpl-10', name: 'Tornado Warning', category: 'emergency', urgency: 'critical', message: 'TORNADO WARNING: A tornado has been detected. Take shelter immediately in a basement, cellar, or interior room on the lowest floor. Protect your head with blankets or helmets. Avoid windows and mobile structures.' },
+  { id: 'tpl-11', name: 'Severe Thunderstorm Alert', category: 'emergency', urgency: 'medium', message: 'SEVERE WEATHER WARNING: High winds, large hail, and frequent lightning strikes are occurring. Move indoors immediately. Stay away from windows, avoid using corded electrical appliances, and do not touch running water.' },
+  { id: 'tpl-12', name: 'Hazardous Spill Warning', category: 'emergency', urgency: 'medium', message: 'SAFETY ADVISORY: A chemical spill has occurred on a major transit route. Avoid the affected vicinity to allow emergency responders to secure the area. Keep vehicle windows closed if passing nearby. Follow all official detours.' }
 ];
 
 const CATEGORIES = [
@@ -52,8 +54,8 @@ export default function TemplatesPage() {
   const [templates, setTemplates] = useState(() => {
     const version = localStorage.getItem('uacs_templates_version');
     const saved = localStorage.getItem('uacs_custom_templates');
-    if (version !== 'v3') {
-      localStorage.setItem('uacs_templates_version', 'v3');
+    if (version !== 'v4') {
+      localStorage.setItem('uacs_templates_version', 'v4');
       localStorage.setItem('uacs_custom_templates', JSON.stringify(DEFAULT_TEMPLATES));
       return DEFAULT_TEMPLATES;
     }
@@ -278,7 +280,7 @@ export default function TemplatesPage() {
         </div>
       </div>
 
-      {/* Templates Display Grid */}
+      {/* Templates Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {filteredTemplates.map((tpl, i) => {
           const name = tpl.name;
