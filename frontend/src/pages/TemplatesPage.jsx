@@ -223,7 +223,7 @@ export default function TemplatesPage() {
 
             <div className="md:col-span-3">
               <label className="block text-xs font-bold uppercase tracking-wider text-theme-muted mb-1.5">
-                Template Message Content (Use placeholders like [ZONE], [TIME], [MAGNITUDE])
+                Template Message Content
               </label>
               <textarea
                 placeholder="Write the emergency instructions clearly..."
