@@ -208,7 +208,7 @@ export default function DashboardPage() {
       <div 
         className="animate-slide-up p-5 rounded-2xl border transition-all duration-300 hover:scale-[1.02] shadow-sm flex flex-col justify-between"
         style={{
-          background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)',
+          background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #030303 15%, #08080a 30%, #0d0d10 45%, #131316 60%, #17171a 75%, #1e1e22 90%, #242428 100%)',
           borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
           boxShadow: theme === 'light' 
             ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
@@ -572,7 +572,7 @@ export default function DashboardPage() {
             <div 
               className="relative rounded-3xl border overflow-hidden shadow-lg"
               style={{
-                background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)',
+                background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #030303 15%, #08080a 30%, #0d0d10 45%, #131316 60%, #17171a 75%, #1e1e22 90%, #242428 100%)',
                 borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
                 boxShadow: theme === 'light' 
                   ? '0 20px 40px -15px rgba(80, 45, 85, 0.12)' 
@@ -592,7 +592,7 @@ export default function DashboardPage() {
               onClick={() => setShowMap(true)}
               className="p-8 rounded-3xl border-2 border-dashed transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] cursor-pointer group flex flex-col items-center justify-center gap-4 min-h-50"
               style={{
-                background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)',
+                background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #030303 15%, #08080a 30%, #0d0d10 45%, #131316 60%, #17171a 75%, #1e1e22 90%, #242428 100%)',
                 borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.25)' : 'rgba(79, 89, 112, 0.35)',
                 boxShadow: theme === 'light' 
                   ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
@@ -640,7 +640,7 @@ export default function DashboardPage() {
         <div 
           className="p-6 rounded-3xl border relative overflow-hidden"
           style={{
-            background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)',
+            background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #030303 15%, #08080a 30%, #0d0d10 45%, #131316 60%, #17171a 75%, #1e1e22 90%, #242428 100%)',
             borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
             boxShadow: theme === 'light' 
               ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
@@ -684,7 +684,7 @@ export default function DashboardPage() {
         <div 
           className="p-6 rounded-3xl border"
           style={{
-            background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)',
+            background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #030303 15%, #08080a 30%, #0d0d10 45%, #131316 60%, #17171a 75%, #1e1e22 90%, #242428 100%)',
             borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
             boxShadow: theme === 'light' 
               ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
@@ -756,7 +756,7 @@ export default function DashboardPage() {
       <div 
         className="flex gap-1.5 p-1.5 rounded-2xl border w-fit" 
         style={{ 
-          background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)', 
+          background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #030303 15%, #08080a 30%, #0d0d10 45%, #131316 60%, #17171a 75%, #1e1e22 90%, #242428 100%)', 
           borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.3)' 
         }}
       >
@@ -814,7 +814,7 @@ export default function DashboardPage() {
             className="p-5 rounded-2xl border transition-all duration-300 animate-slide-up hover:scale-[1.01]"
             style={{ 
               animationDelay: `${i*60}ms`,
-              background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)',
+              background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #030303 15%, #08080a 30%, #0d0d10 45%, #131316 60%, #17171a 75%, #1e1e22 90%, #242428 100%)',
               borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
               boxShadow: theme === 'light' 
                 ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
@@ -874,7 +874,7 @@ export default function DashboardPage() {
             style={{ 
               animationDelay: `${i*60}ms`,
               borderLeftColor: theme === 'light' ? '#a61b3c' : '#ffffff',
-              background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)',
+              background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #030303 15%, #08080a 30%, #0d0d10 45%, #131316 60%, #17171a 75%, #1e1e22 90%, #242428 100%)',
               borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
               boxShadow: theme === 'light' 
                 ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
@@ -931,7 +931,7 @@ export default function DashboardPage() {
             className="p-5 rounded-2xl border transition-all duration-300 opacity-75 animate-slide-up hover:scale-[1.01]"
             style={{ 
               animationDelay: `${i*60}ms`,
-              background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)',
+              background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #030303 15%, #08080a 30%, #0d0d10 45%, #131316 60%, #17171a 75%, #1e1e22 90%, #242428 100%)',
               borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.18)' : 'rgba(79, 89, 112, 0.25)',
               boxShadow: theme === 'light' 
                 ? '0 12px 24px -10px rgba(80, 45, 85, 0.08)' 
@@ -999,7 +999,7 @@ export default function DashboardPage() {
           <div 
             className="max-w-lg w-full rounded-3xl border overflow-hidden flex flex-col"
             style={{ 
-              background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)', 
+              background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #030303 15%, #08080a 30%, #0d0d10 45%, #131316 60%, #17171a 75%, #1e1e22 90%, #242428 100%)', 
               borderColor: theme === 'light' ? 'rgba(145,99,203,0.18)' : 'rgba(79,89,112,0.25)', 
               boxShadow: theme === 'light' 
                 ? '0 32px 64px -12px rgba(80,45,85,0.22), 0 0 0 1px rgba(255,255,255,0.3)' 
@@ -1119,7 +1119,7 @@ export default function DashboardPage() {
               className="p-6 border-t flex flex-col gap-3"
               style={{
                 borderColor: theme === 'light' ? 'rgba(145, 99, 203, 0.12)' : 'rgba(79, 89, 112, 0.2)',
-                background: theme === 'light' ? '#faf8f5' : 'rgba(255, 255, 255, 0.04)'
+                background: theme === 'light' ? '#faf8f5' : 'linear-gradient(315deg, #000000 0%, #030303 15%, #08080a 30%, #0d0d10 45%, #131316 60%, #17171a 75%, #1e1e22 90%, #242428 100%)'
               }}
             >
               <button 
