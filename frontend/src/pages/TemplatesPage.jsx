@@ -45,7 +45,13 @@ export default function TemplatesPage() {
   const { theme } = useTheme();
 
   const [templates, setTemplates] = useState(() => {
+    const version = localStorage.getItem('uacs_templates_version');
     const saved = localStorage.getItem('uacs_custom_templates');
+    if (version !== 'v2') {
+      localStorage.setItem('uacs_templates_version', 'v2');
+      localStorage.setItem('uacs_custom_templates', JSON.stringify(DEFAULT_TEMPLATES));
+      return DEFAULT_TEMPLATES;
+    }
     return saved ? JSON.parse(saved) : DEFAULT_TEMPLATES;
   });
 
